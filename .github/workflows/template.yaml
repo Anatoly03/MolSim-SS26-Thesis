@@ -1,0 +1,73 @@
+# Template Equality Workflow
+#
+# This workflow verifies that the two templates (Rust and C++)
+# produce the same output for the same input.
+
+name: Template Equality Check
+
+on: 
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check-equality:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repository to access the code and input files.
+      - name: Checkout Project
+        uses: actions/checkout@v4.2.2
+
+      # Cache Rust dependencies to speed up the build process.
+      - name: Cache Rust Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+            Cargo.lock
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      # Build the Rust template.
+      - name: Build Rust Template
+        working-directory: template-rust
+        run: cargo build --release
+
+      # Cache CMake build files to speed up the C++ build process.
+      - name: Cache CMake Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            template-cpp/build/_deps
+          key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt','cmake/**') }}
+          restore-keys: ${{ runner.os }}-cmake-
+
+      # Build the C++ template using CMake.
+      - name: Build C++ Template
+        working-directory: template-cpp
+        run: |
+          cmake -B build
+          cd build
+          make
+    
+      # Run the Rust template and save the output to a file.
+      - name: Run Rust Template
+        working-directory: template-rust
+        run: |
+          ./target/release/pse-mol-dynamics > rust_output.txt
+
+      # Run the C++ template and save the output to a file.
+      - name: Run C++ Template
+        working-directory: template-cpp
+        run: |
+          ./build/MolSim > cpp_output.txt
+
+      # Compare the outputs of the Rust and C++ templates. If the outputs differ,
+      # diff command returns non-zero exit code.
+      # see: https://www.man7.org/linux/man-pages/man1/diff.1.html
+      - name: Compare Outputs
+        run: |
+          diff template-rust/rust_output.txt template-cpp/cpp_output.txt
