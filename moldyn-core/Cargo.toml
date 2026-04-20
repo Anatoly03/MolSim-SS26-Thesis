@@ -1,0 +1,6 @@
+[package]
+name = "moldyn-core"
+version = "0.1.0"
+authors = ["Anatoly Weinstein"]
+edition = "2024"
+publish = false
