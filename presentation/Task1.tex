@@ -121,7 +121,7 @@
     \gray{Note: \texttt{char} (Rust) is unicode-aware and not limited to 8 bit ASCII characters.}
 \end{frame}
 
-\simpleframe\begin{frame}[fragile]{Rust Enums and Variants}
+\simpleframe\begin{frame}[fragile]{Enums and Variants}
     % TODO quote: https://ocaml.org/docs/basic-data-types#variants
     % TODO quote: https://en.cppreference.com/cpp/language/enum
 
@@ -169,7 +169,7 @@ match file.open("hello.txt") {
     \end{columns}
 \end{frame}
 
-\simpleframe\begin{frame}{Rust Error Handling}
+\simpleframe\begin{frame}{Error Handling}
     \begin{tabular}{ m{0.46\textwidth} | m{0.46\textwidth} } 
         \textbf{Rust} & \textbf{C++} \\
         \hline
@@ -197,7 +197,7 @@ match file.open("hello.txt") {
     If a program encounters an \blue{unrecoverable error}, you \blue{panic}. This is equivalent to throwing an error which unwinds back to the main function, only calling destructor logic on the way.
 \end{frame}
 
-\simpleframe\begin{frame}[fragile]{Rust Frame Program}
+\simpleframe\begin{frame}[fragile]{Frame Program}
     % TODO cite: https://docs.rs/clap/latest/clap/
 
     \begin{itemize}
@@ -214,6 +214,28 @@ struct Args {
     /// Documentation for arguments works also!
     #[arg(short, long, default_value_t = "path/to/out.txt")]
     output: String, // or use `PathBuf' directly
+}
+    \end{lstlisting}
+
+\end{frame}
+
+\simpleframe\begin{frame}[fragile]{Serialization and Deserialization}
+    % TODO cite: https://docs.rs/clap/latest/clap/
+
+    \begin{itemize}
+        \item Typically done with \blue{serde} and \blue{serde\_json} (or \blue{serde\_yaml}, ...)
+        \item \blue{serde} maps Rust data structures to an internal format, then \blue{serde\_json} and \blue{serde\_yaml} define interpretations for serialization and deserialization into the respective data format.
+    \end{itemize}
+    \vspace{1em}
+
+    \begin{lstlisting}[aboveskip=0pt,belowskip=0pt,breaklines=false]
+/// Documentation comments become `printHelp' equivalent.
+#[derive(Serialize, Deserialize)]
+struct Particle {
+    #[serde(default, alias = "x")]
+    position: Vec3, // try to serialize, default to zero
+    #[serde(default, skip_deserializing)]
+    force: Vec3, // do not deserialize, always zero
 }
     \end{lstlisting}
 
