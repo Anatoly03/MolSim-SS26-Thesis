@@ -6,6 +6,23 @@
 \usepackage[skins,theorems]{tcolorbox}
  
 \setbeamercovered{transparent}
+\lstdefinelanguage{Rust}{
+    sensitive=true,
+    morekeywords={as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl, in, let, loop, match, mod, move, mut, pub, ref, return, self, Self, static, struct, super, trait, true, type, unsafe, use, where, while, async, await, dyn, Result, Option, Ok, Err, panic},
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]",
+    morestring=[b]',
+}
+\lstset{
+    language=Rust,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{red},
+    commentstyle=\color{teal},
+    morekeywords={Result, Option, Ok, Err, panic},
+    breaklines=true
+}
 
 \title{Rust vs C++: Brief Introduction}
 \author{Anatoly Weinstein}
@@ -56,7 +73,7 @@
 \end{frame}
 
 \simpleframe\begin{frame}{Commands and Tooling}
-    \begin{tabular}{ m{0.45\textwidth} | m{0.45\textwidth} } 
+    \begin{tabular}{ m{0.46\textwidth} | m{0.46\textwidth} } 
         \textbf{Rust} & \textbf{C++} \\
         \hline
         \texttt{cargo build} & \texttt{make} \\
@@ -70,11 +87,120 @@
     \end{tabular}
 \end{frame}
 
+\simpleframe\begin{frame}{Primitive Data Types}
+    \begin{tabular}{ m{0.46\textwidth} | m{0.46\textwidth} } 
+        \textbf{Rust} & \textbf{C++} \\
+        \hline
+        \texttt{u64}, \texttt{i32}, \texttt{u16}, ... & \texttt{uint64\_t}, \texttt{int32\_t}, \texttt{uint8\_t}, ... \\
+        \texttt{f32}, \texttt{f64} & \texttt{float}, \texttt{double} \\
+        %  \texttt{usize} & \texttt{size\_t} \\
+        \texttt{usize}, \texttt{isize} & \texttt{unsigned long int}, \texttt{long int} \\
+        \texttt{usize}, \gray{\texttt{std::core::c\_size\_t}} & \texttt{size\_t} \\
+        \hline
+    \end{tabular}
+    \vspace{0.5em}
+
+    % TODO add citation: https://stackoverflow.com/questions/131803/unsigned-int-vs-size-t
+    % TODO add citation: https://doc.rust-lang.org/std/primitive.usize.html
+    % TODO add citation: https://doc.rust-lang.org/core/ffi/type.c_size_t.html
+
+    \gray{Note: \texttt{usize} (Rust) and \texttt{size\_t} (C++) are false friends. They are technically similar but different in compiler guarantees.}
+
+    \vspace{0.5em}
+    \begin{tabular}{ m{0.46\textwidth} | m{0.46\textwidth} } 
+        \hline
+        \texttt{bool} & \texttt{bool} \\
+        \texttt{u8} & \texttt{char} \\
+        \hline
+    \end{tabular}
+    \vspace{0.5em}
+
+    % TODO add citation: https://en.cppreference.com/cpp/language/types
+    % TODO add citation: https://doc.rust-lang.org/std/primitive.char.html
+    \gray{Note: \texttt{char} (Rust) is unicode-aware and not limited to 8 bit ASCII characters.}
+\end{frame}
+
+\simpleframe\begin{frame}[fragile]{Rust Enums and Variants}
+    % TODO quote: https://ocaml.org/docs/basic-data-types#variants
+    % TODO quote: https://en.cppreference.com/cpp/language/enum
+
+    Rust uses OCaml-like enums which are more powerful than C++ enums in that every variant can branch out into a different data type.
+
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{lstlisting}[aboveskip=0pt,belowskip=0pt,breaklines=false]
+pub enum Option<T> {
+    Some(T),
+    None,
+}
+            \end{lstlisting}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{lstlisting}[aboveskip=0pt,belowskip=0pt,breaklines=false]
+pub enum Result<T, E> {
+    Ok(T),
+    Err(E),
+}
+            \end{lstlisting}
+        \end{column}
+    \end{columns}
+    \vspace{0.5em}
+
+    This feature allows Rust to encode branching of code flow into the data type, setting a design choice for error handling.
+
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{lstlisting}[aboveskip=0pt,belowskip=0pt,breaklines=false]
+if let Some(value) = ... {
+    // value is of type T
+    ...
+}
+            \end{lstlisting}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \begin{lstlisting}[aboveskip=0pt,belowskip=0pt,breaklines=false]
+match file.open("hello.txt") {
+    Ok(file) => file,
+    Err(e) => ...,
+}
+            \end{lstlisting}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\simpleframe\begin{frame}{Rust Error Handling}
+    \begin{tabular}{ m{0.46\textwidth} | m{0.46\textwidth} } 
+        \textbf{Rust} & \textbf{C++} \\
+        \hline
+        \texttt{Result<T, E>} & \texttt{try} and \texttt{catch} \\
+        \texttt{Option<T>} & \texttt{std::optional<T>} \\
+        \hline
+    \end{tabular}
+    \vspace{1em}
+
+    Rust does not have stack-unwinding exceptions which can be `caught' and handled at runtime. There are two types of error handlers in Rust:
+
+    \vspace{1em}
+    \begin{tabular}{ m{0.46\textwidth} | m{0.46\textwidth} } 
+        \textbf{Recoverable} & \textbf{Unrecoverable} \\
+        \hline
+        \texttt{Result<T, E>} & \texttt{panic \!("this is very very bad");} \\
+        % {\begin{itemize}
+        %     \item \texttt{Ok(T)}: the operation succeeded and returned a value of type \texttt{T}.
+        %     \item \texttt{Err(E)}: the operation failed and returned an error of type \texttt{E}.
+        % \end{itemize}}
+        \hline
+    \end{tabular}
+    \vspace{1em}
+
+    If a program encounters an \blue{unrecoverable error}, you \blue{panic}. This is equivalent to throwing an error which unwinds back to the main function, only calling destructor logic on the way.
+\end{frame}
+
 \simpleframe\begin{frame}{Ferris will answer questions}
     \centering
     % image from:
     % https://en.wikipedia.org/wiki/List_of_computing_mascots
-    \includegraphics{media/ferris.png}
+    \includegraphics[width=0.5\textwidth]{media/ferris.png}
 \end{frame}
 
 \end{document}
