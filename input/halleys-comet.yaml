@@ -1,0 +1,20 @@
+# This file describes the initial conditions for the simulation of Halley's comet.
+
+name: halleys-comet
+force: gravitational
+
+particles:
+  - position: [0.0, 0.0, 0.0]
+    mass: 1.0
+  - position: [0.0, 1.0, 0.0]
+    velocity:
+      x: -1.0
+    mass: 3.0e-6
+  - position: [0.0, 5.36, 0.0]
+    velocity:
+      x: -0.425
+    mass: 9.55e-4
+  - position: [34.75, 0.0, 0.0]
+    velocity:
+      y: 0.0296
+    mass: 1.0e-14
