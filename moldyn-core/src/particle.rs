@@ -46,15 +46,13 @@ impl Particle {
     /// This functionality is constant across different simulation algorithms,
     /// so it is implemented here.
     pub fn update_position(&mut self, delta_time: f64) {
-        // C++ code: particle.position += dt * particle.velocity + std::pow(dt, 2) * particle.force / (2 * particle.mass);
-        todo!("rewrite it in rust");
+        self.position += self.velocity * delta_time + self.force * (delta_time.powi(2) / (2.0 * self.mass));
     }
 
     /// Calculate the updated velocity of the particle given a delta time step.
     /// This functionality is constant across different simulation algorithms,
     /// so it is implemented here.
     pub fn update_velocity(&mut self, delta_time: f64) {
-        // C++ code: particle.velocity += dt * ((particle.force + particle.old_force) / (2 * particle.mass));
-        todo!("rewrite it in rust");
+        self.velocity += (self.force + self.old_force) * (delta_time / (2.0 * self.mass));
     }
 }

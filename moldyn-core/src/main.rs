@@ -46,12 +46,10 @@ fn main() {
         }
     };
 
-    println!("Simulation name: {}", input.name);
+    println!("simulation name: `{}`", input.name);
 
     // this is supposed to panic and confirm that force deserialization is working
     let mut p1 = Particle::default();
     let mut p2 = Particle::default();
     input.force.apply_force(&mut p1, &mut p2);
-
-    println!("Hello, world!");
 }

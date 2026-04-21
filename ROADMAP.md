@@ -1,9 +1,15 @@
+# Chapter 1
+
 - [x] Rust Template
 - [x] CLI Argument Parser
 - [x] Input File Parser
   - [x] YAMl Support
   - [ ] JSON Support
 - [ ] Output File Writer
+
+***
+
+> The following bullet points have not been inserted into a proper timeline.
 
 - [ ] As we discussed in the meeting, the basic algorithm of the molecular dynamics
 simulation consists of the following steps:
@@ -35,4 +41,9 @@ simulation consists of the following steps:
 
 - [ ] TODO: include worksheet 3
 
+- [ ] SIMD
+  - https://doc.rust-lang.org/std/simd/struct.Simd.html
+
 - [ ] Profilers
+  - https://nnethercote.github.io/perf-book/profiling.html
+  - https://valgrind.org/docs/manual/cg-manual.html
