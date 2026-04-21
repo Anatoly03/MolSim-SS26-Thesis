@@ -34,7 +34,7 @@ jobs:
       - name: Generate Documentation
         # run: rustdoc moldyn-core/src/main.rs
         # dependencies not linked, so use `cargo doc` instead
-        run: cargo doc
+        run: cargo doc --no-deps --workspace
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
