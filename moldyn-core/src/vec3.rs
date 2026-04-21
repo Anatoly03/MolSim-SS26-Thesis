@@ -5,10 +5,10 @@
 //! https://github.com/Anatoly03/MolSim-WS25-GroupA/blob/assignment5-local-backup/src/core/math/Vec3.h
 
 use serde::{Deserialize, Serialize};
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 #[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize, Default)]
-pub struct Vec3<T> {
+pub struct Vec3<T = f64> {
     pub x: T,
     pub y: T,
     pub z: T,
@@ -96,6 +96,16 @@ impl<T: Add<Output = T>> Add for Vec3<T> {
     }
 }
 
+// vector addition assignment
+impl<T: AddAssign> AddAssign for Vec3<T> {
+    /// Implements the addition-assign operation `+=` for the [Vec3] class.
+    fn add_assign(&mut self, rhs: Self) {
+        self.x += rhs.x;
+        self.y += rhs.y;
+        self.z += rhs.z;
+    }
+}
+
 // vector subtraction
 impl<T: Sub<Output = T>> Sub for Vec3<T> {
     type Output = Self;
@@ -119,7 +129,17 @@ impl<T: Sub<Output = T>> Sub for Vec3<T> {
     }
 }
 
-// scalar multiplication with scalar
+// vector subtraction assignment
+impl<T: SubAssign> SubAssign for Vec3<T> {
+    /// Implements the subtraction-assign operation `-=` for the [Vec3] class.
+    fn sub_assign(&mut self, rhs: Self) {
+        self.x -= rhs.x;
+        self.y -= rhs.y;
+        self.z -= rhs.z;
+    }
+}
+
+// multiplication with scalar
 impl<T: Mul<Output = T> + Copy> Mul<T> for Vec3<T> {
     type Output = Self;
 
@@ -139,6 +159,16 @@ impl<T: Mul<Output = T> + Copy> Mul<T> for Vec3<T> {
             y: self.y * scalar,
             z: self.z * scalar,
         }
+    }
+}
+
+// multiplication with scalar assignment
+impl<T: MulAssign + Copy> MulAssign<T> for Vec3<T> {
+    /// Implements the multiplication-assign operation `*=` for the [Vec3] class.
+    fn mul_assign(&mut self, rhs: T) {
+        self.x *= rhs;
+        self.y *= rhs;
+        self.z *= rhs;
     }
 }
 
@@ -163,6 +193,16 @@ impl<T: Div<Output = T> + Copy> Div<T> for Vec3<T> {
             y: self.y / scalar,
             z: self.z / scalar,
         }
+    }
+}
+
+// division by scalar assignment
+impl<T: DivAssign + Copy> DivAssign<T> for Vec3<T> {
+    /// Implements the division-assign operation `/=` for the [Vec3] class.
+    fn div_assign(&mut self, rhs: T) {
+        self.x /= rhs;
+        self.y /= rhs;
+        self.z /= rhs;
     }
 }
 
