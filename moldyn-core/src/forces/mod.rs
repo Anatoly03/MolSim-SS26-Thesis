@@ -7,15 +7,36 @@ pub use newton::NewtonForce;
 use serde::{Deserialize, de::Visitor};
 
 pub trait Force {
-    /// Returns the name of the force system, which is used for serialization
-    /// and deserialization. The characters are expected to be in lowercase.
+    /// # Returns
+    /// 
+    /// Name of the force system, which is used for serialization and
+    /// deserialization. The characters are expected to be in `lowercase`.
     fn system_name(&self) -> &str;
 
-    /// Calculates the force between two particles, not changing their state.
+    /// Calculates the force between two particles. For directly applying the
+    /// force, see [Force::apply_force].
+    /// 
+    /// # Returns
+    /// 
+    /// The force vector that should be applied to the first particle. According
+    /// to the [Third Law](https://en.wikipedia.org/wiki/Newton%27s_laws_of_motion#Third_law)
+    /// the second particle should receive the negated force.
+    /// 
+    /// # Example
+    /// 
+    /// ```rust,no_run
+    /// let force = LennardJonesForce::default().force(&particle1, &particle2);
+    /// particle1.apply_force(force);
+    /// particle2.apply_force(-force);
+    /// ```
+    /// 
+    /// ```rust,no_run
+    /// let lennard_jones = LennardJonesForce::default();
+    /// let force = lennard_jones.apply_force(&particle1, &particle2);
+    /// ```
     fn force(&self, particle: &Particle, other: &Particle) -> Vec3;
 
-    /// Applies the force to a particle pair. The force is added (or subtracted)
-    /// to the `force` field of each particle forming an attraction or repulsion.
+    /// Applies the calculated force to a particle pair.
     fn apply_force(&self, particle: &mut Particle, other: &mut Particle) {
         let force = self.force(particle, other);
         particle.apply_force(force);
@@ -39,7 +60,6 @@ impl<'de> Visitor<'de> for ForceVisitor {
     ///
     /// ```yaml
     /// # Particle definition input file example
-    ///
     /// name: halleys-comet
     /// force: gravitational
     /// ```

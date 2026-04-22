@@ -41,11 +41,5 @@ impl TryFrom<PathBuf> for FileDefinition {
                 format!("unsupported file extension: {file_extension}"),
             )),
         }
-
-        // let file_content = std::fs::read_to_string(&value)
-        //     .map_err(|e| format!("Failed to read file {:?}: {}", value, e))?;
-
-        // serde_yaml::from_str(&file_content)
-        //     .map_err(|e| format!("Failed to parse YAML from file {:?}: {}", value, e))
     }
 }

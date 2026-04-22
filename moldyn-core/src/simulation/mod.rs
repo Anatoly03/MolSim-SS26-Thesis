@@ -3,34 +3,37 @@
 mod sum;
 
 use crate::Particle;
-use std::vec::IntoIter;
+use std::{slice::{Iter, IterMut}, vec::IntoIter};
 pub use sum::DirectSum;
 
 /// An interface-level abstraction of a molecular dynamics simulation. A
 /// `simulation` is a method of organizing the particles and forces in a way
 /// that allows for efficient computation.
 pub trait Simulation {
-    /// TODO document
-    fn particles(&mut self) -> IntoIter<&mut Particle>;
+    /// An iterator over the particles in the simulation, used in methods like
+    /// [Simulation::particle_count]
+    fn particles<'a>(&'a self) -> Iter<'a, Particle>;
 
-    /// TODO document
-    fn particle_pairs(&mut self) -> IntoIter<(&mut Particle, &mut Particle)>;
+    /// Mutable iterator over the particles in the simulation, used in methods
+    /// like [Simulation::step].
+    fn particles_mut<'a>(&'a mut self) -> IterMut<'a, Particle>;
 
-    /// The number of particles in the simulation. This is a convenience method that
-    /// can be used to ensure the particle count remains consistent (or wantedly
-    /// decreased) during the simulation.
+    /// The core method of the trait. Different implementations of [Simulation] vary
+    /// in performance as this is the heaviest part of the simulation.
+    /// 
+    /// # Returns
+    /// 
+    /// - An iterator over distinct pairs of particles, accounting for symmetry.
+    /// - If you receive a pair `(a, b)` it is guaranteed that you will not receive `(b, a)`.
+    /// - There is no guarantee you will receive all pairs.
+    fn particle_pairs_mut<'a>(&'a mut self) -> IterMut<'a, (Particle, Particle)>;
+
+    /// # Returns
+    /// 
+    /// The number of particles in the simulation.
     fn particle_count(&self) -> usize {
-        self.particles().len()
+        self.particles().count()
     }
-
-    // /// TODO document
-    // /// TODO do we need this method? it breaks dyn compatibility (generics)
-    // /// TODO retink
-    // fn for_each_particle(&mut self, mut f: impl FnMut(&mut Particle)) {
-    //     for particle in self.particles() {
-    //         f(particle);
-    //     }
-    // }
 
     /// TODO document
     fn step(&mut self) {}

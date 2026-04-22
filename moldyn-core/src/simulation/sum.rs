@@ -1,5 +1,7 @@
 //! TODO document
 
+use std::slice::IterMut;
+
 use crate::{Particle, simulation::Simulation};
 
 /// The [DirectSum] simulation method is the most intuitive way to process
@@ -13,11 +15,15 @@ pub struct DirectSum {
 }
 
 impl Simulation for DirectSum {
-    fn particles(&mut self) -> std::vec::IntoIter<&mut Particle> {
-        self.particles.into_iter()
+    fn particles<'a>(&'a self) -> std::slice::Iter<'a, Particle> {
+        self.particles.iter()
     }
 
-    fn particle_pairs(&mut self) -> std::vec::IntoIter<(&mut Particle, &mut Particle)> {
+    fn particles_mut<'a>(&'a mut self) -> IterMut<'a, Particle> {
+        self.particles.iter_mut()
+    }
+
+    fn particle_pairs_mut<'a>(&'a mut self) -> IterMut<'a, (Particle, Particle)> {
         todo!()
     }
 }
