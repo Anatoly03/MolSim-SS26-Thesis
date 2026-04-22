@@ -34,6 +34,7 @@ impl Simulation for DirectSum {
         for i in 0..count {
             // newtons third law: skip same pairs
             for j in (i + 1)..count {
+                // TODO maybe move this line one above, check efficiency of split_at_mut
                 // https://doc.rust-lang.org/std/vec/struct.Vec.html#method.split_at_mut
                 let (left, right) = self.particles.split_at_mut(j);
 

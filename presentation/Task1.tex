@@ -242,6 +242,42 @@ struct Particle {
 
 \end{frame}
 
+\simpleframe\begin{frame}[fragile]{Rust Ownership Model}{The so-to-say 'first big boss' to beginners}
+    % TODO cite https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html
+    TODO refactor slides to be less verbose
+
+    \vspace{1em}
+    \begin{itemize}
+        \item Only owned values can be dropped. \gray{Intuitively, you cannot destroy items you lend from the library.}
+        \item When an owned value goes out of scope, it is automatically dropped. \gray{Intuitively, if you lose a pen, it is gone.}
+        \item Only one mutable borrow can exist at a time. A mutable borrow blocks other borrows. \gray{Intuitively, you should not lend a book to two editors at the same time.}
+        \item Multiple immutable borrows can exists at a time. \gray {Intuitively, you can give a book to many readers simultaneously.}
+    \end{itemize}
+\end{frame}
+
+\simpleframe\begin{frame}[fragile]{Rust Ownership Model}{Cheatsheet}
+
+    \vspace{1em}
+    \begin{tabular}{ | m{0.15\textwidth} | m{0.25\textwidth} | m{0.48\textwidth} | } 
+        \hline
+        \textbf{Syntax} & \textbf{Description} & \textbf{Permissions} \\
+        \hline
+        \texttt{a: T} & \blue{owned} & read, create immutable borrow, drop \\ \hline
+        \texttt{mut a: T} & \blue{owned mutably} & read, write, create immutable and mutable borrows, drop \\ \hline
+        \texttt{a: \&T} & \blue{immutable borrow} & read, create immutable references \\ \hline
+        \texttt{a: \&mut T} & \blue{mutable borrow} & read, write, create single mutable reference, create immutable references \\ \hline
+    \end{tabular}
+    \vspace{1em}
+
+    Other types like \texttt{mut a: \&T} are possible but rarely useful.
+\end{frame}
+
+\simpleframe\begin{frame}[fragile]{Rust Ownership Model}
+
+    TODO problems i encountered with borrow checker
+    TODO see direct sum implementation and pairwise iteration
+\end{frame}
+
 \simpleframe\begin{frame}{Ferris will answer questions}
     \centering
     % image from:
