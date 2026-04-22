@@ -1,4 +1,9 @@
+//! TODO document
+
+mod args;
+
 use crate::{Force, Particle, simulation::Simulation};
+pub use args::SimulationArgs;
 use serde::{Deserialize, Serialize};
 use std::{
     io::{Error, ErrorKind::InvalidInput},
@@ -6,16 +11,24 @@ use std::{
     sync::Arc,
 };
 
+/// TODO document
 #[derive(Serialize, Deserialize)]
 pub struct FileDefinition {
+    /// TODO document
     pub name: String,
 
+    /// TODO document
     #[serde(skip_serializing, default)]
     pub force: Box<dyn Force>,
 
+    /// TODO document
     #[serde(skip_serializing, default)]
     pub algorithm: Box<dyn Simulation>,
 
+    /// TODO document
+    pub args: SimulationArgs,
+
+    /// TODO document
     #[serde(default)]
     pub particles: Vec<Particle>,
 }
@@ -60,12 +73,14 @@ impl From<FileDefinition> for Box<dyn Simulation> {
             name: _,
             force,
             mut algorithm,
+            args,
             particles,
         } = value;
 
         let force_arc = Arc::from(force);
         algorithm.set_force(force_arc);
         algorithm.set_particles(particles);
+        algorithm.set_args(args);
 
         algorithm
     }

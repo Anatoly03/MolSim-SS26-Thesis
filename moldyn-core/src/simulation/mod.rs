@@ -2,7 +2,7 @@
 
 mod sum;
 
-use crate::{Force, Particle};
+use crate::{Force, Particle, reader::SimulationArgs};
 use serde::{Deserialize, de::Visitor};
 use std::sync::Arc;
 pub use sum::DirectSum;
@@ -46,6 +46,9 @@ pub trait Simulation {
 
     /// Set the force calculation method.
     fn set_force(&mut self, force: Arc<dyn Force>);
+
+    /// Set the simulation arguments.
+    fn set_args(&mut self, args: SimulationArgs);
 
     /// Updates the position of all particles.
     fn update_position(&mut self, delta_t: f64) {

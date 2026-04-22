@@ -1,5 +1,6 @@
 //! TODO document
 
+use crate::reader::SimulationArgs;
 use crate::{Force, LennardJonesForce};
 use crate::{Particle, simulation::Simulation};
 use std::sync::Arc;
@@ -14,6 +15,7 @@ pub struct DirectSum {
     // TODO explain in slides why Arc works and Box does not
     force: Arc<dyn Force>,
     particles: Vec<Particle>,
+    args: SimulationArgs,
 }
 
 impl Simulation for DirectSum {
@@ -72,6 +74,10 @@ impl Simulation for DirectSum {
     fn set_force(&mut self, force: Arc<dyn Force>) {
         self.force = force;
     }
+
+    fn set_args(&mut self, args: SimulationArgs) {
+        self.args = args;
+    }
 }
 
 impl Default for DirectSum {
@@ -79,6 +85,7 @@ impl Default for DirectSum {
         Self {
             force: Arc::new(LennardJonesForce::default()),
             particles: Vec::new(),
+            args: SimulationArgs::default(),
         }
     }
 }

@@ -11,7 +11,9 @@ use clap::Parser;
 pub use forces::{Force, LennardJonesForce, NewtonForce};
 pub use particle::Particle;
 pub use simulation::Simulation;
-use std::path::PathBuf;
+use std::{
+    fs, io::{BufWriter, Write}, path::{Path, PathBuf}
+};
 pub use vec3::Vec3;
 
 use crate::reader::FileDefinition;
@@ -48,27 +50,42 @@ fn main() {
     };
 
     println!("simulation name: `{}`", input.name);
-    println!("------------------\n");
+
+    // create output directory
+    let write_directory = match args.output.parent().map(|path| {
+        fs::create_dir_all(path)?;
+        Ok::<PathBuf, std::io::Error>(path.to_owned())
+    }) {
+        // if parent path was specified and created successfully, use it
+        Some(Ok(path)) => path.to_owned(),
+        // if no parent path specified, all is good (大丈夫)
+        None => PathBuf::new(),
+        // if parent path was specified but not created, exit non-zero
+        // we land here if OS error occured (e.g. path was a file)
+        Some(Err(e)) => {
+            eprintln!("Error creating output directory: {}", e);
+            std::process::exit(1);
+        }
+    };
 
     // generate simulation
     let mut simulation: Box<dyn Simulation> = input.into();
 
-    simulation.for_each_particles(&mut |p| println!("{p:?}\n"));
-    println!("------------------\n");
-    simulation.step();
-    simulation.for_each_particles(&mut |p| println!("{p:?}\n"));
-    println!("------------------\n");
-    simulation.step();
-    simulation.for_each_particles(&mut |p| println!("{p:?}\n"));
-    println!("------------------\n");
-    simulation.step();
-    simulation.for_each_particles(&mut |p| println!("{p:?}\n"));
-    println!("------------------\n");
-    simulation.step();
-    simulation.for_each_particles(&mut |p| println!("{p:?}\n"));
+    for i in 0..5 {
+        println!("Step {i}");
+        simulation.step();
 
-    // // this is supposed to panic and confirm that force deserialization is working
-    // let mut p1 = Particle::default();
-    // let mut p2 = Particle::default();
-    // input.force.apply_force(&mut p1, &mut p2);
+        let file = match fs::File::create(write_directory.join(format!("sim_{}.log", i))) {
+            Ok(file) => file,
+            Err(e) => {
+                eprintln!("Error creating output file: {}", e);
+                std::process::exit(1);
+            }
+        };
+        let mut writer = BufWriter::new(file);
+
+        simulation.for_each_particles(&mut move |p| {
+            writeln!(writer, "{p:?}").expect("Error writing to output file");
+        });
+    }
 }
