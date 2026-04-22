@@ -28,7 +28,8 @@ pub trait OutputWriter {
     /// Writes the simulation results.
     fn write(&mut self, path: &Path, state: &Box<dyn Simulation>) -> Result<()> {
         let full_file_path = path.parent().unwrap_or(Path::new(".")).join(format!(
-            "{}_{}.{}",
+            // https://stackoverflow.com/questions/50458144/what-is-the-easiest-way-to-pad-a-string-with-0-to-the-left
+            "{}_{:0>8}.{}",
             // map to UTF sequences: https://doc.rust-lang.org/std/ffi/struct.OsStr.html#method.to_string_lossy
             // this theoretically makes using tbis program on Windows possible but no clue tbf
             // something to do with endians and UTF-16

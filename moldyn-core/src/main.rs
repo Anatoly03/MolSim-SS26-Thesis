@@ -101,7 +101,7 @@ fn main() {
 
         simulation.step(args.delta_time);
 
-        if frame % 10 == 0 {
+        if frame % 100 == 0 {
             output_writer
                 .write(&args.output, &simulation)
                 .expect("error occured during simulation write");
