@@ -1,8 +1,8 @@
 //! TODO document
 
+use crate::{Force, LennardJonesForce};
 use crate::{Particle, simulation::Simulation};
-use std::slice::{Iter, IterMut};
-use std::vec::IntoIter;
+use std::sync::Arc;
 
 /// The [DirectSum] simulation method is the most intuitive way to process
 /// a molecular dynamics simulation. It bases the computation on the
@@ -11,6 +11,8 @@ use std::vec::IntoIter;
 /// **Newton Pair Optimization**: The only optimization [DirectSum] performs
 /// is avoiding computing the same pair of particles twice.
 pub struct DirectSum {
+    // TODO explain in slides why Arc works and Box does not
+    force: Arc<dyn Force>,
     particles: Vec<Particle>,
 }
 
@@ -28,7 +30,10 @@ impl Simulation for DirectSum {
     }
 
     // index-based approach because two mutable iterators were problematic
-    fn for_each_particle_pairs_mut<'a>(&'a mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle)) {
+    fn for_each_particle_pairs_mut<'a>(
+        &'a mut self,
+        f: &mut dyn FnMut(&mut Particle, &mut Particle),
+    ) {
         let count = self.particle_count();
 
         for i in 0..count {
@@ -44,7 +49,7 @@ impl Simulation for DirectSum {
                 //        i         j
                 // [p1,  p2,  p3],[p4,  p5]
                 //       ^^        ^^ avoid borrow issue with split_at_mut
-                
+
                 // TODO document in slides
 
                 f(&mut left[i], &mut right[0]);
@@ -54,5 +59,26 @@ impl Simulation for DirectSum {
 
     fn particle_count(&self) -> usize {
         self.particles.len()
+    }
+
+    fn set_particles(&mut self, particles: Vec<Particle>) {
+        self.particles = particles;
+    }
+
+    fn get_force(&self) -> Arc<dyn Force> {
+        self.force.clone()
+    }
+
+    fn set_force(&mut self, force: Arc<dyn Force>) {
+        self.force = force;
+    }
+}
+
+impl Default for DirectSum {
+    fn default() -> Self {
+        Self {
+            force: Arc::new(LennardJonesForce::default()),
+            particles: Vec::new(),
+        }
     }
 }

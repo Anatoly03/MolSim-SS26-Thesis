@@ -2,7 +2,9 @@
 
 mod sum;
 
-use crate::Particle;
+use crate::{Force, Particle};
+use serde::{Deserialize, de::Visitor};
+use std::sync::Arc;
 pub use sum::DirectSum;
 
 // to self: tried to keep dyn-compatibility. following approaches failed:
@@ -36,6 +38,97 @@ pub trait Simulation {
     /// The number of particles in the simulation.
     fn particle_count(&self) -> usize;
 
+    /// Set the particles in the simulation.
+    fn set_particles(&mut self, particles: Vec<Particle>);
+
+    /// Get the force calculation method.
+    fn get_force(&self) -> Arc<dyn Force>;
+
+    /// Set the force calculation method.
+    fn set_force(&mut self, force: Arc<dyn Force>);
+
+    /// Updates the position of all particles.
+    fn update_position(&mut self, delta_t: f64) {
+        self.for_each_particles_mut(&mut |p| p.update_position(delta_t));
+    }
+
+    /// Updates the velocity of all particles.
+    fn update_force(&mut self) {
+        // cannot borrow `*self` as mutable because it is also borrowed as immutable
+        // mutable borrow occurs hererustcClick for full compiler diagnostic
+        // mod.rs(50, 21): immutable borrow occurs here
+        // mod.rs(52, 14): immutable borrow later used by call
+        let force: Arc<dyn Force> = self.get_force();
+
+        self.for_each_particle_pairs_mut(&mut |p1, p2| {
+            force.apply_force(p1, p2);
+        });
+    }
+
+    /// Updates the velocity of all particles.
+    fn update_velocity(&mut self, delta_t: f64) {
+        self.for_each_particles_mut(&mut |p| p.update_velocity(delta_t));
+    }
+
     /// TODO document
-    fn step(&mut self) {}
+    fn step(&mut self) {
+        const DELTA_T: f64 = 0.014;
+
+        self.update_position(DELTA_T);
+        // TODO delay force
+        self.update_force();
+        // APPLY GRAVITY HERE
+        // CALCULATE BORDER BEHAVIOUR
+        self.update_velocity(DELTA_T);
+        // TODO UPDATE CURRENT TIME += DELTA TIME
+    }
+
+    // TODO PLOT PARTICLES
+}
+
+struct SimulationVisitor;
+
+impl<'de> Visitor<'de> for SimulationVisitor {
+    type Value = Box<dyn Simulation>;
+
+    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+        formatter.write_str("a simulation")
+    }
+
+    /// If the simulation is represented as a string, we can parse it as a known simulation
+    /// type. Strings are case-insensitive.
+    ///
+    /// # Example
+    ///
+    /// ```yaml
+    /// # Particle definition input file example
+    /// name: halleys-comet
+    /// algorithm: direct-sum
+    /// ```
+    fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+    where
+        E: serde::de::Error,
+    {
+        match value.to_ascii_lowercase().as_str() {
+            "direct-sum" | "ds" => Ok(Box::new(DirectSum::default())),
+            // TODO linked-cells
+            _ => Err(E::custom(format!("Unknown simulation type: {}", value))),
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for Box<dyn Simulation> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        deserializer.deserialize_any(SimulationVisitor)
+    }
+}
+
+impl Default for Box<dyn Simulation> {
+    /// The default simulation system for this project is the direct sum.
+    fn default() -> Self {
+        Box::new(DirectSum::default())
+    }
 }

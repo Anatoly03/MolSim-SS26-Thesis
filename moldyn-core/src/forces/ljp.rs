@@ -13,7 +13,7 @@ pub struct LennardJonesForce {
 
 impl Force for LennardJonesForce {
     fn system_name(&self) -> &str {
-        "lennardjones"
+        "lennard-jones"
     }
     
     fn force(&self, particle: &Particle, other: &Particle) -> Vec3 {

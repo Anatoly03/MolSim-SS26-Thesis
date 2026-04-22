@@ -10,6 +10,7 @@ mod vec3;
 use clap::Parser;
 pub use forces::{Force, LennardJonesForce, NewtonForce};
 pub use particle::Particle;
+pub use simulation::Simulation;
 use std::path::PathBuf;
 pub use vec3::Vec3;
 
@@ -48,8 +49,18 @@ fn main() {
 
     println!("simulation name: `{}`", input.name);
 
-    // this is supposed to panic and confirm that force deserialization is working
-    let mut p1 = Particle::default();
-    let mut p2 = Particle::default();
-    input.force.apply_force(&mut p1, &mut p2);
+    // generate simulation
+    let mut simulation: Box<dyn Simulation> = input.into();
+
+    simulation.step();
+    simulation.step();
+    simulation.step();
+    simulation.step();
+
+    simulation.for_each_particles(&mut |p| println!("{p:?}"));
+
+    // // this is supposed to panic and confirm that force deserialization is working
+    // let mut p1 = Particle::default();
+    // let mut p2 = Particle::default();
+    // input.force.apply_force(&mut p1, &mut p2);
 }

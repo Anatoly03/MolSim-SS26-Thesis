@@ -5,31 +5,32 @@ use crate::{Particle, Vec3};
 pub use ljp::LennardJonesForce;
 pub use newton::NewtonForce;
 use serde::{Deserialize, de::Visitor};
+use std::sync::Arc;
 
 pub trait Force {
     /// # Returns
-    /// 
+    ///
     /// Name of the force system, which is used for serialization and
     /// deserialization. The characters are expected to be in `lowercase`.
     fn system_name(&self) -> &str;
 
     /// Calculates the force between two particles. For directly applying the
     /// force, see [Force::apply_force].
-    /// 
+    ///
     /// # Returns
-    /// 
+    ///
     /// The force vector that should be applied to the first particle. According
     /// to the [Third Law](https://en.wikipedia.org/wiki/Newton%27s_laws_of_motion#Third_law)
     /// the second particle should receive the negated force.
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```rust,no_run
     /// let force = LennardJonesForce::default().force(&particle1, &particle2);
     /// particle1.apply_force(force);
     /// particle2.apply_force(-force);
     /// ```
-    /// 
+    ///
     /// ```rust,no_run
     /// let lennard_jones = LennardJonesForce::default();
     /// let force = lennard_jones.apply_force(&particle1, &particle2);

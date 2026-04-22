@@ -1,8 +1,9 @@
-use crate::{Force, Particle};
+use crate::{Force, Particle, simulation::Simulation};
 use serde::{Deserialize, Serialize};
 use std::{
     io::{Error, ErrorKind::InvalidInput},
     path::PathBuf,
+    sync::Arc,
 };
 
 #[derive(Serialize, Deserialize)]
@@ -11,6 +12,9 @@ pub struct FileDefinition {
 
     #[serde(skip_serializing, default)]
     pub force: Box<dyn Force>,
+
+    #[serde(skip_serializing, default)]
+    pub algorithm: Box<dyn Simulation>,
 
     #[serde(default)]
     pub particles: Vec<Particle>,
@@ -41,5 +45,22 @@ impl TryFrom<PathBuf> for FileDefinition {
                 format!("unsupported file extension: {file_extension}"),
             )),
         }
+    }
+}
+
+impl From<FileDefinition> for Box<dyn Simulation> {
+    fn from(value: FileDefinition) -> Self {
+        let FileDefinition {
+            name: _,
+            force,
+            mut algorithm,
+            particles,
+        } = value;
+
+        let force_arc = Arc::from(force);
+        algorithm.set_force(force_arc);
+        algorithm.set_particles(particles);
+
+        algorithm
     }
 }
