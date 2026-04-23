@@ -89,16 +89,63 @@ impl OutputWriter for VtkWriter {
         // equivalent cpp: auto points = vtkSmartPointer<vtkPoints>::New();
         let particle_count = state.particle_count();
         let mut points = Vec::new();
+        let mut masses = Vec::new();
+        let mut velocities = Vec::new();
+        let mut forces = Vec::new();
 
         state.for_each_particles(&mut |p| {
             // equivalent cpp: points->InsertNextPoint(p.getX().data());
             points.push(p.get_position().x);
             points.push(p.get_position().y);
             points.push(p.get_position().z);
+
+            // equivalent cpp: massArray->InsertNextValue(static_cast<float>(p.getM()));
+            masses.push(p.get_mass() as f32);
+
+            // equivalent cpp: velocityArray->InsertNextTuple(p.getV().data());
+            velocities.push(p.get_velocity().x as f32);
+            velocities.push(p.get_velocity().y as f32);
+            velocities.push(p.get_velocity().z as f32);
+
+            // equivalent cpp: forceArray->InsertNextTuple(p.getF().data());
+            forces.push(p.get_force().x as f32);
+            forces.push(p.get_force().y as f32);
+            forces.push(p.get_force().z as f32);
         });
 
         let attributes = Attributes {
-            point: vec![],
+            point: vec![
+                Attribute::DataArray(DataArray {
+                    // equivalent cpp:
+                    // vtkNew<vtkFloatArray> massArray;
+                    // massArray->SetName("mass");
+                    // massArray->SetNumberOfComponents(1);
+                    name: "mass".to_string(),
+                    elem: ElementType::Scalars {
+                        num_comp: 1,
+                        lookup_table: None,
+                    },
+                    data: IOBuffer::F32(masses),
+                }),
+                Attribute::DataArray(DataArray {
+                    // equivalent cpp:
+                    // vtkNew<vtkFloatArray> velocityArray;
+                    // velocityArray->SetName("velocity");
+                    // velocityArray->SetNumberOfComponents(3);
+                    name: "velocity".to_string(),
+                    elem: ElementType::Vectors,
+                    data: IOBuffer::F32(velocities),
+                }),
+                Attribute::DataArray(DataArray {
+                    // equivalent cpp:
+                    // vtkNew<vtkFloatArray> forceArray;
+                    // forceArray->SetName("force");
+                    // forceArray->SetNumberOfComponents(3);
+                    name: "force".to_string(),
+                    elem: ElementType::Vectors,
+                    data: IOBuffer::F32(forces),
+                }),
+            ],
             cell: vec![],
         };
 
@@ -122,12 +169,14 @@ impl OutputWriter for VtkWriter {
         let vtk = Vtk {
             version: Version::new((1, 0)),
             // equivalent cpp: writer->SetFileName(strstr.str().c_str());
+            // TODO set title, set file path
             title: String::default(),
-            file_path: None,
             // equivalent cpp: writer->SetDataModeToAscii();
             // equivalent cpp: writer->SetInputData(grid);
             byte_order: ByteOrder::BigEndian,
             data: DataSet::inline(grid),
+            // this is for vtk parallel files, we do not need it
+            file_path: None,
         };
 
         vtk.write_xml(writer)?;
