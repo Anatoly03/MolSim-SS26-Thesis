@@ -87,6 +87,7 @@ impl OutputWriter for VtkWriter {
         state: &Box<dyn Simulation>,
     ) -> std::io::Result<()> {
         // equivalent cpp: auto points = vtkSmartPointer<vtkPoints>::New();
+        let particle_count = state.particle_count();
         let mut points = Vec::new();
 
         state.for_each_particles(&mut |p| {
@@ -106,10 +107,14 @@ impl OutputWriter for VtkWriter {
             points: IOBuffer::F64(points),
             cells: Cells {
                 cell_verts: VertexNumbers::XML {
-                    connectivity: vec![],
-                    offsets: vec![],
+                    // ERROR: In vtkXMLUnstructuredDataReader.cxx, line 752
+                    // vtkXMLUnstructuredGridReader (0x7fcddf9d8e60): Cannot read cell offsets from Cells in piece 0 because the "offsets" array is not long enough.
+                    connectivity: (0u64..particle_count as u64).collect(),
+                    offsets: (1u64..=particle_count as u64).collect(),
                 },
-                types: vec![],
+                // ERROR: In vtkXMLUnstructuredGridReader.cxx, line 142
+                // vtkXMLUnstructuredGridReader (0x7fcdda790fc0): Piece 0 is missing its NumberOfCells attribute.
+                types: vec![CellType::Vertex; particle_count],
             },
             data: attributes,
         };
