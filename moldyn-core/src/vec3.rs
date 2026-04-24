@@ -6,8 +6,7 @@
 
 use serde::{Deserialize, Serialize, de::Visitor};
 use std::{
-    marker::PhantomData,
-    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
+    fmt::Display, marker::PhantomData, ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign}
 };
 
 /// A struct representing a three-dimensional [mathematical vector](https://en.wikipedia.org/wiki/Vector_%28mathematics_and_physics%29).
@@ -339,6 +338,12 @@ where
         D: serde::Deserializer<'de>,
     {
         deserializer.deserialize_any(Vec3Visitor(PhantomData))
+    }
+}
+
+impl<T: Display> Display for Vec3<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "[{}, {}, {}]", self.x, self.y, self.z)
     }
 }
 
