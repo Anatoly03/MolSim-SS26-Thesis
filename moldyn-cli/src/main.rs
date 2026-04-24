@@ -1,22 +1,10 @@
-//! The main module for the moldyn-core library.
-#![crate_name = "moldyn_core"]
-
-mod forces;
-mod particle;
-mod reader;
-mod simulation;
-mod vec3;
-mod writer;
+//! The binary runnable for the Molecular Dynamics Rust project.
+#![crate_name = "moldyn_cli"]
 
 use clap::Parser;
-pub use forces::{Force, LennardJonesForce, NewtonForce};
-pub use particle::Particle;
-pub use reader::{FileDefinition, SimulationArgs};
-pub use simulation::Simulation;
+pub use moldyn_core::*;
 use std::fs;
 use std::path::PathBuf;
-pub use vec3::Vec3;
-pub use writer::OutputWriter;
 
 /// Molecular Dynamics Thesis Code. This library implements a simple
 /// engine to simulate molecular dynamics.

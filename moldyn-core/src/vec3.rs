@@ -6,7 +6,9 @@
 
 use serde::{Deserialize, Serialize, de::Visitor};
 use std::{
-    fmt::Display, marker::PhantomData, ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign}
+    fmt::Display,
+    marker::PhantomData,
+    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
 };
 
 /// A struct representing a three-dimensional [mathematical vector](https://en.wikipedia.org/wiki/Vector_%28mathematics_and_physics%29).
@@ -29,6 +31,8 @@ impl<T> Vec3<T> {
     /// # Example
     ///
     /// ```rust
+    /// use moldyn_core::Vec3;
+    /// 
     /// let v: Vec3<f64> = Vec3::new(1.0, 2.0, 3.0);
     /// let w: Vec3<i32> = Vec3::new(1, 2, 3);
     ///
@@ -83,6 +87,8 @@ impl<T: Neg<Output = T>> Neg for Vec3<T> {
     /// # Example
     ///
     /// ```rust
+    /// use moldyn_core::Vec3;
+    /// 
     /// let v: Vec3<f64> = Vec3::new(1.0, 2.0, 3.0);
     /// let w: Vec3<i32> = Vec3::new(1, 2, 3);
     ///
@@ -107,6 +113,8 @@ impl<T: Add<Output = T>> Add for Vec3<T> {
     /// # Example
     ///
     /// ```rust
+    /// use moldyn_core::Vec3;
+    /// 
     /// let v: Vec3<f64> = Vec3::new(1.0, 2.0, 3.0);
     /// let w: Vec3<f64> = Vec3::new(4.0, 5.0, 6.0);
     ///
@@ -140,6 +148,8 @@ impl<T: Sub<Output = T>> Sub for Vec3<T> {
     /// # Example
     ///
     /// ```rust
+    /// use moldyn_core::Vec3;
+    /// 
     /// let v: Vec3<f64> = Vec3::new(1.0, 2.0, 3.0);
     /// let w: Vec3<f64> = Vec3::new(4.0, 5.0, 6.0);
     ///
@@ -173,6 +183,8 @@ impl<T: Mul<Output = T> + Copy> Mul<T> for Vec3<T> {
     /// # Example
     ///
     /// ```rust
+    /// use moldyn_core::Vec3;
+    /// 
     /// let v: Vec3<f64> = Vec3::new(1.0, 2.0, 3.0);
     /// let w: Vec3<f64> = Vec3::new(2.0, 4.0, 6.0);
     ///
@@ -207,6 +219,8 @@ impl<T: Div<Output = T> + Copy> Div<T> for Vec3<T> {
     /// # Example
     ///
     //// ```rust
+    /// use moldyn_core::Vec3;
+    /// 
     /// let v: Vec3<f64> = Vec3::new(2.0, 4.0, 6.0);
     /// let w: Vec3<f64> = Vec3::new(1.0, 2.0, 3.0);
     ///
@@ -355,6 +369,8 @@ impl Vec3<$t> {
     /// # Example
     ///
     /// ```rust
+    /// use moldyn_core::Vec3;
+    /// 
     /// let v = Vec3::new(1.0, 2.0, 3.0);
     /// let w = Vec3::new(4.0, 5.0, 6.0);
     ///
@@ -369,6 +385,8 @@ impl Vec3<$t> {
     /// # Example
     ///
     /// ```rust
+    /// use moldyn_core::Vec3;
+    /// 
     /// let v = Vec3::new(1.0, 2.0, 3.0);
     /// let w = Vec3::new(4.0, 5.0, 6.0);
     ///
@@ -387,7 +405,9 @@ impl Vec3<$t> {
     /// # Example
     ///
     /// ```rust
-    /// let v = Vec3::new(2.0, 2.0, 1.0);
+    /// use moldyn_core::Vec3;
+    ///
+    #[doc = stringify!(let v: Vec3<$t> = Vec3::<$t>::new(2.0 as $t, 2.0 as $t, 1.0 as $t);)]
     ///
     /// assert_eq!(v.length(), 3.0);
     /// ```

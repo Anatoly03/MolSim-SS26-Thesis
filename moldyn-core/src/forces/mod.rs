@@ -27,15 +27,16 @@ pub trait Force {
     ///
     /// # Example
     ///
-    /// ```rust,no_run
+    /// ```rust
+    /// use moldyn_core::{Particle, Vec3, LennardJonesForce, Force};
+    /// 
+    /// let mut particle1 = Particle::from_data(Vec3::new(0.0, 0.0, 0.0), Vec3::zero(), 1.0);
+    /// let mut particle2 = Particle::from_data(Vec3::new(1.0, 0.0, 0.0), Vec3::zero(), 1.0);
+    /// 
     /// let force = LennardJonesForce::default().force(&particle1, &particle2);
+    /// 
     /// particle1.apply_force(force);
     /// particle2.apply_force(-force);
-    /// ```
-    ///
-    /// ```rust,no_run
-    /// let lennard_jones = LennardJonesForce::default();
-    /// let force = lennard_jones.apply_force(&particle1, &particle2);
     /// ```
     fn force(&self, particle: &Particle, other: &Particle) -> Vec3 {
         let potential = self.potential(particle, other);
@@ -50,6 +51,18 @@ pub trait Force {
     }
 
     /// Applies the calculated force to a particle pair.
+    /// 
+    /// # Example
+    /// 
+    /// ```rust
+    /// use moldyn_core::{Particle, Vec3, LennardJonesForce, Force};
+    /// 
+    /// let mut particle1 = Particle::from_data(Vec3::new(0.0, 0.0, 0.0), Vec3::zero(), 1.0);
+    /// let mut particle2 = Particle::from_data(Vec3::new(1.0, 0.0, 0.0), Vec3::zero(), 1.0);
+    /// 
+    /// let lennard_jones = LennardJonesForce::default();
+    /// let force = lennard_jones.apply_force(&mut particle1, &mut particle2);
+    /// ```
     fn apply_force(&self, particle: &mut Particle, other: &mut Particle) {
         let force = self.force(particle, other);
         particle.apply_force(force);

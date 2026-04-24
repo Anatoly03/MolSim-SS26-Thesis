@@ -1,4 +1,4 @@
 [workspace]
 resolver="2"
-members = ["template-rust", "moldyn-core"]
-default-members = ["moldyn-core"]
+members = ["template-rust", "moldyn-core", "moldyn-cli"]
+default-members = ["moldyn-core", "moldyn-cli"]

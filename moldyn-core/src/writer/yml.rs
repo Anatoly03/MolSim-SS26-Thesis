@@ -2,8 +2,8 @@
 //! implementation used only to verify the capacity of the program to write
 //! output files and is deprecated for future use.
 
-use crate::{FileDefinition, OutputWriter, Simulation};
-use std::io::{BufWriter, Error, ErrorKind, Write};
+use crate::{OutputWriter, Simulation};
+use std::io::{BufWriter, Write};
 
 /// A simple text writer for the simulation data.
 #[derive(Default)]
