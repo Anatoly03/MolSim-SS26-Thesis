@@ -4,6 +4,7 @@
 
 This project implements molecular dynamics simulations in C++ and Rust. The goal of this workspace is to compare C++ and Rust.
 
-- [`moldyn-core`](./moldyn-core/src/): Main Workspace
+- [`moldyn-core`](./moldyn-core/src/): Library Workspace
+- [`moldyn-cli`](./moldyn-cli/src/): Executable Workspace
 - [`template-cpp`](./template-cpp/): Copy of original Molecular Dynamics template Codebase (Reformatted, not yet Refactored)
 - [`template-rust`](./template-rust/): Rewrite of template codebase in Rust
