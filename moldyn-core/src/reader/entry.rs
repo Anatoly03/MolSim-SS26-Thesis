@@ -36,3 +36,29 @@ pub enum ParticleLike {
     Single(Particle),
     Cuboid(Vec<Particle>),
 }
+
+struct ParticleLikeVisitor;
+
+impl<'de> Visitor<'de> for ParticleLikeVisitor {
+    type Value = ParticleLike;
+
+    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+        formatter.write_str("a particle-like entry")
+    }
+
+    fn visit_map<M>(self, mut map: M) -> Result<Self::Value, M::Error>
+    where
+        M: serde::de::MapAccess<'de>,
+    {
+        todo!()
+    }
+}
+
+impl<'de> Deserialize<'de> for ParticleLike {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        deserializer.deserialize_map(ParticleLikeVisitor)
+    }
+}
