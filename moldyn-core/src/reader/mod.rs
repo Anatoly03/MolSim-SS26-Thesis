@@ -28,6 +28,7 @@ pub struct FileDefinition {
     pub algorithm: Box<dyn Simulation>,
 
     /// TODO document
+    #[serde(default)]
     pub args: SimulationArgs,
 
     /// TODO document

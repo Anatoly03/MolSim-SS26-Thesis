@@ -91,12 +91,15 @@ fn main() {
             }
         };
 
-    let mut current_time = 0.0;
-    let mut frame = 0;
-    while current_time < args.total_time {
-        println!("Step {frame}");
+    let mut current_time = simulation.args().time_start.unwrap_or(0.0);
+    let delta_time = simulation.args().time_step.unwrap_or(args.delta_time);
+    let end_time = simulation.args().time_end.unwrap_or(args.total_time);
 
-        simulation.step(args.delta_time);
+    let mut frame = 0;
+    while current_time < end_time {
+        println!("Step {frame: >8} [{current_time:.4} / {end_time:.4}]");
+
+        simulation.step(delta_time);
 
         if frame % args.frame_period == 0 {
             output_writer
@@ -104,7 +107,7 @@ fn main() {
                 .expect("error occured during simulation write");
         }
 
-        current_time += args.delta_time;
+        current_time += delta_time;
         frame += 1;
     }
 }

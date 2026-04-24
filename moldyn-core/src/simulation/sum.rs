@@ -75,6 +75,10 @@ impl Simulation for DirectSum {
         self.force = force;
     }
 
+    fn args(&self) -> SimulationArgs {
+        self.args.clone()
+    }
+
     fn set_args(&mut self, args: SimulationArgs) {
         self.args = args;
     }

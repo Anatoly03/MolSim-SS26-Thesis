@@ -47,6 +47,9 @@ pub trait Simulation {
     /// Set the force calculation method.
     fn set_force(&mut self, force: Arc<dyn Force>);
 
+    /// Get the simulation arguments.
+    fn args(&self) -> SimulationArgs;
+
     /// Set the simulation arguments.
     fn set_args(&mut self, args: SimulationArgs);
 

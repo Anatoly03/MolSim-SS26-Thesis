@@ -13,7 +13,7 @@ use std::{
 /// A struct representing a three-dimensional [mathematical vector](https://en.wikipedia.org/wiki/Vector_%28mathematics_and_physics%29).
 /// These are used to represent particle information, such as position
 /// or velocity, in three-dimensional space.
-#[derive(Debug, PartialEq, Clone, Copy, Serialize, Default)]
+#[derive(Debug, PartialEq, Clone, Serialize, Default)]
 pub struct Vec3<T = f64> {
     pub x: T,
     pub y: T,
@@ -54,6 +54,19 @@ impl<T> Vec3<T> {
             x: T::default(),
             y: T::default(),
             z: T::default(),
+        }
+    }
+
+    /// Maps the individual components of the [Vec3] instance to a new type
+    /// with the provided lambda expression.
+    pub fn map<U, F>(self, f: F) -> Vec3<U>
+    where
+        F: Fn(T) -> U,
+    {
+        Vec3 {
+            x: f(self.x),
+            y: f(self.y),
+            z: f(self.z),
         }
     }
 }
@@ -233,7 +246,7 @@ struct Vec3Visitor<T>(PhantomData<T>);
 
 impl<'de, T> Visitor<'de> for Vec3Visitor<T>
 where
-    T: Deserialize<'de> + Copy + Default,
+    T: Deserialize<'de> + Default,
 {
     type Value = Vec3<T>;
 
@@ -319,7 +332,7 @@ where
 
 impl<'de, T: Deserialize<'de>> Deserialize<'de> for Vec3<T>
 where
-    T: Deserialize<'de> + Copy + Default,
+    T: Deserialize<'de> + Default,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -330,8 +343,8 @@ where
 }
 
 macro_rules! impl_for_primitives {
-    ($($t:ty),*) => {
-$(impl Vec3<$t> {
+    ($($t:ty),*) => {$(
+impl Vec3<$t> {
     /// Creates the dot product of two [Vec3] instances of the same primitive type.
     ///
     /// # Example
@@ -402,8 +415,10 @@ $(impl Vec3<$t> {
             }),
         }
     }
-})*
-    };
+}
+
+impl Copy for Vec3<$t> {}
+    )*};
 }
 
 impl_for_primitives!(

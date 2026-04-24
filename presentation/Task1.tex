@@ -14,6 +14,12 @@
     morestring=[b]",
     morestring=[b]',
 }
+\lstdefinelanguage{Yaml}{
+    sensitive=true,
+    morekeywords={true, false, null, particles, type, cuboid, foreach, position, velocity, mass, sigma, brownian_sigma},
+    morecomment=[l]{\#},
+    morestring=[b]",
+}
 \lstset{
     language=Rust,
     basicstyle=\ttfamily\small,
@@ -278,7 +284,7 @@ struct Particle {
     TODO see direct sum implementation and pairwise iteration
 \end{frame}
 
-\simpleframe\begin{frame}{Project State}
+\simpleframe\begin{frame}{Project State}{Halleys' Comet}
     \centering
     \includegraphics[width=\textwidth]{media/hello-particles.png}
 
@@ -286,6 +292,32 @@ struct Particle {
         \item \blue{File Reading}: YAML
         \item \blue{File Writing}: XYZ, VTK
     \end{itemize}
+\end{frame}
+
+\simpleframe\begin{frame}[fragile]{Project State}{Cuboid Generation and Dynamic Expressions}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.48\textwidth}
+            \begin{lstlisting}[language=Yaml]
+particles:
+  - type: cuboid
+    foreach: [100, 20]
+    position:
+      x: 20.0 + 1.1225 * nx
+      y: 20.0 + 1.1225 * ny
+    velocity:
+      x: 0.0 # expressions too
+      y: 0.0 # supported here
+    mass: 1.0
+    sigma: 1.0
+    brownian_sigma: 0.0000
+            \end{lstlisting}
+        \end{column}
+        \begin{column}{0.9\textwidth}
+            \includegraphics[width=0.6\textwidth]{media/cuboids.png}
+        \end{column}
+        
+    \end{columns}
+    \vspace{0.5em}
 \end{frame}
 
 \simpleframe\begin{frame}{Developer Experience}
