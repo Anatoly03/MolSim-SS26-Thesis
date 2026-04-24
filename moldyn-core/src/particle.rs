@@ -28,6 +28,16 @@ pub struct Particle {
 }
 
 impl Particle {
+    /// [Particle] constructor from position, initial velocity and mass.
+    pub fn from_data(position: Vec3, velocity: Vec3, mass: f64) -> Self {
+        Self {
+            position,
+            velocity,
+            mass,
+            ..Default::default()
+        }
+    }
+
     /// Returns the current force of the particle.
     pub fn get_force(&self) -> Vec3 {
         self.force

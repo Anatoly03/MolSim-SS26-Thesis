@@ -27,38 +27,37 @@
 //! ```
 
 use crate::Particle;
-use serde::{Deserialize, de::Visitor};
+use serde::{Deserialize, Serialize};
 
 /// A deserialization-utility representing "particle-like" entries in the
 /// input. Intuitively, a particle-like is either a single particle or a
 /// generator yielding a set of particles.
+#[derive(Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum ParticleLike {
     Single(Particle),
-    Cuboid(Vec<Particle>),
+    Cuboid(Cuboid),
 }
 
-struct ParticleLikeVisitor;
-
-impl<'de> Visitor<'de> for ParticleLikeVisitor {
-    type Value = ParticleLike;
-
-    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-        formatter.write_str("a particle-like entry")
-    }
-
-    fn visit_map<M>(self, mut map: M) -> Result<Self::Value, M::Error>
-    where
-        M: serde::de::MapAccess<'de>,
-    {
-        todo!()
-    }
+/// A cuboid generator.
+#[derive(Serialize, Deserialize)]
+pub struct Cuboid {
+    #[serde(rename = "type")]
+    _type: CuboidTag,
 }
 
-impl<'de> Deserialize<'de> for ParticleLike {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        deserializer.deserialize_map(ParticleLikeVisitor)
+/// A tag for cuboid generators, used to give [serde] a hint in deserialization.
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+enum CuboidTag {
+    Cuboid,
+}
+
+impl From<ParticleLike> for Vec<Particle> {
+    fn from(value: ParticleLike) -> Self {
+        match value {
+            ParticleLike::Single(p) => vec![p],
+            ParticleLike::Cuboid(_) => todo!("cuboid support"),
+        }
     }
 }

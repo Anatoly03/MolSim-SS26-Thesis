@@ -1,7 +1,7 @@
 //! This module contains the [NewtonForce] struct, which implements the
 //! [Force] trait according to Newton's law of universal gravitation.
 
-use crate::{Particle, Vec3, forces::Force};
+use crate::{Particle, forces::Force};
 
 /// A struct representing a Newton (or Coloumb-like) force, which implements
 /// the [Force] trait.

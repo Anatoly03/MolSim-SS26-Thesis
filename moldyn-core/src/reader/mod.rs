@@ -3,8 +3,9 @@
 mod args;
 mod entry;
 
-use crate::{Force, Particle, simulation::Simulation};
+use crate::{Force, simulation::Simulation};
 pub use args::SimulationArgs;
+pub use entry::ParticleLike;
 use serde::{Deserialize, Serialize};
 use std::{
     io::{Error, ErrorKind::InvalidInput},
@@ -16,7 +17,7 @@ use std::{
 #[derive(Serialize, Deserialize)]
 pub struct FileDefinition {
     /// TODO document
-    pub name: String,
+    pub name: Option<String>,
 
     /// TODO document
     #[serde(skip_serializing, default)]
@@ -31,7 +32,7 @@ pub struct FileDefinition {
 
     /// TODO document
     #[serde(default)]
-    pub particles: Vec<Particle>,
+    pub particles: Vec<ParticleLike>,
 }
 
 impl TryFrom<PathBuf> for FileDefinition {
@@ -79,8 +80,11 @@ impl From<FileDefinition> for Box<dyn Simulation> {
         } = value;
 
         algorithm.set_force(Arc::from(force));
-        algorithm.set_particles(particles);
         algorithm.set_args(args);
+
+        for p in particles.into_iter() {
+            algorithm.add_particles(p.into());
+        }
 
         algorithm
     }

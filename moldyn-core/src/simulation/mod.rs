@@ -39,7 +39,7 @@ pub trait Simulation {
     fn particle_count(&self) -> usize;
 
     /// Set the particles in the simulation.
-    fn set_particles(&mut self, particles: Vec<Particle>);
+    fn add_particles(&mut self, particles: Vec<Particle>);
 
     /// Get the force calculation method.
     fn get_force(&self) -> Arc<dyn Force>;

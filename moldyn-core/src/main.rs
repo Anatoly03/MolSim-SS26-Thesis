@@ -63,7 +63,9 @@ fn main() {
         }
     };
 
-    println!("simulation name: `{}`", input.name);
+    if let Some(name) = &input.name {
+        println!("simulation name: `{name}`");
+    }
 
     // create output directory
     match args.output.parent().map(fs::create_dir_all) {

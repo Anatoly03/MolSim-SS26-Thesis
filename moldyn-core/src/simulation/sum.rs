@@ -63,8 +63,8 @@ impl Simulation for DirectSum {
         self.particles.len()
     }
 
-    fn set_particles(&mut self, particles: Vec<Particle>) {
-        self.particles = particles;
+    fn add_particles(&mut self, particles: Vec<Particle>) {
+        self.particles.extend(particles);
     }
 
     fn get_force(&self) -> Arc<dyn Force> {
