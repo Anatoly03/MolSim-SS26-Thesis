@@ -1,16 +1,28 @@
-//! Welcome to the Molecular Dynamics teaching code (Rust Edition). If
-//! you are rather new to Rust, you might want to check the following
+//! Welcome to the Molecular Dynamics teaching code (Rust Edition). This template
+//! code provides a basic structure for a simple simulation program.
+//!
+//! If you are rather new to Rust, you might want to check the following
 //! resources:
 //!
+//! - [Install Rust](https://rust-lang.org/tools/install/)
 //! - [The Rust Book](https://doc.rust-lang.org/book/)
 //! - [The Rust Reference](https://doc.rust-lang.org/reference/)
 //! - [What is RustDoc?](https://doc.rust-lang.org/rustdoc/what-is-rustdoc.html)
+//!
+//! The following Rust commands are useful for development:
+//! 
+//! - [cargo build](https://doc.rust-lang.org/nightly/cargo/commands/cargo-build.html)
+//! - [cargo clippy](https://doc.rust-lang.org/nightly/cargo/commands/cargo-clippy.html)
+//! - [cargo fmt](https://doc.rust-lang.org/nightly/cargo/commands/cargo-fmt.html)
+//! - [cargo run](https://doc.rust-lang.org/nightly/cargo/commands/cargo-run.html)
 
 mod file_reader;
 mod output_writer;
 mod particle;
 
 use crate::file_reader::FileReader;
+#[cfg(feature = "vtk")]
+use crate::output_writer::VTKWriter;
 use crate::output_writer::{OutputWriter, XYZWriter};
 use crate::particle::Particle;
 
@@ -85,7 +97,11 @@ fn calculate_v(particles: &mut Vec<Particle>) {
 fn plot_particles(particles: &mut Vec<Particle>, iteration: usize) {
     let out_name = String::from("MD_vtk");
 
-    let mut writer = XYZWriter;
+    #[cfg(feature = "vtk")]
+    let writer = VTKWriter;
+    #[cfg(not(feature = "vtk"))]
+    let writer = XYZWriter;
+
     writer.plot_particles(particles, &out_name, iteration);
 
     // // Assuming outputWriter::XYZWriter is defined elsewhere

@@ -6,7 +6,7 @@ algorithm: direct-sum
 
 args:
   time_start: 0.0
-  time_end: 0.0005 # 20.0
+  time_end: 20.0
   time_step: 0.0005
 
 # config:
