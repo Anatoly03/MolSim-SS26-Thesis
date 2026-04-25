@@ -34,7 +34,8 @@ simulation consists of the following steps:
 - [ ] GitHub CI
 - [ ] Further expand your CI pipeline to check your unit tests pass for every pull request to master.
 
-- [ ] Logging (Choose Rust Logging Library)
+- [ ] Logging
+  - Standard Library best for logging https://github.com/rust-lang/log
 - [ ] The user should be able to select the log level either via any form of input or through CMake. Having to edit any source file to change the log level is not acceptable.
 
 - [ ] TODO: include worksheet 2 task 4

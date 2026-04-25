@@ -36,8 +36,7 @@ struct Args {
     /// the directories along the path will be created if they do not exist.
     /// The output format will be selected from the file extension. Supported formats
     /// are: YAML.
-    // TODO: make this output.yaml by default
-    #[arg(short, long, default_value = "output/output.vtk")]
+    #[arg(short, long, default_value = "output/out.vtk")]
     output: PathBuf,
 
     /// The time step for the simulation.
