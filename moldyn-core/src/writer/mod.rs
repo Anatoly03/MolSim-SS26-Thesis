@@ -4,6 +4,7 @@ mod txt;
 #[cfg(feature = "vtk")]
 mod vtk;
 mod xyz;
+#[cfg(feature = "yaml")]
 mod yml;
 
 use crate::Simulation;
@@ -15,6 +16,7 @@ pub use txt::TxtWriter;
 #[cfg(feature = "vtk")]
 pub use vtk::VtkWriter;
 pub use xyz::XyzWriter;
+#[cfg(feature = "yaml")]
 pub use yml::YamlWriter;
 
 /// A trait for writing simulation results to an output file.
@@ -57,13 +59,15 @@ pub trait OutputWriter {
 impl dyn OutputWriter {
     /// Creates a new output writer from a file extension. The extension passed
     /// as argument is case-insensitive and does not include the leading dot.
-    /// 
-    /// The supported extensions are:
     ///
-    /// - Text Files `.txt`
-    /// - XYZ Files `.xyz`
-    #[cfg_attr(feature = "vtk", doc = "- VTK Files `.vtk` or `.vtu`")]
-    /// - YAML Files `.yml` or `.yaml`
+    /// # Supported File Formats
+    /// 
+    /// | File Format | Extensions | URL |
+    /// | --- | --- | --- |
+    /// | Text      | `.txt`, `.text` |
+    /// | XYZ       | `.xyz`          | http://openbabel.org/wiki/XYZ_(format)
+    #[cfg_attr(feature = "vtk", doc = " | VTK       | `.vtk`, `.vtu`  | https://en.wikipedia.org/wiki/VTK")]
+    #[cfg_attr(feature = "yaml", doc = " | YAML      | `.yml`, `.yaml` | https://yaml.org/")]
     pub fn from_extension(extension: &str) -> Result<Box<dyn OutputWriter>> {
         let ext = extension.to_ascii_lowercase();
 
@@ -80,6 +84,7 @@ impl dyn OutputWriter {
             return Ok(Box::new(VtkWriter::default()));
         }
 
+        #[cfg(feature = "yaml")]
         if matches!(ext.as_ref(), "yml" | "yaml") {
             return Ok(Box::new(YamlWriter::default()));
         }

@@ -41,9 +41,17 @@ pub struct FileDefinition {
 impl TryFrom<PathBuf> for FileDefinition {
     type Error = Error;
 
+    /// Performs the conversion from [PathBuf] to [FileDefinition] by reading the
+    /// file at the specified path and deserializing it based on the file extension.
+    /// 
+    /// # Supported File Formats
+    /// 
+    /// | File Format | Extensions | URL |
+    /// | --- | --- | --- |
+    #[cfg_attr(feature = "yaml", doc = " | YAML      | `.yml`, `.yaml` | https://yaml.org/")]
     fn try_from(value: PathBuf) -> Result<Self, Self::Error> {
         // determines the file format
-        let file_extension = value
+        let ext = value
             .extension()
             .and_then(|ext| ext.to_str())
             .ok_or(Error::new(
@@ -55,20 +63,20 @@ impl TryFrom<PathBuf> for FileDefinition {
             ))?
             .to_ascii_lowercase();
 
-        match file_extension.as_str() {
-            "yaml" | "yml" => {
-                let file = std::fs::File::open(&value)?;
+        #[cfg(feature = "yaml")]
+        if matches!(ext.as_ref(), "yml" | "yaml") {
+            let file = std::fs::File::open(&value)?;
 
-                let a = serde_yaml::from_reader(file)
-                    .map_err(|e| Error::new(InvalidInput, format!("Parse error: {e}")))?;
+            let a = serde_yaml::from_reader(file)
+                .map_err(|e| Error::new(InvalidInput, format!("Parse error: {e}")))?;
 
-                Ok(a)
-            }
-            _ => Err(Error::new(
-                InvalidInput,
-                format!("Unsupported file extension: `{file_extension}`"),
-            )),
+            return Ok(a);
         }
+
+        Err(Error::new(
+            InvalidInput,
+            format!("Unsupported file extension: `{ext}`"),
+        ))
     }
 }
 

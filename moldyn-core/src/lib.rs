@@ -3,7 +3,9 @@
 //! 
 //! # Features
 //! 
-//! - `vtk`: Integrates VTK-support as well as writing `.vtu` output formats. This
+//! - `vtk`: Integrates VTK-support for reading and writing `.vtu` files. This
+//!   feature is enabled by default.
+//! - `yaml`: Integrates YAML-support for reading and writing `.yaml` files. This
 //!   feature is enabled by default.
 #![crate_name = "moldyn_core"]
 
