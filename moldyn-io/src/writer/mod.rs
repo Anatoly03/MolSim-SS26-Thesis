@@ -1,4 +1,9 @@
-//! TODO document
+//! This module manages the simulation writer. It provides the [OutputWriter]
+//! trait which is capable of selecting the correct writing method based on
+//! the given output path.
+//! 
+//! This module also re-exports the individual writers for the supported file
+//! formats locked behind the respective features.
 
 mod txt;
 #[cfg(feature = "vtk")]
@@ -7,17 +12,18 @@ mod xyz;
 #[cfg(feature = "yaml")]
 mod yml;
 
-use moldyn_core::Simulation;
-use std::fs::File;
-use std::io::{BufWriter, Write};
-use std::io::{Error, ErrorKind::InvalidInput, Result};
-use std::{ffi::OsStr, path::Path};
 pub use txt::TxtWriter;
 #[cfg(feature = "vtk")]
 pub use vtk::VtkWriter;
 pub use xyz::XyzWriter;
 #[cfg(feature = "yaml")]
 pub use yml::YamlWriter;
+
+use moldyn_core::Simulation;
+use std::fs::File;
+use std::io::{BufWriter, Write};
+use std::io::{Error, ErrorKind::InvalidInput, Result};
+use std::{ffi::OsStr, path::Path};
 
 /// A trait for writing simulation results to an output file.
 pub trait OutputWriter {
@@ -28,6 +34,7 @@ pub trait OutputWriter {
     /// Writes a single frame of the simulation state to the provided writer.
     fn write_frame(&mut self, writer: &mut BufWriter<File>, state: &dyn Simulation) -> Result<()>;
 
+    /// The file extension used in file writing.
     fn extension(&self) -> &str;
 
     /// Writes the simulation results.
@@ -61,13 +68,19 @@ impl dyn OutputWriter {
     /// as argument is case-insensitive and does not include the leading dot.
     ///
     /// # Supported File Formats
-    /// 
+    ///
     /// | File Format | Extensions | URL |
     /// | --- | --- | --- |
     /// | Text      | `.txt`, `.text` |
     /// | XYZ       | `.xyz`          | http://openbabel.org/wiki/XYZ_(format)
-    #[cfg_attr(feature = "vtk", doc = " | VTK       | `.vtk`, `.vtu`  | https://en.wikipedia.org/wiki/VTK")]
-    #[cfg_attr(feature = "yaml", doc = " | YAML      | `.yml`, `.yaml` | https://yaml.org/")]
+    #[cfg_attr(
+        feature = "vtk",
+        doc = " | VTK       | `.vtk`, `.vtu`  | https://en.wikipedia.org/wiki/VTK"
+    )]
+    #[cfg_attr(
+        feature = "yaml",
+        doc = " | YAML      | `.yml`, `.yaml` | https://yaml.org/"
+    )]
     pub fn from_extension(extension: &str) -> Result<Box<dyn OutputWriter>> {
         let ext = extension.to_ascii_lowercase();
 

@@ -3,6 +3,9 @@
 //! such as reading and writing simulation data.
 //!
 //! # Features
+//! 
+//! > **NOTE**: Currently, if the `json` and `yaml` features are disabled, this
+//! program is unusable due to not having a default file format for file reading.
 //!
 //! - `vtk`: Integrates VTK-support for reading and writing `.vtu` files. This
 //!   feature is enabled by default.
@@ -11,8 +14,8 @@
 //! - `json`: Integrates JSON-support for reading `.json` files. (Disabled by
 //!   default)
 
-mod reader;
-mod writer;
+pub mod reader;
+pub mod writer;
 
 pub use reader::*;
 pub use writer::*;

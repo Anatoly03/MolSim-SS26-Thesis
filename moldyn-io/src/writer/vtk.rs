@@ -1,15 +1,46 @@
-//! Defines a simple text writer for the simulation data. This is a basic
-//! implementation used only to verify the capacity of the program to write
-//! output files and is deprecated for future use.
+//! Defines a VTK writer for the simulation data, outputting `.vtu` files.
 
 use super::OutputWriter;
 use moldyn_core::Simulation;
 use std::io::BufWriter;
 use vtkio::model::*;
 
-/// A simple text writer for the simulation data.
+/// A simple VTK writer for the simulation data.
+/// 
+/// # Output Example
+/// 
+/// ```xml
+/// <VTKFile type="UnstructuredGrid" version="1.0" byte_order="BigEndian" header_type="UInt64">
+///     <UnstructuredGrid>
+///         <Piece NumberOfPoints="4" NumberOfCells="4" NumberOfLines="0" NumberOfStrips="0"
+///             NumberOfPolys="0" NumberOfVerts="0">
+///             <PointData Scalars="mass" Vectors="velocity">
+///                 <DataArray type="Float32" Name="mass" format="binary" NumberOfComponents="1">
+///                     AAAAAAAAABA/gAAANklTnDp6WPcoNCTc</DataArray>
+///                 <DataArray type="Float32" Name="velocity" format="binary" NumberOfComponents="3">
+///                     AAAAAAAAADCwa2SmNXMp9gAAAAC/f/y5u6PJqQAAAAC+2ZmBunSJvgAAAAC5FwPyPPJ7vQAAAAA=</DataArray>
+///                 <DataArray type="Float32" Name="force" format="binary" NumberOfComponents="3">
+///                     AAAAAAAAADC0N+aiOT34yAAAAAAzANcBtklDKgAAAAA0F7DiuTrTuwAAAAClpgsQHzgC9wAAAAA=</DataArray>
+///             </PointData>
+///             <CellData />
+///             <Points>
+///                 <DataArray type="Float64" format="binary" NumberOfComponents="3">
+///                     AAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC/hHrhR64Uez/wAAAAAAAAAAAAAAAAAAC/cWhysCDEnEAVcKPXCj1xAAAAAAAAAABAQWAAAAAAAD8zZg5R0lqsAAAAAAAAAAA=</DataArray>
+///             </Points>
+///             <Cells>
+///                 <DataArray type="UInt64" Name="connectivity" format="binary" NumberOfComponents="1">
+///                     AAAAAAAAACAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAIAAAAAAAAAAw==</DataArray>
+///                 <DataArray type="UInt64" Name="offsets" format="binary" NumberOfComponents="1">
+///                     AAAAAAAAACAAAAAAAAAAAQAAAAAAAAACAAAAAAAAAAMAAAAAAAAABA==</DataArray>
+///                 <DataArray type="UInt8" Name="types" format="binary" NumberOfComponents="1">
+///                     AAAAAAAAAAQBAQEB</DataArray>
+///             </Cells>
+///         </Piece>
+///     </UnstructuredGrid>
+/// </VTKFile>
+/// ```
 ///
-/// # C++ Source Code
+/// # C++ Source Code Reference
 ///
 /// The [VtkWriter] attempts to rewrite the functionality of the C++ code from
 /// the [original project](https://github.com/TUM-I5/MolSim/blob/master/src/outputWriter/VTKWriter.cpp)

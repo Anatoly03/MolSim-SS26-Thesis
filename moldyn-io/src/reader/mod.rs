@@ -1,9 +1,10 @@
-//! TODO document
+//! This module manages the simulation reader. It provides the [FileDefinition]
+//! struct which contains the maximal information retrievable from an input file.
 
 mod entry;
 
+pub use entry::*;
 use moldyn_core::{Force, Simulation, SimulationArgs};
-pub use entry::ParticleLike;
 use serde::{Deserialize, Serialize};
 use std::{
     io::{Error, ErrorKind::InvalidInput},
@@ -18,9 +19,9 @@ use std::{
 pub struct FileDefinition {
     /// The name of the simulation. This is an optional field that can be used to
     /// sign a simulation input file with human-understandable semantics.
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```yaml
     /// # This is a simple named simulation without any particles.
     /// name: My Simulation
@@ -32,38 +33,38 @@ pub struct FileDefinition {
     /// the [potential energy](https://en.wikipedia.org/wiki/Potential_energy) and
     /// [forces](https://en.wikipedia.org/wiki/Force) between particle and yields
     /// different results.
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```yaml
     /// name: My Lennard-Jones Simulation
     /// force: lennard-jones
     /// ```
-    /// 
+    ///
     /// Or alternatively, you can set the force model to `newton` to simulate
     /// gravitational interactions:
-    /// 
+    ///
     /// ```yaml
     /// name: My Gravitational Simulation
     /// force: newton
     /// ```
-    /// 
+    ///
     /// # Note on Mass Scale
-    /// 
+    ///
     /// Note that different force models require a different scale for the
     /// particle mass. For example, for Lennard-Jones simulations, the mass is
     /// typically around `1.0` for every body, while for Newtonian simulations the
     /// "mass scale" is around `1.0` for heavy bodies like the sun and a fraction
     /// of that for lighter bodies.
-    /// 
+    ///
     /// In the simulation of Halleys Comet orbiting the solar system, each body has
     /// the following mass:
-    /// 
+    ///
     /// - Sun: `1.0`
     /// - Earth: `3.0 e-6`
     /// - Jupiter: `9.5 e-4`
     /// - Halleys Comet: `1.0 e-14`
-    /// 
+    ///
     /// Therefore representing in kilograms, you can assume that the mass of `1.0`
     /// corresponds to `1.988 e30 kg`.
     #[serde(default)]
@@ -73,9 +74,9 @@ pub struct FileDefinition {
     /// and the memory structure of the simulation when managing the particle data.
     /// A change in the algorithm should, as a rule of thumbs, not yield different
     /// results for the same input.
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```yaml
     /// name: My Simulation
     /// algorithm: direct-sum
@@ -97,13 +98,19 @@ impl TryFrom<PathBuf> for FileDefinition {
 
     /// Performs the conversion from [PathBuf] to [FileDefinition] by reading the
     /// file at the specified path and deserializing it based on the file extension.
-    /// 
+    ///
     /// # Supported File Formats
-    /// 
+    ///
     /// | File Format | Extensions | URL |
     /// | --- | --- | --- |
-    #[cfg_attr(feature = "yaml", doc = " | YAML      | `.yml`, `.yaml` | https://yaml.org/")]
-    #[cfg_attr(feature = "json", doc = " | JSON      | `.json`         | https://www.json.org/json-en.html")]
+    #[cfg_attr(
+        feature = "yaml",
+        doc = " | YAML      | `.yml`, `.yaml` | https://yaml.org/"
+    )]
+    #[cfg_attr(
+        feature = "json",
+        doc = " | JSON      | `.json`         | https://www.json.org/json-en.html"
+    )]
     fn try_from(value: PathBuf) -> Result<Self, Self::Error> {
         // determines the file format
         let ext = value
