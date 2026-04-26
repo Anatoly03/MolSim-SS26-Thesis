@@ -103,6 +103,7 @@ impl TryFrom<PathBuf> for FileDefinition {
     /// | File Format | Extensions | URL |
     /// | --- | --- | --- |
     #[cfg_attr(feature = "yaml", doc = " | YAML      | `.yml`, `.yaml` | https://yaml.org/")]
+    #[cfg_attr(feature = "json", doc = " | JSON      | `.json`         | https://www.json.org/json-en.html")]
     fn try_from(value: PathBuf) -> Result<Self, Self::Error> {
         // determines the file format
         let ext = value
@@ -122,6 +123,16 @@ impl TryFrom<PathBuf> for FileDefinition {
             let file = std::fs::File::open(&value)?;
 
             let a = serde_yaml::from_reader(file)
+                .map_err(|e| Error::new(InvalidInput, format!("Parse error: {e}")))?;
+
+            return Ok(a);
+        }
+
+        #[cfg(feature = "json")]
+        if matches!(ext.as_ref(), "json") {
+            let file = std::fs::File::open(&value)?;
+
+            let a = serde_json::from_reader(file)
                 .map_err(|e| Error::new(InvalidInput, format!("Parse error: {e}")))?;
 
             return Ok(a);
