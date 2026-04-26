@@ -11,17 +11,17 @@
 //! - [C++ to Rust Phrasebook](https://cel.cs.brown.edu/crp/title-page.html)
 //!
 //! The following Rust commands are useful for development:
-//! 
+//!
 //! - [cargo build](https://doc.rust-lang.org/nightly/cargo/commands/cargo-build.html)
 //! - [cargo clippy](https://doc.rust-lang.org/nightly/cargo/commands/cargo-clippy.html)
 //! - [cargo fmt](https://doc.rust-lang.org/nightly/cargo/commands/cargo-fmt.html)
 //! - [cargo run](https://doc.rust-lang.org/nightly/cargo/commands/cargo-run.html)
-//! 
+//!
 //! This crate has the feature `vtk` which you can enable to generate
 //! [VTK](https://en.wikipedia.org/wiki/VTK) output files instead of XYZ files.
 //! You can enable it by adding `--features vtk` to the cargo commands or by
 //! changing line 9 in `Cargo.toml` to include the feature.
-//! 
+//!
 //! ```toml
 //! [features]
 //! default = ["vtk"]

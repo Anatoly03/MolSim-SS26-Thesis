@@ -30,14 +30,14 @@ pub trait Simulation {
     fn particles_mut(&mut self) -> &mut [Particle];
 
     /// Invokes a lambda callback for each particle in the simulation.
-    fn for_each_particles<'a>(&'a self, f: &mut dyn FnMut(&Particle)) {
+    fn for_each_particles(&self, f: &mut dyn FnMut(&Particle)) {
         for part in self.particles().iter() {
             f(part);
         }
     }
 
     /// Invokes a lambda callback for each particle (mutable) in the simulation.
-    fn for_each_particles_mut<'a>(&'a mut self, f: &mut dyn FnMut(&mut Particle)) {
+    fn for_each_particles_mut(&mut self, f: &mut dyn FnMut(&mut Particle)) {
         for part in self.particles_mut().iter_mut() {
             f(part);
         }
@@ -50,10 +50,7 @@ pub trait Simulation {
     /// - An iterator over distinct pairs of particles, accounting for symmetry.
     /// - If you receive a pair `(a, b)` it is guaranteed that you will not receive `(b, a)`.
     /// - There is no guarantee you will receive all pairs.
-    fn for_each_particle_pairs_mut<'a>(
-        &'a mut self,
-        f: &mut dyn FnMut(&mut Particle, &mut Particle),
-    );
+    fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle));
 
     /// The number of particles in the simulation.
     fn particle_count(&self) -> usize;

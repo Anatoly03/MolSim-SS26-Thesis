@@ -1,7 +1,7 @@
 //! This module manages the simulation writer. It provides the [OutputWriter]
 //! trait which is capable of selecting the correct writing method based on
 //! the given output path.
-//! 
+//!
 //! This module also re-exports the individual writers for the supported file
 //! formats locked behind the respective features.
 

@@ -32,10 +32,7 @@ impl Simulation for DirectSum {
     }
 
     // index-based approach because two mutable iterators were problematic
-    fn for_each_particle_pairs_mut<'a>(
-        &'a mut self,
-        f: &mut dyn FnMut(&mut Particle, &mut Particle),
-    ) {
+    fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle)) {
         let count = self.particle_count();
 
         for i in 0..count {

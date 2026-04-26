@@ -9,9 +9,9 @@ use std::io::{BufWriter, Write};
 /// A simple text writer for the simulation data. This implementation logs
 /// the particles using Rusts' built-in [std::fmt::Debug] trait. It is not
 /// a seriously usable output format.
-/// 
+///
 /// # Output Example
-/// 
+///
 /// ```text
 /// Particle { position: Vec3 { x: 0.0, y: 0.0, z: 0.0 }, velocity: Vec3 { x: -8.563553373154629e-10, y: 9.058561490167886e-7, z: 0.0 }, force: Vec3 { x: -1.7127106746309258e-7, y: 0.0001811712298033577, z: 0.0 }, old_force: Vec3 { x: 0.0, y: 0.0, z: 0.0 }, mass: 1.0 }
 /// Particle { position: Vec3 { x: -0.01, y: 1.0, z: 0.0 }, velocity: Vec3 { x: -0.9999500035551665, y: -0.004998404868413561, z: 0.0 }, force: Vec3 { x: 2.999786690007546e-8, y: -2.9990429210481366e-6, z: 0.0 }, old_force: Vec3 { x: 0.0, y: 0.0, z: 0.0 }, mass: 3e-6 }

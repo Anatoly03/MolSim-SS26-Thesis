@@ -6,9 +6,9 @@ use std::io::BufWriter;
 use vtkio::model::*;
 
 /// A simple VTK writer for the simulation data.
-/// 
+///
 /// # Output Example
-/// 
+///
 /// ```xml
 /// <VTKFile type="UnstructuredGrid" version="1.0" byte_order="BigEndian" header_type="UInt64">
 ///     <UnstructuredGrid>

@@ -1,17 +1,17 @@
 //! The crate defines the binary runnable for the Molecular Dynamics Rust project.
 //! The codebase handles the argument parsing with [clap] and propagates the program
 //! execution to the [moldyn_core] main library crate.
-//! 
+//!
 //! The main function reads the input file, creates the output directories and starts
 //! the simulation loop.
-//! 
+//!
 //! Below are two examples how to build the project and print the help message.
-//! 
+//!
 //! ```sh
 //! cargo build --release
 //! ./target/release/moldyn-cli --help
 //! ```
-//! 
+//!
 //! ```sh
 //! cargo run --release -- --help
 //! ```

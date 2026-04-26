@@ -26,8 +26,8 @@
 //!   - brownian_sigma: b
 //! ```
 
-use moldyn_core::{Particle, Vec3};
 use meval::Expr;
+use moldyn_core::{Particle, Vec3};
 use serde::{Deserialize, Serialize};
 
 /// A deserialization-utility representing "particle-like" entries in the
