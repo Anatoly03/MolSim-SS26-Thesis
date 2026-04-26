@@ -103,11 +103,16 @@ pub fn main() {
 
     let mut frame = 0;
     while current_time < end_time {
-        println!("Step {frame: >8} [{current_time:.4} / {end_time:.4}]");
+        let print_frame = frame % args.frame_period == 0;
+
+        println!(
+            "Step {frame: >8} [{current_time:.4} / {end_time:.4}] {}",
+            if print_frame { "WRITE" } else { "" }
+        );
 
         simulation.step(delta_time);
 
-        if frame % args.frame_period == 0 {
+        if print_frame {
             output_writer
                 .write(&args.output, &*simulation)
                 .expect("error occured during simulation write");

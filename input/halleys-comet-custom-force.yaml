@@ -1,7 +1,10 @@
 # This file describes the initial conditions for the simulation of Halley's comet.
+# It uses a custom potential function which is equivalent to the Newton force to
+# demonstrate that custom potential can be used.
 
 name: halleys-comet
-force: gravitational
+force:
+  potential: M / r
 algorithm: direct-sum
 
 args:

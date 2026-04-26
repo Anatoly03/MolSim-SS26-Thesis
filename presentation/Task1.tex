@@ -476,7 +476,7 @@ fn dangle() -> &String {
     In this code example, the Rust compiler is intelligent enough to suggest removing the reference.
 \end{frame}
 
-\simpleframe\begin{frame}{Project State}{Halleys' Comet}
+\nofooterframe\begin{frame}{Project State}{Halleys' Comet}
     \centering
     \includegraphics[width=\textwidth]{media/hello-particles.png}
 
@@ -484,6 +484,14 @@ fn dangle() -> &String {
         \item \blue{File Reading}: YAML, (JSON)
         \item \blue{File Writing}: XYZ, VTK, YAML, (JSON)
     \end{itemize}
+\end{frame}
+
+\simpleframe\begin{frame}{Project State}{Physics Bugs and Tests}
+    \begin{center}
+        \includegraphics[width=0.55\textwidth]{media/hello-particles-bug.png}
+    \end{center}
+
+    I had a nasty physics bug\footnote{Reproduce: \texttt{cargo run -- input/halleys-comet-custom-force-half.yaml -o output/out.xyz -s 500}} because of \texttt{lenght} and \texttt{length2} confusion. Even languages with strong verification like Rust cannot prevent you from making logic errors. \blue{$\rightarrow$ Unit testing is still important!}
 \end{frame}
 
 \simpleframe\begin{frame}[fragile]{Project State}{Cuboid Generation and Dynamic Expressions}

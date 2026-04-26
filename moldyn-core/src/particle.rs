@@ -89,8 +89,27 @@ impl Particle {
 
     /// Calculate the vector difference between two particles' positions. Note
     /// that the order of the particles affects the sign.
+    /// 
+    /// - `direction(a, b) == -direction(b, a)`.
     pub fn position_difference(particle1: &Particle, particle2: &Particle) -> Vec3 {
         particle1.position - particle2.position
+    }
+
+    /// Calculate the normalized vector difference between two particles' positions.
+    /// Note that the order of the particles affects the sign.
+    /// 
+    /// - If result is `Some`: `direction(a, b) == -direction(b, a)`.
+    /// - If result is `None`: `direction(a, b) == direction(b, a) == None`.
+    pub fn direction(particle1: &Particle, particle2: &Particle) -> Option<Vec3> {
+        Particle::position_difference(particle1, particle2).normal()
+    }
+
+    /// Calculate the distance between two particles' positions. This function is
+    /// symmetric:
+    /// 
+    /// - `distance(a, b) == distance(b, a)`.
+    pub fn distance(particle1: &Particle, particle2: &Particle) -> f64 {
+        Particle::position_difference(particle1, particle2).length()
     }
 
     /// Calculate the product of the masses of two particles.

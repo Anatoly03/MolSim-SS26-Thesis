@@ -1,7 +1,9 @@
 # This file describes the initial conditions for the simulation of Halley's comet.
+# It uses a 'bugged' custom potential function to reproduce images of bugs.
 
 name: halleys-comet
-force: gravitational
+force:
+  potential: M / r^2
 algorithm: direct-sum
 
 args:
