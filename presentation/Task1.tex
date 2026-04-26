@@ -315,7 +315,7 @@ struct Particle {
     \gray{Opened files (and streams in general) close in the destructor logic making it impossible to forget to close files (or streams).}
 \end{frame}
 
-\simpleframe\begin{frame}[t, fragile]{Rust Ownership Model}{The so-to-say 'first big boss' to beginners}
+\nofooterframe\begin{frame}[t, fragile]{Rust Ownership Model}{The so-to-say 'first big boss' to beginners}
     \centering
     \begin{tikzpicture}[node distance=1cm and 1cm, minimum height=1cm, minimum width=3cm]
         \node[draw, rectangle] (owned) {Owned};
@@ -414,6 +414,10 @@ println!("{r2} {r2}"); // &r1, &r2
     
     \vspace{1em}
     Borrow types like `\texttt{mut a: \&T}' and `\texttt{mut a: \&mut T}' are also possible but less common in practice.
+
+    \blue{Recap:} A value can have either one mutable or multiple immutable references.
+    
+    \blue{Note:} A reference has to be valid at any point in its' scope and cannot outlive the value it points to. Lifetimes will be explained later in detail.
 \end{frame}
 
 \nofooterframe\begin{frame}[t, fragile]{Rust Ownership Model}{Problems I've Faced (Problem)}
@@ -453,6 +457,23 @@ for i in 0..count {
     }
 }
     \end{lstlisting}
+\end{frame}
+
+\nofooterframe\begin{frame}[fragile]{Rust Lifetimes}{The 'second big boss' to Rust beginners}
+    Previously we've learned references have to be valid. But how does the Rust compiler verify it? Consider the following code returning a dangling reference.\footcite{rust-dangle}
+
+    \vspace{0.5em}
+    \begin{lstlisting}[frame=single,breaklines=false]
+fn dangle() -> &String {
+    let s = String::from("hello");
+    &s // we return a reference to s
+} // s is dropped here (out of scope), but we return &s: error!
+    \end{lstlisting}
+    \vspace{0.5em}
+
+    Every variable in Rust is assigned a lifetime (syntax: \texttt{`a}). The lifetime ends when the variable goes out of scope. The Rust compiler always infers lifetimes, but it is possible to tell the compiler about lifetimes explictly.
+
+    In this code example, the Rust compiler is intelligent enough to suggest removing the reference.
 \end{frame}
 
 \simpleframe\begin{frame}{Project State}{Halleys' Comet}
