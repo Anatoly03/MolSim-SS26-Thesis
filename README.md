@@ -1,5 +1,7 @@
 # MolSim Thesis
 
+[![C++ Build & Test](https://github.com/Anatoly03/MolSim-SS26-Thesis/actions/workflows/cpp.yml/badge.svg)](https://github.com/Anatoly03/MolSim-SS26-Thesis/actions/workflows/cpp.yml) [![Cargo Build & Test](https://github.com/Anatoly03/MolSim-SS26-Thesis/actions/workflows/cargo.yml/badge.svg)](https://github.com/Anatoly03/MolSim-SS26-Thesis/actions/workflows/cargo.yml) [![Deploy Rustdoc](https://github.com/Anatoly03/MolSim-SS26-Thesis/actions/workflows/rustdoc.yml/badge.svg)](https://github.com/Anatoly03/MolSim-SS26-Thesis/actions/workflows/rustdoc.yml)
+
 [Rust Documentation](https://anatoly03.github.io/MolSim-SS26-Thesis/moldyn_core/index.html)
 
 This project implements molecular dynamics simulations in C++ and Rust. The goal of this workspace is to look at the programming languages in terms of (developer experience of) program architecture design and comparative benchmarking.
