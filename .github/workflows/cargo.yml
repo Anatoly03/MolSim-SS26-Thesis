@@ -2,8 +2,13 @@ name: Cargo Build & Test
 
 on:
   push:
-  pull_request:
-
+    paths:
+      - moldyn-cli/**
+      - moldyn-core/**
+      - moldyn-io/**
+      - moldyn-wasm/**
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 env: 
   CARGO_TERM_COLOR: always
 
