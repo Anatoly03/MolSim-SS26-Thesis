@@ -4,6 +4,8 @@
  */
 
 #include <iostream>
+#include <memory>
+
 #include "Args.h"
 
 /**
@@ -11,15 +13,14 @@
  */
 int main(int argc, char *argv[])
 {
-    std::string input_path;
+    std::unique_ptr<std::ifstream> input_file;
 
     Args()
-        .required_details(&input_path, "The input file for the simulation. The parser will be selected from the file extension.")
+        .required_details(&input_file, "The input file for the simulation. The parser will be selected from the file extension.")
         .help("Molecular Dynamics Thesis Code. This library implements a simple engine to simulate molecular dynamics.")
         .version()
         .parse(argc, argv);
 
-    std::cout << "Input file: " << input_path << "\n";
     std::cout << "Hello, C++!\n";
 
     return 0;

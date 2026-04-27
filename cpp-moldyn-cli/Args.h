@@ -9,9 +9,11 @@
 
 #include <cxxabi.h>
 #include <cstdlib>
+#include <fstream>
 #include <getopt.h>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <optional>
 #include <set>
 #include <string>
@@ -92,9 +94,11 @@ private:
             if (type_hint == typeid(double).hash_code())
                 return "double";
             if (type_hint == typeid(std::string).hash_code())
-                return "std::string";
+                return "string";
             if (type_hint == typeid(std::optional<std::string>).hash_code())
-                return "std::optional<std::string>";
+                return "[string]";
+            if (type_hint == typeid(std::unique_ptr<std::ifstream>).hash_code())
+                return "file path";
 
             // https://stackoverflow.com/questions/12877521/human-readable-type-info-name
             // caller is responsible for freeing the demangled name
@@ -223,11 +227,9 @@ private:
      */
     bool parse_into_ref(char *optarg, const ArgsRef &ref)
     {
-        // booleans are flags and treated as true if present
-        // TODO support for `-B0` syntax for setting booleans to false
         if (const auto v = ref.try_get<bool>())
         {
-            *v = true;
+            *v = optarg ? (std::string(optarg) != "0") : true;
             return true;
         }
 
@@ -246,6 +248,21 @@ private:
         if (const auto v = ref.try_get<std::string>())
         {
             *v = std::string(optarg);
+            return true;
+        }
+
+        if (const auto v = ref.try_get<std::unique_ptr<std::ifstream>>())
+        {
+            std::string file_path(optarg);
+            std::unique_ptr<std::ifstream> pointer = std::make_unique<std::ifstream>(file_path);
+
+            if (!pointer->is_open())
+            {
+                std::cerr << "Error: Failed to open file at path `" << file_path << "`\n";
+                exit(1);
+            }
+
+            *v = std::move(pointer);
             return true;
         }
 
