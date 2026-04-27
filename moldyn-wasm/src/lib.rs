@@ -28,3 +28,8 @@ extern "C" {
 pub fn greet(name: &str) {
     log(&format!("Hello, {name}!"));
 }
+
+// read:
+// https://wasm-bindgen.github.io/wasm-bindgen/examples/console-log.html
+// https://wasm-bindgen.github.io/wasm-bindgen/reference/attributes/on-rust-exports/skip_typescript.html
+

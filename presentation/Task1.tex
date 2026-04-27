@@ -525,6 +525,16 @@ particles:
     \vspace{0.5em}
 \end{frame}
 
+\simpleframe\begin{frame}[fragile]{Project State}{Benchmarking}
+    \begin{center}
+        \includegraphics[width=\textwidth]{media/benchmark.png}
+    \end{center}
+
+    \blue{Rust integrates benchmarking support}, but is \blue{currently unstable} and requires a `\emph{nightly compiler}' (equivalent to `beta' of the compiler). In this particular benchmark, we see that the direct sum of forces scales in $\mathcal O (n^2)$.
+
+    The Lennard-Jones potential is faster than the Newton potential for the benchmark \texttt{thousand\_bodies}. This is probably because of the cut-off radius.
+\end{frame}
+
 \simpleframe\begin{frame}{Developer Experience}
     \begin{itemize}
         \item It is definitely easier to work in a programming language in which you have more years of experience. \blue{$\rightarrow$ Bias when measuring `developer experience'}.
@@ -541,7 +551,7 @@ particles:
     \includegraphics[width=0.5\textwidth]{media/ferris.png}
 \end{frame}
 
-\simpleframe\begin{frame}[allowframebreaks]{References}
+\headerframe\begin{frame}[allowframebreaks]{References}
   \printbibliography
 \end{frame}
 

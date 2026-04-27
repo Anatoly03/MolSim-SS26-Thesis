@@ -3,7 +3,7 @@ mod ljp;
 mod newton;
 
 use crate::{Particle, Vec3};
-use custom::CustomForce;
+pub use custom::CustomForce;
 pub use ljp::LennardJonesForce;
 use meval::Expr;
 pub use newton::NewtonForce;
@@ -31,13 +31,13 @@ pub trait Force {
 
     /// Calculates the force between two particles. For directly applying the
     /// force, see [Force::apply_force].
-    /// 
+    ///
     /// # Formula
-    /// 
+    ///
     /// ```text
     /// F = -U / r    (simplified to scalar, actually a vector)
     /// ```
-    /// 
+    ///
     /// The resulting force is a three dimensional vector pointing towards the other
     /// particle. The magnitude is the fraction of potential energy and distance.
     ///
@@ -158,22 +158,10 @@ impl<'de> Visitor<'de> for ForceVisitor {
         match force_type.to_ascii_lowercase().as_str() {
             "custom-potential" | "potential" => {
                 let params = map.next_value::<Expr>()?;
-                let func = params
-                    .bind2("r", "M")
-                    .map_err(|e| Error::custom(format!("could not bind custom potential functtuion: {e}")))?;
-
-                let wrap = move |p1: &Particle, p2: &Particle| {
-                    let distance = Particle::distance(p1, p2);
-                    let mul_mass = Particle::mass_product(p1, p2);
-
-                    if distance == 0.0 {
-                        0.0
-                    } else {
-                        -func(distance, mul_mass)
-                    }
-                };
-
-                Ok(Box::new(CustomForce::new(Box::new(wrap))))
+                let custom: CustomForce = params.try_into().map_err(|e| {
+                    Error::custom(format!("could not bind custom potential functtuion: {e}"))
+                })?;
+                Ok(Box::new(custom))
             }
             _ => Err(A::Error::custom(format!(
                 "Unknown force type: {}",

@@ -51,6 +51,7 @@ simulation consists of the following steps:
 
 - [ ] Benchmarking
   - https://nnethercote.github.io/perf-book/benchmarking.html
+  - https://doc.rust-lang.org/nightly/unstable-book/library-features/test.html
 
 - Github CI Idea: Video Generation (Job on workflow dispatch)
   1. Build and run
@@ -59,3 +60,13 @@ simulation consists of the following steps:
   4. Upload video
 
 - github ci badges: https://github.com/marketplace/actions/ci-badges
+
+ideas to rewrite c++ with macros
+- https://gcc.gnu.org/onlinedocs/cpp/Stringizing.html
+
+we test in nightly
+https://doc.rust-lang.org/nightly/unstable-book/library-features/test.html
+
+meval alternative for c++:
+https://mathparser.org/mxparser-tutorial/simple-expressions/
+https://mathparser.org/mxparser-tutorial/user-defined-arguments/

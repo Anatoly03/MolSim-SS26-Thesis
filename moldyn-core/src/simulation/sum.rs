@@ -88,3 +88,289 @@ impl Default for DirectSum {
         }
     }
 }
+
+// https://doc.rust-lang.org/nightly/unstable-book/library-features/test.html
+// build.rs is specifically to allow this type of benchmarks
+#[cfg(all(test, nightly))]
+mod benchmark {
+    use crate::{
+        CustomForce, DirectSum, LennardJonesForce, NewtonForce, Particle, Simulation,
+        SimulationArgs, Vec3,
+    };
+    use meval::Expr;
+    use std::sync::Arc;
+    use test::Bencher;
+
+    #[bench]
+    fn halleys_comet(b: &mut Bencher) {
+        let particles = vec![
+            // sun
+            Particle::from_data(Vec3::zero(), Vec3::zero(), 1.0),
+            // earth
+            Particle::from_data(Vec3::new(0.0, 1.0, 0.0), Vec3::new(-1.0, 0.0, 0.0), 3.0e-6),
+            // jupiter
+            Particle::from_data(
+                Vec3::new(0.0, 5.36, 0.0),
+                Vec3::new(-0.425, 0.0, 0.0),
+                9.55e-4,
+            ),
+            // halleys comet
+            Particle::from_data(
+                Vec3::new(34.75, 0.0, 0.0),
+                Vec3::new(0.0, 0.0296, 0.0),
+                1.0e-14,
+            ),
+        ];
+
+        let mut simulation = DirectSum::default();
+        simulation.set_force(Arc::new(NewtonForce::default()));
+        simulation.add_particles(particles);
+
+        b.iter(|| {
+            simulation.step(0.01);
+        });
+    }
+
+    #[bench]
+    fn halleys_comet_lennard_jones(b: &mut Bencher) {
+        let particles = vec![
+            // sun
+            Particle::from_data(Vec3::zero(), Vec3::zero(), 1.0),
+            // earth
+            Particle::from_data(Vec3::new(0.0, 1.0, 0.0), Vec3::new(-1.0, 0.0, 0.0), 3.0e-6),
+            // jupiter
+            Particle::from_data(
+                Vec3::new(0.0, 5.36, 0.0),
+                Vec3::new(-0.425, 0.0, 0.0),
+                9.55e-4,
+            ),
+            // halleys comet
+            Particle::from_data(
+                Vec3::new(34.75, 0.0, 0.0),
+                Vec3::new(0.0, 0.0296, 0.0),
+                1.0e-14,
+            ),
+        ];
+
+        let mut simulation = DirectSum::default();
+        simulation.set_force(Arc::new(LennardJonesForce::default()));
+        simulation.add_particles(particles);
+
+        b.iter(|| {
+            simulation.step(0.01);
+        });
+    }
+
+    #[bench]
+    fn halleys_comet_custom_newton_force(b: &mut Bencher) {
+        let particles = vec![
+            // sun
+            Particle::from_data(Vec3::zero(), Vec3::zero(), 1.0),
+            // earth
+            Particle::from_data(Vec3::new(0.0, 1.0, 0.0), Vec3::new(-1.0, 0.0, 0.0), 3.0e-6),
+            // jupiter
+            Particle::from_data(
+                Vec3::new(0.0, 5.36, 0.0),
+                Vec3::new(-0.425, 0.0, 0.0),
+                9.55e-4,
+            ),
+            // halleys comet
+            Particle::from_data(
+                Vec3::new(34.75, 0.0, 0.0),
+                Vec3::new(0.0, 0.0296, 0.0),
+                1.0e-14,
+            ),
+        ];
+
+        let mut simulation = DirectSum::default();
+        let force_expr = CustomForce::from_expr("M / r");
+        let force = simulation.set_force(Arc::new(NewtonForce::default()));
+        simulation.add_particles(particles);
+
+        b.iter(|| {
+            simulation.step(0.01);
+        });
+    }
+
+    #[bench]
+    fn halleys_comet_custom_lennard_jones(b: &mut Bencher) {
+        let particles = vec![
+            // sun
+            Particle::from_data(Vec3::zero(), Vec3::zero(), 1.0),
+            // earth
+            Particle::from_data(Vec3::new(0.0, 1.0, 0.0), Vec3::new(-1.0, 0.0, 0.0), 3.0e-6),
+            // jupiter
+            Particle::from_data(
+                Vec3::new(0.0, 5.36, 0.0),
+                Vec3::new(-0.425, 0.0, 0.0),
+                9.55e-4,
+            ),
+            // halleys comet
+            Particle::from_data(
+                Vec3::new(34.75, 0.0, 0.0),
+                Vec3::new(0.0, 0.0296, 0.0),
+                1.0e-14,
+            ),
+        ];
+
+        // let frac = self.sigma / distance;
+        //     let frac6 = frac.powi(6);
+        //     let frac12 = frac6.powi(2);
+
+        //     4.0 * self.epsilon * (frac12 - frac6)
+
+        let mut simulation = DirectSum::default();
+        let force_expr = CustomForce::from_expr("20.0 * ((1 / r)^12 - (1 / r)^6)");
+        let force = simulation.set_force(Arc::new(NewtonForce::default()));
+        simulation.add_particles(particles);
+
+        b.iter(|| {
+            simulation.step(0.01);
+        });
+    }
+
+    #[bench]
+    fn halleys_comet_custom_heavy(b: &mut Bencher) {
+        let particles = vec![
+            // sun
+            Particle::from_data(Vec3::zero(), Vec3::zero(), 1.0),
+            // earth
+            Particle::from_data(Vec3::new(0.0, 1.0, 0.0), Vec3::new(-1.0, 0.0, 0.0), 3.0e-6),
+            // jupiter
+            Particle::from_data(
+                Vec3::new(0.0, 5.36, 0.0),
+                Vec3::new(-0.425, 0.0, 0.0),
+                9.55e-4,
+            ),
+            // halleys comet
+            Particle::from_data(
+                Vec3::new(34.75, 0.0, 0.0),
+                Vec3::new(0.0, 0.0296, 0.0),
+                1.0e-14,
+            ),
+        ];
+
+        let mut simulation = DirectSum::default();
+        let force_expr = CustomForce::from_expr("(1 / r)^12 - (1 / r)^11 + (1 / r)^10 - (1 / r)^9 + (1 / r)^6 - (1 / r)^5");
+        let force = simulation.set_force(Arc::new(NewtonForce::default()));
+        simulation.add_particles(particles);
+
+        b.iter(|| {
+            simulation.step(0.01);
+        });
+    }
+
+    #[bench]
+    fn ten_bodies(b: &mut Bencher) {
+        let mut particles = vec![];
+
+        for x in 0..10 {
+            particles.push(Particle::at(x as f64, 0.0, 0.0).with_mass(1.0));
+        }
+
+        let mut simulation = DirectSum::default();
+        simulation.set_force(Arc::new(NewtonForce::default()));
+        simulation.add_particles(particles);
+
+        b.iter(|| {
+            simulation.step(0.01);
+        });
+    }
+
+    #[bench]
+    fn ten_bodies_lennard_jones(b: &mut Bencher) {
+        let mut particles = vec![];
+
+        for x in 0..10 {
+            particles.push(Particle::at(x as f64, 0.0, 0.0).with_mass(1.0));
+        }
+
+        let mut simulation = DirectSum::default();
+        simulation.set_force(Arc::new(LennardJonesForce::default()));
+        simulation.add_particles(particles);
+
+        b.iter(|| {
+            simulation.step(0.01);
+        });
+    }
+
+    #[bench]
+    fn hundred_bodies(b: &mut Bencher) {
+        let mut particles = vec![];
+
+        for x in 0..10 {
+            for y in 0..10 {
+                particles.push(Particle::at(x as f64, y as f64, 0.0).with_mass(1.0));
+            }
+        }
+
+        let mut simulation = DirectSum::default();
+        simulation.set_force(Arc::new(NewtonForce::default()));
+        simulation.add_particles(particles);
+
+        b.iter(|| {
+            simulation.step(0.01);
+        });
+    }
+
+    #[bench]
+    fn hundred_bodies_lennard_jones(b: &mut Bencher) {
+        let mut particles = vec![];
+
+        for x in 0..10 {
+            for y in 0..10 {
+                particles.push(Particle::at(x as f64, y as f64, 0.0).with_mass(1.0));
+            }
+        }
+
+        let mut simulation = DirectSum::default();
+        simulation.set_force(Arc::new(LennardJonesForce::default()));
+        simulation.add_particles(particles);
+
+        b.iter(|| {
+            simulation.step(0.01);
+        });
+    }
+
+    #[bench]
+    fn thousand_bodies(b: &mut Bencher) {
+        let mut particles = vec![];
+
+        for x in 0..10 {
+            for y in 0..10 {
+                for z in 0..10 {
+                    particles.push(Particle::at(x as f64, y as f64, 0.0).with_mass(1.0));
+                }
+            }
+        }
+
+        let mut simulation = DirectSum::default();
+        simulation.set_force(Arc::new(NewtonForce::default()));
+        simulation.add_particles(particles);
+
+        b.iter(|| {
+            simulation.step(0.01);
+        });
+    }
+
+    #[bench]
+    fn thousand_bodies_lennard_jones(b: &mut Bencher) {
+        let mut particles = vec![];
+
+        for x in 0..10 {
+            for y in 0..10 {
+                for z in 0..10 {
+                    particles.push(Particle::at(x as f64, y as f64, 0.0).with_mass(1.0));
+                }
+            }
+        }
+
+        let mut simulation = DirectSum::default();
+        simulation.set_force(Arc::new(LennardJonesForce::default()));
+        simulation.add_particles(particles);
+
+        b.iter(|| {
+            simulation.step(0.01);
+        });
+    }
+}

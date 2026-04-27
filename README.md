@@ -30,3 +30,7 @@ cmake . -B target/cpp
 make -C target/cpp  -j4 --no-print-directory
 ./target/cpp/MolSim --help
 ```
+
+# Benchmarking
+
+Rust benchmarking is currently done on the nightly channel using the macro [`#[bench]`](https://doc.rust-lang.org/nightly/unstable-book/library-features/test.html). To run the bencharks, run `cargo +nightly bench`.
