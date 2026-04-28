@@ -3,6 +3,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::particle::ParticleWrapper;
 
+/// A direct sum simulation instance.
 #[wasm_bindgen(js_name = Simulation)]
 pub struct SimulationWrapper {
     #[wasm_bindgen(skip)]

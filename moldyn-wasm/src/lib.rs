@@ -11,6 +11,8 @@ mod vec3;
 mod sum;
 
 pub use vec3::Vec3Wrapper;
+pub use particle::ParticleWrapper;
+pub use sum::SimulationWrapper;
 use wasm_bindgen::prelude::*;
 
 // TODO continue reading the web assembly book
