@@ -8,6 +8,7 @@
 
 mod particle;
 mod vec3;
+mod sum;
 
 pub use vec3::Vec3Wrapper;
 use wasm_bindgen::prelude::*;
