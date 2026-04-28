@@ -6,8 +6,7 @@
 //!
 //! To read more about WebAssembly with Rust, read the [wasm-bindgen guide](https://wasm-bindgen.github.io/wasm-bindgen/introduction.html)
 
-// #[macro_use]
-// mod macros;
+mod particle;
 mod vec3;
 
 pub use vec3::Vec3Wrapper;
@@ -24,6 +23,17 @@ extern "C" {
     fn log(s: &str);
 }
 
+// /// The namespace `Moldyn` is used for all exported wasm bindings.
+// #[wasm_bindgen(typescript_custom_section)]
+// const TS_APPEND_CONTENT: &'static str = r"
+// /**
+//  * The namespace `Moldyn` contains all the WebAssembly bindings for the
+//  * molecular dynamics simulation.
+//  */
+// export namespace Moldyn {}
+// export default Moldyn;
+// ";
+
 #[wasm_bindgen]
 pub fn greet(name: &str) {
     log(&format!("Hello, {name}!"));
@@ -32,4 +42,3 @@ pub fn greet(name: &str) {
 // read:
 // https://wasm-bindgen.github.io/wasm-bindgen/examples/console-log.html
 // https://wasm-bindgen.github.io/wasm-bindgen/reference/attributes/on-rust-exports/skip_typescript.html
-

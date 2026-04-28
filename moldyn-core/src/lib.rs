@@ -2,6 +2,12 @@
 //! main components of the simulation.
 //!
 //! # Features
+// //! 
+// //! ### `serde` (default)
+// //! 
+// //! Integrates [serde](https://serde.rs/) support for serializing and deserializing
+// //! simulation data. This feature is enabled by default but can be disabled to
+// //! reduce the binary size of the resulting program.
 //!
 //! ### `nightly`
 //!
@@ -18,7 +24,7 @@ mod particle;
 mod simulation;
 mod vec3;
 
-pub use forces::{CustomForce, Force, LennardJonesForce, NewtonForce};
+pub use forces::*;
 pub use particle::Particle;
-pub use simulation::{DirectSum, Simulation, SimulationArgs};
+pub use simulation::*;
 pub use vec3::Vec3;
