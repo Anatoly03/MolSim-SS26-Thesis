@@ -1,4 +1,4 @@
-//! The crate defines the binary runnable for the Molecular Dynamics Rust project.
+//! This crate defines the binary runnable for the Molecular Dynamics Rust project.
 //! The codebase handles the argument parsing with [clap] and propagates the program
 //! execution to the [moldyn_core] main library crate.
 //!
