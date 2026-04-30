@@ -1,8 +1,10 @@
 /**
  * @file Args.h
  * @author Anatoly Weinstein
+ * 
  * @brief Definition of the Args class for CLI argument parsing,
- * wrapping around getopt_long for parsing.
+ * wrapping around [getopt](https://www.man7.org/linux/man-pages/man3/getopt.3.html)
+ * and `getopt_long` for parsing.
  */
 
 #pragma once
