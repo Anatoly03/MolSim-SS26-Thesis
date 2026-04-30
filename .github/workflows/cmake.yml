@@ -1,0 +1,54 @@
+name: CMake
+
+on:
+  workflow_call:
+    inputs:
+      build_dir:
+        required: false
+        type: string
+        default: target/cpp
+      run_build:
+        required: false
+        type: boolean
+        default: true
+      run_tests:
+        required: false
+        type: boolean
+        default: false
+      cmake_options:
+        required: false
+        type: string
+        default: ''
+  # Also allow manual runs for testing
+  workflow_dispatch:
+
+jobs:
+  prepare_and_build:
+    name: Prepare and Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache CMake dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ inputs.build_dir }}
+          key: ${{ runner.os }}-cmake-${{ hashFiles('**/CMakeLists.txt') }}
+          restore-keys: ${{ runner.os }}-cmake-
+
+      - name: Configure & Build (optional)
+        if: ${{ inputs.run_build == true }}
+        uses: threeal/cmake-action@v2.1.0
+        with:
+          options: |
+            ${{ inputs.cmake_options }}
+          build-dir: ${{ inputs.build_dir }}
+          run-build: ${{ inputs.run_build }}
+
+      - name: Run Tests (optional)
+        if: ${{ inputs.run_tests == true }}
+        uses: threeal/ctest-action@v1.1.0
+        with:
+          test-dir: ${{ inputs.build_dir }}

@@ -1,18 +1,13 @@
-# Simple workflow for deploying rustdoc content to GitHub Pages
-name: Deploy Rustdoc
+name: Deploy Documentation
 
 on:
   push:
     branches: ["main"]
     paths:
-      - cpp-moldyn-cli/**
-      - cpp-moldyn-core/**
-      - cpp-moldyn-test/**
       - moldyn-cli/**
       - moldyn-core/**
       - moldyn-io/**
       - moldyn-wasm/**
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -21,34 +16,43 @@ permissions:
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
+  setup:
+    uses: ./.github/workflows/cmake.yml
+    with:
+      run_build: false
+
+  doxygen_and_deploy:
+    name: Generate & Deploy Docs
+    needs: setup
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
+
+      - name: Install Doxygen and Graphviz
+        run: |
+          sudo apt update
+          sudo apt install -y doxygen graphviz
+
       - name: Generate Documentation (Rustdoc)
-        # run: rustdoc moldyn-core/src/main.rs
-        # dependencies not linked, so use `cargo doc` instead
         run: cargo doc --no-deps --workspace
-      - name: Generate Documentation (Doxygen)  
-        run:  make -C target/cpp docs --no-print-directory
+
+      - name: Generate Documentation (Doxygen)
+        run: doxygen Doxyfile
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: target/doc
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
