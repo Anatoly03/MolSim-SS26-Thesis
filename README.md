@@ -17,14 +17,14 @@ This project implements molecular dynamics simulations in C++ and Rust. The goal
 - [`template-cpp`](./template-cpp/): C++ Molecular Dynamics template (Copy, Reformatted)
 - [`template-rust`](./template-rust/): Rust Molecular Dynamics template (Rewrite)
 
-# Building & Running Rust
+### Building & Running Rust
 
 ```
 cargo build --release
 ./target/release/moldyn-cli --help
 ```
 
-# Building & Running C++
+### Building & Running C++
 
 ```sh
 cmake . -B target/cpp
@@ -32,11 +32,11 @@ make -C target/cpp -j4 --no-print-directory
 ./target/cpp/MolSim --help
 ```
 
-# Benchmarking
+### Benchmarking
 
 Rust benchmarking is currently done on the nightly channel using the macro [`#[bench]`](https://doc.rust-lang.org/nightly/unstable-book/library-features/test.html). To run the bencharks, run `cargo +nightly bench`.
 
-# Documentation
+### Documentation
 
 [![Rust Documentation](https://badges.ws/badge?icon=rust&value=Documentation)](https://anatoly03.github.io/MolSim-SS26-Thesis/moldyn_core/index.html)
 [![C++ Documentation](https://badges.ws/badge?icon=c%2b%2b&value=Doxygen)](https://anatoly03.github.io/MolSim-SS26-Thesis/cpp/index.html)
