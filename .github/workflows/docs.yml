@@ -5,6 +5,9 @@ on:
   push:
     branches: ["main"]
     paths:
+      - cpp-moldyn-cli/**
+      - cpp-moldyn-core/**
+      - cpp-moldyn-test/**
       - moldyn-cli/**
       - moldyn-core/**
       - moldyn-io/**
