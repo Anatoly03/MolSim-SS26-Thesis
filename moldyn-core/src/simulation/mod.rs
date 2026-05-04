@@ -1,6 +1,7 @@
 //! TODO document
 
 mod args;
+mod cells;
 mod sum;
 
 use crate::{Force, Particle};
@@ -8,6 +9,7 @@ pub use args::SimulationArgs;
 use serde::{Deserialize, Serialize, de::Visitor};
 use std::sync::Arc;
 pub use sum::DirectSum;
+pub use cells::LinkedCells;
 
 // to self: tried to keep dyn-compatibility. following approaches failed:
 // - fn ...(... impl Fn) is technically generic
