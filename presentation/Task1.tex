@@ -525,14 +525,30 @@ particles:
     \vspace{0.5em}
 \end{frame}
 
-\simpleframe\begin{frame}[fragile]{Project State}{Benchmarking}
+\simpleframe\begin{frame}[t,fragile]{Project State}{Benchmarking}
     \begin{center}
-        \includegraphics[width=\textwidth]{media/benchmark.png}
+        \includegraphics[width=\textwidth]{media/benchmark-pc.png}
+    \end{center}
+    \label{fig:benchmark-pc}
+    
+    \begin{center}
+        \scriptsize Benchmarked with: 12th Gen Intel(R) Core(TM) i7-12700K
     \end{center}
 
-    \blue{Rust integrates benchmarking support}, but is \blue{currently unstable} and requires a `\emph{nightly compiler}' (equivalent to `beta' of the compiler). In this particular benchmark, we see that the direct sum of forces scales in $\mathcal O (n^2)$.
+    \blue{Rust integrates benchmarking support}, but is \blue{currently unstable} and requires a `\emph{nightly compiler}' (equivalent to `beta' of a program). In this particular benchmark, we see that the direct sum of forces scales in $\mathcal O (n^2)$.
 
-    The Lennard-Jones potential is faster than the Newton potential for the benchmark \texttt{thousand\_bodies}. This is probably because of the cut-off radius.
+    % \gray{The Lennard-Jones potential is faster than the Newton potential for the benchmark \texttt{thousand\_bodies}. This is most-likely because of the cut-off radius.}
+\end{frame}
+
+\simpleframe\begin{frame}[t,fragile]{Project State}{Benchmarking}
+    \begin{center}
+        \includegraphics[width=\textwidth]{media/benchmark-mac.png}
+    \end{center}
+
+    \begin{center}
+        \scriptsize Benchmarked with: Dual-Core Intel(R) Core(TM) i5
+    \end{center}
+    
 \end{frame}
 
 \simpleframe\begin{frame}{Developer Experience}
