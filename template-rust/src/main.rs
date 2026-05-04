@@ -33,6 +33,9 @@
 //! ```
 //! 
 //! Per default, the `xyz` output format is prefered.
+//! 
+//! Author: Anatoly Weinstein
+//! Created: April 2026
 
 mod file_reader;
 mod output_writer;

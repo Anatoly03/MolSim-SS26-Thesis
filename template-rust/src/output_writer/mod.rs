@@ -1,3 +1,8 @@
+//! For file writing.
+//! 
+//! Author: Anatoly Weinstein
+//! Created: April 2026
+
 #[cfg(feature = "vtk")]
 mod vtk;
 mod xyz;
