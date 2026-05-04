@@ -4,7 +4,7 @@
 //!
 //! The main function reads the input file, creates the output directories and starts
 //! the simulation loop.
-//! 
+//!
 //! # Help
 //!
 //! Below are two examples how to build the project and print the help message.
@@ -17,19 +17,19 @@
 //! ```sh
 //! cargo run --release -- --help
 //! ```
-//! 
+//!
 //! ### Output
-//! 
+//!
 //! The help message will look something like this.
-//! 
+//!
 //! ```text
 //! Molecular Dynamics Thesis Code. This library implements a simple engine to simulate molecular dynamics
-//! 
+//!
 //! Usage: moldyn-cli [OPTIONS] <INPUT>
-//! 
+//!
 //! Arguments:
 //!   <INPUT>  The input file for the simulation. The parser will be selected from the file extension. Supported formats are: YAML
-//! 
+//!
 //! Options:
 //!   -o, --output <OUTPUT>              The output file for the simulation results. If a deep path is provided, the directories along the path will be created if they do not exist. The output format will be selected from the file extension. Supported formats are: YAML [default: output/out.vtk]
 //!   -d, --delta-time <DELTA_TIME>      The time step for the simulation [default: 0.0014]

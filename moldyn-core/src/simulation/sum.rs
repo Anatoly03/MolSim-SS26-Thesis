@@ -251,7 +251,9 @@ mod benchmark {
         ];
 
         let mut simulation = DirectSum::default();
-        let force_expr = CustomForce::from_expr("(1 / r)^12 - (1 / r)^11 + (1 / r)^10 - (1 / r)^9 + (1 / r)^6 - (1 / r)^5");
+        let force_expr = CustomForce::from_expr(
+            "(1 / r)^12 - (1 / r)^11 + (1 / r)^10 - (1 / r)^9 + (1 / r)^6 - (1 / r)^5",
+        );
         let force = simulation.set_force(Arc::new(NewtonForce::default()));
         simulation.add_particles(particles);
 

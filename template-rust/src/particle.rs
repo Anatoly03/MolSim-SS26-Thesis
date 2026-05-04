@@ -1,5 +1,5 @@
 //! This module contains the [Particle] struct.
-//! 
+//!
 //! Author: Anatoly Weinstein
 //! Created: April 2026
 

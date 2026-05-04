@@ -7,12 +7,12 @@
 //! To read more about WebAssembly with Rust, read the [wasm-bindgen guide](https://wasm-bindgen.github.io/wasm-bindgen/introduction.html)
 
 mod particle;
-mod vec3;
 mod sum;
+mod vec3;
 
-pub use vec3::Vec3Wrapper;
 pub use particle::ParticleWrapper;
 pub use sum::SimulationWrapper;
+pub use vec3::Vec3Wrapper;
 use wasm_bindgen::prelude::*;
 
 // TODO continue reading the web assembly book

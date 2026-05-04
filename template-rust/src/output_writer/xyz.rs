@@ -1,5 +1,5 @@
 //! For writing XYZ files.
-//! 
+//!
 //! Author: Anatoly Weinstein
 //! Created: April 2026
 

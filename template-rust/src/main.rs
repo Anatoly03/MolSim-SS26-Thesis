@@ -16,9 +16,9 @@
 //! - [cargo clippy](https://doc.rust-lang.org/nightly/cargo/commands/cargo-clippy.html)
 //! - [cargo fmt](https://doc.rust-lang.org/nightly/cargo/commands/cargo-fmt.html)
 //! - [cargo run](https://doc.rust-lang.org/nightly/cargo/commands/cargo-run.html)
-//! 
+//!
 //! # Features
-//! 
+//!
 //! ### `vtk`
 //!
 //! This crate has the feature `vtk` which you can enable to generate
@@ -31,9 +31,9 @@
 //! default = ["vtk"]
 //! vtk = []
 //! ```
-//! 
+//!
 //! Per default, the `xyz` output format is prefered.
-//! 
+//!
 //! Author: Anatoly Weinstein
 //! Created: April 2026
 

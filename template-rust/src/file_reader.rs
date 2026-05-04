@@ -1,5 +1,5 @@
 //! For file reading.
-//! 
+//!
 //! Author: Anatoly Weinstein
 //! Created: April 2026
 
