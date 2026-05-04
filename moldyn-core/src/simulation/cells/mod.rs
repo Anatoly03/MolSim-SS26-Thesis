@@ -1,6 +1,6 @@
 //! TODO document
 
-use crate::{DirectSum, SimulationArgs};
+use crate::{DirectSum, ParticleContainer, SimulationArgs};
 use crate::{Force, LennardJonesForce};
 use crate::{Particle, simulation::Simulation};
 use std::collections::HashMap;
@@ -12,18 +12,14 @@ use std::sync::Arc;
 /// The generic type is the cell type, which is treated as an internal simulation.
 /// For example, if the subtype is [DirectSum][crate::DirectSum], then the particles
 /// in the cell will be calculated using the direct sum method.
-pub struct LinkedCells<Cell: Simulation> {
-    force: Arc<dyn Force>,
-
+pub struct LinkedCells<Cell: ParticleContainer> {
     /// The particles are stored in a hash map, where the key is the cell coordinates
     /// and the value representing the cell. The value is for LinkedCells a direct sum
     /// sub-simulation cell.
     cells: HashMap<Vec<i32>, Cell>,
-
-    args: SimulationArgs,
 }
 
-impl<Cell: Simulation> Simulation for LinkedCells<Cell> {
+impl<Cell: ParticleContainer> ParticleContainer for LinkedCells<Cell> {
     fn system_name(&self) -> &str {
         "linked-cells"
     }
@@ -50,30 +46,12 @@ impl<Cell: Simulation> Simulation for LinkedCells<Cell> {
     fn add_particles(&mut self, particles: Vec<Particle>) {
         todo!()
     }
-
-    fn get_force(&self) -> Arc<dyn Force> {
-        todo!()
-    }
-
-    fn set_force(&mut self, force: Arc<dyn Force>) {
-        todo!()
-    }
-
-    fn args(&self) -> super::SimulationArgs {
-        todo!()
-    }
-
-    fn set_args(&mut self, args: super::SimulationArgs) {
-        todo!()
-    }
 }
 
-impl<Cell: Simulation> Default for LinkedCells<Cell> {
+impl<Cell: ParticleContainer> Default for LinkedCells<Cell> {
     fn default() -> Self {
         Self {
-            force: Arc::new(LennardJonesForce::default()),
             cells: HashMap::new(),
-            args: SimulationArgs::default(),
         }
     }
 }
@@ -98,8 +76,8 @@ mod equivalence_tests {
             }
         }
 
-        let mut cells_simulation = LinkedCells::<DirectSum>::default();
-        let mut sum_simulation = DirectSum::default();
+        let mut cells_simulation = Simulation::<LinkedCells<DirectSum>>::default();
+        let mut sum_simulation = Simulation::<DirectSum>::default();
 
         cells_simulation.set_force(force.clone());
         sum_simulation.set_force(force);

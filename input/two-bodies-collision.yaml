@@ -2,7 +2,7 @@
 
 name: halleys-comet
 force: lennard-jones
-algorithm: direct-sum
+algorithm: linked-cells
 
 args:
   time_start: 0.0

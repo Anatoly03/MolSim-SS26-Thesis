@@ -1,8 +1,6 @@
 //! TODO document
 
-use crate::SimulationArgs;
-use crate::{Force, LennardJonesForce};
-use crate::{Particle, simulation::Simulation};
+use crate::{Force, LennardJonesForce, Particle, ParticleContainer, SimulationArgs};
 use std::sync::Arc;
 
 /// The [DirectSum] simulation method is the most intuitive way to process
@@ -13,12 +11,10 @@ use std::sync::Arc;
 /// is avoiding computing the same pair of particles twice.
 pub struct DirectSum {
     // TODO explain in slides why Arc works and Box does not
-    force: Arc<dyn Force>,
     particles: Vec<Particle>,
-    args: SimulationArgs,
 }
 
-impl Simulation for DirectSum {
+impl ParticleContainer for DirectSum {
     fn system_name(&self) -> &str {
         "direct-sum"
     }
@@ -61,30 +57,12 @@ impl Simulation for DirectSum {
     fn add_particles(&mut self, particles: Vec<Particle>) {
         self.particles.extend(particles);
     }
-
-    fn get_force(&self) -> Arc<dyn Force> {
-        self.force.clone()
-    }
-
-    fn set_force(&mut self, force: Arc<dyn Force>) {
-        self.force = force;
-    }
-
-    fn args(&self) -> SimulationArgs {
-        self.args.clone()
-    }
-
-    fn set_args(&mut self, args: SimulationArgs) {
-        self.args = args;
-    }
 }
 
 impl Default for DirectSum {
     fn default() -> Self {
         Self {
-            force: Arc::new(LennardJonesForce::default()),
             particles: Vec::new(),
-            args: SimulationArgs::default(),
         }
     }
 }

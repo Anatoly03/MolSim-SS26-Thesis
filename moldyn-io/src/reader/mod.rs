@@ -4,7 +4,7 @@
 mod entry;
 
 pub use entry::*;
-use moldyn_core::{Force, Simulation, SimulationArgs};
+use moldyn_core::{Force, SimulationTrait, SimulationArgs};
 use serde::{Deserialize, Serialize};
 use std::{
     io::{Error, ErrorKind::InvalidInput},
@@ -82,7 +82,7 @@ pub struct FileDefinition {
     /// algorithm: direct-sum
     /// ```
     #[serde(default)]
-    pub algorithm: Box<dyn Simulation>,
+    pub algorithm: Box<dyn SimulationTrait>,
 
     /// TODO document
     #[serde(default)]
@@ -152,7 +152,7 @@ impl TryFrom<PathBuf> for FileDefinition {
     }
 }
 
-impl From<FileDefinition> for Box<dyn Simulation> {
+impl From<FileDefinition> for Box<dyn SimulationTrait> {
     fn from(value: FileDefinition) -> Self {
         let FileDefinition {
             name: _,
