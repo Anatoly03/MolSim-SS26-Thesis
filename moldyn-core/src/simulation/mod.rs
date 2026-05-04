@@ -198,7 +198,7 @@ impl<'de> Visitor<'de> for SimulationVisitor {
     {
         match value.to_ascii_lowercase().as_str() {
             "direct-sum" | "ds" => Ok(Box::new(DirectSum::default())),
-            // TODO linked-cells
+            "linked-cells" | "lc" => Ok(Box::new(LinkedCells::<DirectSum>::default())),
             _ => Err(E::custom(format!("Unknown simulation type: {value}"))),
         }
     }

@@ -1,22 +1,31 @@
 //! TODO document
 
-use crate::SimulationArgs;
+use crate::{DirectSum, SimulationArgs};
 use crate::{Force, LennardJonesForce};
 use crate::{Particle, simulation::Simulation};
+use std::collections::HashMap;
 use std::sync::Arc;
 
 /// The [LinkedCells] simulation method is the a simple optimization of particle
 /// management over the quadratic [DirectSum][crate::DirectSum] method.
-pub struct LinkedCells {
-    // TODO explain in slides why Arc works and Box does not
+///
+/// The generic type is the cell type, which is treated as an internal simulation.
+/// For example, if the subtype is [DirectSum][crate::DirectSum], then the particles
+/// in the cell will be calculated using the direct sum method.
+pub struct LinkedCells<Cell: Simulation> {
     force: Arc<dyn Force>,
-    particles: Vec<Particle>,
+
+    /// The particles are stored in a hash map, where the key is the cell coordinates
+    /// and the value representing the cell. The value is for LinkedCells a direct sum
+    /// sub-simulation cell.
+    cells: HashMap<Vec<i32>, Cell>,
+
     args: SimulationArgs,
 }
 
-impl Simulation for LinkedCells {
+impl<Cell: Simulation> Simulation for LinkedCells<Cell> {
     fn system_name(&self) -> &str {
-        todo!()
+        "linked-cells"
     }
 
     fn particles(&self) -> &[Particle] {
@@ -32,7 +41,10 @@ impl Simulation for LinkedCells {
     }
 
     fn particle_count(&self) -> usize {
-        todo!()
+        self.cells
+            .values()
+            .flat_map(|cell| cell.particles())
+            .count()
     }
 
     fn add_particles(&mut self, particles: Vec<Particle>) {
@@ -56,12 +68,50 @@ impl Simulation for LinkedCells {
     }
 }
 
-impl Default for LinkedCells {
+impl<Cell: Simulation> Default for LinkedCells<Cell> {
     fn default() -> Self {
         Self {
             force: Arc::new(LennardJonesForce::default()),
-            particles: Vec::new(),
+            cells: HashMap::new(),
             args: SimulationArgs::default(),
+        }
+    }
+}
+
+#[cfg(test)]
+mod equivalence_tests {
+    use crate::{DirectSum, LennardJonesForce, LinkedCells, Particle, Simulation};
+    use std::sync::Arc;
+
+    #[test]
+    #[ignore = "not implemented"]
+    fn with_direct_sum() {
+        let mut particles = vec![];
+        let force = Arc::new(LennardJonesForce::default());
+
+        // cut off radius is 3.0 (default), so a chunk with 5.0 (default) in linked cells
+        // should be equivalent to direct sum
+
+        for x in 0..100 {
+            for y in 0..100 {
+                particles.push(Particle::at(x as f64, y as f64, 0.0).with_mass(1.0));
+            }
+        }
+
+        let mut cells_simulation = LinkedCells::<DirectSum>::default();
+        let mut sum_simulation = DirectSum::default();
+
+        cells_simulation.set_force(force.clone());
+        sum_simulation.set_force(force);
+
+        cells_simulation.add_particles(particles.clone());
+        sum_simulation.add_particles(particles);
+
+        for i in 0..10 {
+            cells_simulation.step((i as f64) * 0.01);
+            sum_simulation.step((i as f64) * 0.01);
+
+            assert_eq!(cells_simulation.particles(), sum_simulation.particles());
         }
     }
 }
