@@ -1,7 +1,7 @@
 //! Defines a VTK writer for the simulation data, outputting `.vtu` files.
 
 use super::OutputWriter;
-use moldyn_core::Simulation;
+use moldyn_core::SimulationTrait;
 use std::io::BufWriter;
 use vtkio::model::*;
 
@@ -116,7 +116,7 @@ impl OutputWriter for VtkWriter {
     fn write_frame(
         &mut self,
         writer: &mut BufWriter<std::fs::File>,
-        state: &dyn Simulation,
+        state: &dyn SimulationTrait,
     ) -> std::io::Result<()> {
         // equivalent cpp: auto points = vtkSmartPointer<vtkPoints>::New();
         let particle_count = state.particle_count();

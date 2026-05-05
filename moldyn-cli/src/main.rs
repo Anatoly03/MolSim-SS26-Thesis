@@ -106,7 +106,7 @@ pub fn main() {
     };
 
     // generate simulation
-    let mut simulation: Box<dyn Simulation> = input.into();
+    let mut simulation: Box<dyn SimulationTrait> = input.into();
 
     // set up output writer
     let output_extension = args.output.extension().unwrap_or(std::ffi::OsStr::new(""));

@@ -1,38 +1,47 @@
 //! TODO document
 
 mod args;
+mod cells;
+mod container;
 mod sum;
+mod dynsim;
 
-use crate::{Force, Particle};
+use crate::{Force, LennardJonesForce, Particle};
 pub use args::SimulationArgs;
-use serde::{Deserialize, Serialize, de::Visitor};
+pub use cells::LinkedCells;
+pub use container::ParticleContainer;
+use serde::{Serialize};
 use std::sync::Arc;
 pub use sum::DirectSum;
-
-// to self: tried to keep dyn-compatibility. following approaches failed:
-// - fn ...(... impl Fn) is technically generic
-// - type PairIter = ... is also generic/ typed
-// - returning `Iter` and `IterMut` works for `particles` (`particles_mut`)
-//   but `particle_pairs` had implementation problems returning slide::IntoIter
+pub use dynsim::SimulationTrait;
 
 /// An interface-level abstraction of a molecular dynamics simulation. A
 /// [Simulation] is a method of organizing the particles and forces in a way
 /// that allows for efficient computation.
-pub trait Simulation {
+pub struct Simulation<Container: ParticleContainer> {
+    // TODO explain in slides why Arc works and Box does not
+    force: Arc<dyn Force>,
+    container: Container,
+    args: SimulationArgs,
+}
+
+impl<Container: ParticleContainer> Simulation<Container> {
     /// # Returns
     ///
     /// Name of the simulation system, which is used for serialization and
     /// deserialization. The characters are expected to be in `lowercase`.
-    fn system_name(&self) -> &str;
+    fn system_name(&self) -> &str {
+        self.container.system_name()
+    }
 
     /// Get the particles in the simulation, returns as a slice.
     ///
     /// # Usage
     ///
     /// ```
-    /// use moldyn_core::{DirectSum, Simulation};
+    /// use moldyn_core::{DirectSum, Particle, Simulation, Vec3};
     ///
-    /// let simulation: Box<dyn Simulation> = Box::new(DirectSum::default());
+    /// let mut simulation: Box<dyn Simulation> = Box::new(DirectSum::default());
     ///
     /// simulation.add_particles(vec![
     ///     Particle::from_data(Vec3::zero(), Vec3::new(1.0, 0.0, 0.0), 1.0),
@@ -42,14 +51,16 @@ pub trait Simulation {
     ///     println!("Particle at position: {:?}", particle.get_position());
     /// }
     /// ```
-    fn particles(&self) -> &[Particle];
+    fn particles(&self) -> Box<dyn Iterator<Item = &Particle> + '_> {
+        self.container.particles()
+    }
 
     /// Get the particles in the simulation, returns as a mutable slice.
     ///
     /// # Usage
     ///
     /// ```
-    /// use moldyn_core::{DirectSum, Simulation};
+    /// use moldyn_core::{DirectSum, Particle, Simulation, Vec3};
     ///
     /// let mut simulation: Box<dyn Simulation> = Box::new(DirectSum::default());
     ///
@@ -61,14 +72,16 @@ pub trait Simulation {
     ///     particle.update_position(0.01);
     /// }
     /// ```
-    fn particles_mut(&mut self) -> &mut [Particle];
+    fn particles_mut(&mut self) -> Box<dyn Iterator<Item = &mut Particle> + '_> {
+        self.container.particles_mut()
+    }
 
     /// Invokes a lambda callback for each particle in the simulation.
     ///
     /// # Usage
     ///
     /// ```
-    /// use moldyn_core::{DirectSum, Simulation};
+    /// use moldyn_core::{DirectSum, Particle, Simulation, Vec3};
     ///
     /// let mut simulation: Box<dyn Simulation> = Box::new(DirectSum::default());
     ///
@@ -81,16 +94,12 @@ pub trait Simulation {
     /// });
     /// ```
     fn for_each_particles(&self, f: &mut dyn FnMut(&Particle)) {
-        for part in self.particles().iter() {
-            f(part);
-        }
+        self.container.for_each_particles(f);
     }
 
     /// Invokes a lambda callback for each particle (mutable) in the simulation.
     fn for_each_particles_mut(&mut self, f: &mut dyn FnMut(&mut Particle)) {
-        for part in self.particles_mut().iter_mut() {
-            f(part);
-        }
+        self.container.for_each_particles_mut(f);
     }
 
     /// The core method of the trait. Different implementations of [Simulation] vary
@@ -100,25 +109,39 @@ pub trait Simulation {
     /// - An iterator over distinct pairs of particles, accounting for symmetry.
     /// - If you receive a pair `(a, b)` it is guaranteed that you will not receive `(b, a)`.
     /// - There is no guarantee you will receive all pairs.
-    fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle));
+    fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle)) {
+        self.container.for_each_particle_pairs_mut(f);
+    }
 
     /// The number of particles in the simulation.
-    fn particle_count(&self) -> usize;
+    fn particle_count(&self) -> usize {
+        self.container.particle_count()
+    }
 
     /// Set the particles in the simulation.
-    fn add_particles(&mut self, particles: Vec<Particle>);
+    fn add_particles(&mut self, particles: Vec<Particle>) {
+        self.container.add_particles(particles);
+    }
 
     /// Get the force calculation method.
-    fn get_force(&self) -> Arc<dyn Force>;
+    fn get_force(&self) -> Arc<dyn Force> {
+        self.force.clone()
+    }
 
     /// Set the force calculation method.
-    fn set_force(&mut self, force: Arc<dyn Force>);
+    fn set_force(&mut self, force: Arc<dyn Force>) {
+        self.force = force;
+    }
 
     /// Get the simulation arguments.
-    fn args(&self) -> SimulationArgs;
+    fn args(&self) -> SimulationArgs {
+        self.args.clone()
+    }
 
     /// Set the simulation arguments.
-    fn set_args(&mut self, args: SimulationArgs);
+    fn set_args(&mut self, args: SimulationArgs) {
+        self.args = args;
+    }
 
     /// Updates the position of all particles.
     fn update_position(&mut self, delta_t: f64) {
@@ -151,18 +174,24 @@ pub trait Simulation {
     /// TODO document
     fn step(&mut self, delta_t: f64) {
         self.update_position(delta_t);
+        self.container.on_after_position_update();
         self.delay_force();
         self.update_force();
         // APPLY GRAVITY HERE
-        // CALCULATE BORDER BEHAVIOUR
+        self.container.on_after_force_update();
+        // TODO CALCULATE BORDER BEHAVIOUR in `on_after_force_update`
         self.update_velocity(delta_t);
+        self.container.on_after_velocity_update();
         // TODO UPDATE CURRENT TIME += DELTA TIME
     }
 
     // TODO PLOT PARTICLES
 }
 
-impl<'a> Serialize for dyn Simulation + 'a {
+impl<P> Serialize for Simulation<P>
+where
+    P: ParticleContainer + Serialize,
+{
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
@@ -171,49 +200,16 @@ impl<'a> Serialize for dyn Simulation + 'a {
     }
 }
 
-struct SimulationVisitor;
-
-impl<'de> Visitor<'de> for SimulationVisitor {
-    type Value = Box<dyn Simulation>;
-
-    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-        formatter.write_str("a simulation")
-    }
-
-    /// If the simulation is represented as a string, we can parse it as a known simulation
-    /// type. Strings are case-insensitive.
-    ///
-    /// # Example
-    ///
-    /// ```yaml
-    /// # Particle definition input file example
-    /// name: halleys-comet
-    /// algorithm: direct-sum
-    /// ```
-    fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        match value.to_ascii_lowercase().as_str() {
-            "direct-sum" | "ds" => Ok(Box::new(DirectSum::default())),
-            // TODO linked-cells
-            _ => Err(E::custom(format!("Unknown simulation type: {value}"))),
-        }
-    }
-}
-
-impl<'de> Deserialize<'de> for Box<dyn Simulation> {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        deserializer.deserialize_any(SimulationVisitor)
-    }
-}
-
-impl Default for Box<dyn Simulation> {
+impl<P> Default for Simulation<P>
+where
+    P: ParticleContainer + Default,
+{
     /// The default simulation system for this project is the direct sum.
     fn default() -> Self {
-        Box::new(DirectSum::default())
+        Self {
+            force: Arc::new(LennardJonesForce::default()),
+            container: P::default(),
+            args: SimulationArgs::default(),
+        }
     }
 }
