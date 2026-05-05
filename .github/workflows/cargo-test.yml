@@ -3,25 +3,25 @@
 
 name: Cargo Test
 
+# https://stackoverflow.com/a/64733705
 on:
-  push:
-    paths:
-      - moldyn-cli/**
-      - moldyn-core/**
-      - moldyn-io/**
-      - moldyn-wasm/**
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Cargo Build"]
+    types:
+      - completed
 env: 
   CARGO_TERM_COLOR: always
 
 jobs:
-  setup:
+  build:
     uses: ./.github/workflows/cargo.yml
 
   test:
     name: Test Rust Project
     runs-on: ubuntu-latest
+    # https://stackoverflow.com/a/71489231
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: [build]
     steps:
       - run: cargo test --verbose
   
