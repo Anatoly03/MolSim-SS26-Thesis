@@ -100,7 +100,7 @@ mod benchmark {
             ),
         ];
 
-        let mut simulation = DirectSum::default();
+        let mut simulation = Simulation::<DirectSum>::default();
         simulation.set_force(Arc::new(NewtonForce::default()));
         simulation.add_particles(particles);
 
@@ -130,7 +130,7 @@ mod benchmark {
             ),
         ];
 
-        let mut simulation = DirectSum::default();
+        let mut simulation = Simulation::<DirectSum>::default();
         simulation.set_force(Arc::new(LennardJonesForce::default()));
         simulation.add_particles(particles);
 
@@ -160,7 +160,7 @@ mod benchmark {
             ),
         ];
 
-        let mut simulation = DirectSum::default();
+        let mut simulation = Simulation::<DirectSum>::default();
         let force_expr = CustomForce::from_expr("M / r");
         let force = simulation.set_force(Arc::new(NewtonForce::default()));
         simulation.add_particles(particles);
@@ -197,7 +197,7 @@ mod benchmark {
 
         //     4.0 * self.epsilon * (frac12 - frac6)
 
-        let mut simulation = DirectSum::default();
+        let mut simulation = Simulation::<DirectSum>::default();
         let force_expr = CustomForce::from_expr("20.0 * ((1 / r)^12 - (1 / r)^6)");
         let force = simulation.set_force(Arc::new(NewtonForce::default()));
         simulation.add_particles(particles);
@@ -228,7 +228,7 @@ mod benchmark {
             ),
         ];
 
-        let mut simulation = DirectSum::default();
+        let mut simulation = Simulation::<DirectSum>::default();
         let force_expr = CustomForce::from_expr(
             "(1 / r)^12 - (1 / r)^11 + (1 / r)^10 - (1 / r)^9 + (1 / r)^6 - (1 / r)^5",
         );
@@ -248,7 +248,7 @@ mod benchmark {
             particles.push(Particle::at(x as f64, 0.0, 0.0).with_mass(1.0));
         }
 
-        let mut simulation = DirectSum::default();
+        let mut simulation = Simulation::<DirectSum>::default();
         simulation.set_force(Arc::new(NewtonForce::default()));
         simulation.add_particles(particles);
 
@@ -265,7 +265,7 @@ mod benchmark {
             particles.push(Particle::at(x as f64, 0.0, 0.0).with_mass(1.0));
         }
 
-        let mut simulation = DirectSum::default();
+        let mut simulation = Simulation::<DirectSum>::default();
         simulation.set_force(Arc::new(LennardJonesForce::default()));
         simulation.add_particles(particles);
 
@@ -284,7 +284,7 @@ mod benchmark {
             }
         }
 
-        let mut simulation = DirectSum::default();
+        let mut simulation = Simulation::<DirectSum>::default();
         simulation.set_force(Arc::new(NewtonForce::default()));
         simulation.add_particles(particles);
 
@@ -303,7 +303,7 @@ mod benchmark {
             }
         }
 
-        let mut simulation = DirectSum::default();
+        let mut simulation = Simulation::<DirectSum>::default();
         simulation.set_force(Arc::new(LennardJonesForce::default()));
         simulation.add_particles(particles);
 
@@ -324,7 +324,7 @@ mod benchmark {
             }
         }
 
-        let mut simulation = DirectSum::default();
+        let mut simulation = Simulation::<DirectSum>::default();
         simulation.set_force(Arc::new(NewtonForce::default()));
         simulation.add_particles(particles);
 
@@ -345,7 +345,7 @@ mod benchmark {
             }
         }
 
-        let mut simulation = DirectSum::default();
+        let mut simulation = Simulation::<DirectSum>::default();
         simulation.set_force(Arc::new(LennardJonesForce::default()));
         simulation.add_particles(particles);
 
