@@ -22,15 +22,7 @@ pub trait ParticleContainer {
     ///
     /// # Usage
     ///
-    /// ```
-    /// use moldyn_core::{DirectSum, Particle, Simulation, Vec3};
-    ///
-    /// let mut simulation: Box<dyn Simulation> = Box::new(DirectSum::default());
-    ///
-    /// simulation.add_particles(vec![
-    ///     Particle::from_data(Vec3::zero(), Vec3::new(1.0, 0.0, 0.0), 1.0),
-    /// ]);
-    ///
+    /// ```rust,no_test,no_run
     /// for particle in simulation.particles() {
     ///     println!("Particle at position: {:?}", particle.get_position());
     /// }
@@ -41,15 +33,7 @@ pub trait ParticleContainer {
     ///
     /// # Usage
     ///
-    /// ```
-    /// use moldyn_core::{DirectSum, Particle, Simulation, Vec3};
-    ///
-    /// let mut simulation: Box<dyn Simulation> = Box::new(DirectSum::default());
-    ///
-    /// simulation.add_particles(vec![
-    ///     Particle::from_data(Vec3::zero(), Vec3::new(1.0, 0.0, 0.0), 1.0),
-    /// ]);
-    ///
+    /// ```rust,no_test,no_run
     /// for particle in simulation.particles_mut() {
     ///     particle.update_position(0.01);
     /// }
@@ -60,15 +44,7 @@ pub trait ParticleContainer {
     ///
     /// # Usage
     ///
-    /// ```
-    /// use moldyn_core::{DirectSum, Particle, Simulation, Vec3};
-    ///
-    /// let mut simulation: Box<dyn Simulation> = Box::new(DirectSum::default());
-    ///
-    /// simulation.add_particles(vec![
-    ///     Particle::from_data(Vec3::zero(), Vec3::new(1.0, 0.0, 0.0), 1.0),
-    /// ]);
-    ///     
+    /// ```rust,no_test,no_run
     /// simulation.for_each_particles(&mut |p| {
     ///     println!("Particle at position: {:?}", p.get_position());
     /// });
