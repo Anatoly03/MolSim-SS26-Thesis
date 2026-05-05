@@ -19,12 +19,12 @@ impl ParticleContainer for DirectSum {
         "direct-sum"
     }
 
-    fn particles(&self) -> &[Particle] {
-        &self.particles
+    fn particles(&self) -> Box<dyn Iterator<Item = &Particle> + '_> {
+        Box::new(self.particles.iter())
     }
 
-    fn particles_mut(&mut self) -> &mut [Particle] {
-        &mut self.particles
+    fn particles_mut(&mut self) -> Box<dyn Iterator<Item = &mut Particle> + '_> {
+        Box::new(self.particles.iter_mut())
     }
 
     // index-based approach because two mutable iterators were problematic

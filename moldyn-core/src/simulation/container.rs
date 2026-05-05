@@ -35,7 +35,7 @@ pub trait ParticleContainer {
     ///     println!("Particle at position: {:?}", particle.get_position());
     /// }
     /// ```
-    fn particles(&self) -> &[Particle];
+    fn particles(&self) -> Box<dyn Iterator<Item = &Particle> + '_>;
 
     /// Get the particles in the simulation, returns as a mutable slice.
     ///
@@ -54,7 +54,7 @@ pub trait ParticleContainer {
     ///     particle.update_position(0.01);
     /// }
     /// ```
-    fn particles_mut(&mut self) -> &mut [Particle];
+    fn particles_mut(&mut self) -> Box<dyn Iterator<Item = &mut Particle> + '_>;
 
     /// Invokes a lambda callback for each particle in the simulation.
     ///
@@ -74,14 +74,14 @@ pub trait ParticleContainer {
     /// });
     /// ```
     fn for_each_particles(&self, f: &mut dyn FnMut(&Particle)) {
-        for part in self.particles().iter() {
+        for part in self.particles() {
             f(part);
         }
     }
 
     /// Invokes a lambda callback for each particle (mutable) in the simulation.
     fn for_each_particles_mut(&mut self, f: &mut dyn FnMut(&mut Particle)) {
-        for part in self.particles_mut().iter_mut() {
+        for part in self.particles_mut() {
             f(part);
         }
     }

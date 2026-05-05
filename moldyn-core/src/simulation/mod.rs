@@ -15,12 +15,6 @@ use std::sync::Arc;
 pub use sum::DirectSum;
 pub use dynsim::SimulationTrait;
 
-// to self: tried to keep dyn-compatibility. following approaches failed:
-// - fn ...(... impl Fn) is technically generic
-// - type PairIter = ... is also generic/ typed
-// - returning `Iter` and `IterMut` works for `particles` (`particles_mut`)
-//   but `particle_pairs` had implementation problems returning slide::IntoIter
-
 /// An interface-level abstraction of a molecular dynamics simulation. A
 /// [Simulation] is a method of organizing the particles and forces in a way
 /// that allows for efficient computation.
@@ -57,7 +51,7 @@ impl<Container: ParticleContainer> Simulation<Container> {
     ///     println!("Particle at position: {:?}", particle.get_position());
     /// }
     /// ```
-    fn particles(&self) -> &[Particle] {
+    fn particles(&self) -> Box<dyn Iterator<Item = &Particle> + '_> {
         self.container.particles()
     }
 
@@ -78,7 +72,7 @@ impl<Container: ParticleContainer> Simulation<Container> {
     ///     particle.update_position(0.01);
     /// }
     /// ```
-    fn particles_mut(&mut self) -> &mut [Particle] {
+    fn particles_mut(&mut self) -> Box<dyn Iterator<Item = &mut Particle> + '_> {
         self.container.particles_mut()
     }
 

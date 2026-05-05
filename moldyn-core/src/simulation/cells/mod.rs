@@ -24,16 +24,16 @@ impl<Cell: ParticleContainer> ParticleContainer for LinkedCells<Cell> {
         "linked-cells"
     }
 
-    fn particles(&self) -> &[Particle] {
-        todo!()
+    fn particles(&self) -> Box<dyn Iterator<Item = &Particle> + '_> {
+        Box::new(self.cells.values().flat_map(|cell| cell.particles()))
     }
 
-    fn particles_mut(&mut self) -> &mut [Particle] {
-        todo!()
+    fn particles_mut(&mut self) -> Box<dyn Iterator<Item = &mut Particle> + '_> {
+        Box::new(self.cells.values_mut().flat_map(|cell| cell.particles_mut()))
     }
 
     fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle)) {
-        todo!()
+        todo!("particle pairs iterator not implemented")
     }
 
     fn particle_count(&self) -> usize {
@@ -44,7 +44,7 @@ impl<Cell: ParticleContainer> ParticleContainer for LinkedCells<Cell> {
     }
 
     fn add_particles(&mut self, particles: Vec<Particle>) {
-        todo!()
+        todo!("add particles to cells not implemented")
     }
 }
 
@@ -89,7 +89,10 @@ mod equivalence_tests {
             cells_simulation.step((i as f64) * 0.01);
             sum_simulation.step((i as f64) * 0.01);
 
-            assert_eq!(cells_simulation.particles(), sum_simulation.particles());
+            assert_eq!(
+                cells_simulation.particles().collect::<Vec<_>>(),
+                sum_simulation.particles().collect::<Vec<_>>()
+            );
         }
     }
 }

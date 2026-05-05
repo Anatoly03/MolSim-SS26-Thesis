@@ -9,6 +9,15 @@ use crate::{Force, Particle};
 use serde::{Deserialize, Serialize, de::Visitor};
 use std::sync::Arc;
 
+// to self: tried to keep dyn-compatibility. following approaches failed:
+// - fn ...(... impl Fn) is technically generic
+// - type PairIter = ... is also generic/ typed
+// - returning `Iter` and `IterMut` works for `particles` (`particles_mut`)
+//   but `particle_pairs` had implementation problems returning slide::IntoIter
+// - returning a `Box<dyn Iterator<Item = &Particle>>` had lifetime problems.
+// 
+// works: boxed iterator with implicit lifetime
+
 /// Object-safe wrapper trait for dynamic simulations.
 ///
 /// Allows `Box<dyn SimulationTrait>` to be used when concrete container type is unknown.
@@ -36,7 +45,7 @@ pub trait SimulationTrait {
     ///     println!("Particle at position: {:?}", particle.get_position());
     /// }
     /// ```
-    fn particles(&self) -> &[Particle];
+    fn particles(&self) -> Box<dyn Iterator<Item = &Particle> + '_>;
 
     /// Get the particles in the simulation, returns as a mutable slice.
     ///
@@ -55,7 +64,7 @@ pub trait SimulationTrait {
     ///     particle.update_position(0.01);
     /// }
     /// ```
-    fn particles_mut(&mut self) -> &mut [Particle];
+    fn particles_mut(&mut self) -> Box<dyn Iterator<Item = &mut Particle> + '_>;
 
     /// Invokes a lambda callback for each particle in the simulation.
     ///
@@ -156,11 +165,11 @@ where
         Simulation::system_name(self)
     }
 
-    fn particles(&self) -> &[Particle] {
+    fn particles(&self) -> Box<dyn Iterator<Item = &Particle> + '_> {
         Simulation::particles(self)
     }
 
-    fn particles_mut(&mut self) -> &mut [Particle] {
+    fn particles_mut(&mut self) -> Box<dyn Iterator<Item = &mut Particle> + '_> {
         Simulation::particles_mut(self)
     }
 
