@@ -61,7 +61,7 @@ impl TryFrom<Expr> for CustomForce {
 
 #[cfg(test)]
 mod test {
-    use crate::{CustomForce, Particle, Force};
+    use crate::{CustomForce, Force, NewtonForce, Particle};
 
     /// This test validates that the variable `M` in custom force expression is
     /// the product of masses.
@@ -73,7 +73,10 @@ mod test {
         let p2 = Particle::at(1.0, 2.0, 4.0).with_mass(3.0);
 
         let potential = custom.potential(&p1, &p2);
-        assert_eq!(potential, -21.0, "potential should be negative the product of masses");
+        assert_eq!(
+            potential, -21.0,
+            "potential should be negative the product of masses"
+        );
     }
 
     /// This test validates that the variable `r` in custom force expression is
@@ -86,13 +89,44 @@ mod test {
         let p2 = Particle::at(1.0, 1.0, 4.0).with_mass(3.0);
 
         let potential = custom.potential(&p1, &p2);
-        assert_eq!(potential, -6.0, "potential should be negative the distance between particles");
+        assert_eq!(
+            potential, -6.0,
+            "potential should be negative the distance between particles"
+        );
     }
 
-    /// This test validates that newton is attractive. ( ͡° ͜ʖ ͡°)
+    /// This test validates that the variable `r` in custom force expression
+    /// is the distance between particles.
+    #[test]
+    fn custom_newton_equivalence() {
+        let custom = CustomForce::from_expr("M / r");
+        let newton = NewtonForce::default();
+
+        for x1 in 0..5 {
+            for y2 in 0..5 {
+                for mass1 in 1..5 {
+                    for mass2 in 1..5 {
+                        let p1 = Particle::at(x1 as f64, 0.0, 0.0).with_mass(mass1 as f64);
+                        let p2 = Particle::at(0.0, y2 as f64, 0.0).with_mass(mass2 as f64);
+
+                        let custom_potential = custom.potential(&p1, &p2);
+                        let newton_potential = newton.potential(&p1, &p2);
+
+                        assert_eq!(
+                            custom_potential, newton_potential,
+                            "custom potential should match newton potential for all combinations of x1, y2, mass1, and mass2"
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    /// This test validates that newton is attractive, even for the custom
+    /// force instance. ( ͡° ͜ʖ ͡°)
     #[test]
     fn newton_is_attractive() {
-        let newton = CustomForce::from_expr("M / r^2");
+        let newton = CustomForce::from_expr("M / r");
 
         let p1 = Particle::default().with_mass(1.0);
         let p2 = Particle::at(1.0, 0.0, 0.0).with_mass(1.0);
