@@ -100,4 +100,16 @@ pub trait ParticleContainer {
 
     /// Set the particles in the simulation.
     fn add_particles(&mut self, particles: Vec<Particle>);
+
+    /// Event method for the simulation, after position was updated for all particles, but
+    /// before forces were reset or applied. Here particle cell reindexing can occur.
+    fn on_after_position_update(&mut self) {}
+
+    /// Event method for the simulation, after force was computed for all particles, but
+    /// before velocity was updated for all particles. Here border force can be calculated.
+    fn on_after_force_update(&mut self) {}
+
+    /// Event method for the simulation, after velocity was computed for all particles at the
+    /// end of a time step.
+    fn on_after_velocity_update(&mut self) {}
 }

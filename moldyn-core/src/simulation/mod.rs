@@ -174,11 +174,14 @@ impl<Container: ParticleContainer> Simulation<Container> {
     /// TODO document
     fn step(&mut self, delta_t: f64) {
         self.update_position(delta_t);
+        self.container.on_after_position_update();
         self.delay_force();
         self.update_force();
         // APPLY GRAVITY HERE
-        // CALCULATE BORDER BEHAVIOUR
+        self.container.on_after_force_update();
+        // TODO CALCULATE BORDER BEHAVIOUR in `on_after_force_update`
         self.update_velocity(delta_t);
+        self.container.on_after_velocity_update();
         // TODO UPDATE CURRENT TIME += DELTA TIME
     }
 
