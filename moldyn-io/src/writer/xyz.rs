@@ -1,7 +1,7 @@
 //! Defines a XYZ writer for the simulation data, outputting `.xyz` files.
 
 use super::OutputWriter;
-use moldyn_core::Simulation;
+use moldyn_core::SimulationTrait;
 use std::io::{BufWriter, Write};
 
 /// A simple XYZ writer for the simulation data. This implementation is not
@@ -31,7 +31,7 @@ impl OutputWriter for XyzWriter {
     fn write_frame(
         &mut self,
         writer: &mut BufWriter<std::fs::File>,
-        state: &dyn Simulation,
+        state: &dyn SimulationTrait,
     ) -> std::io::Result<()> {
         writeln!(writer, "{}", state.particle_count())?;
         writeln!(

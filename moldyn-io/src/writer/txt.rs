@@ -3,7 +3,7 @@
 //! output files and is deprecated for future use.
 
 use super::OutputWriter;
-use moldyn_core::Simulation;
+use moldyn_core::SimulationTrait;
 use std::io::{BufWriter, Write};
 
 /// A simple text writer for the simulation data. This implementation logs
@@ -32,7 +32,7 @@ impl OutputWriter for TxtWriter {
     fn write_frame(
         &mut self,
         writer: &mut BufWriter<std::fs::File>,
-        state: &dyn Simulation,
+        state: &dyn SimulationTrait,
     ) -> std::io::Result<()> {
         for p in state.particles() {
             writeln!(writer, "{p:?}").expect("Error writing to output file");

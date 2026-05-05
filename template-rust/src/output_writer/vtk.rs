@@ -1,3 +1,8 @@
+//! For writing VTK files.
+//!
+//! Author: Anatoly Weinstein
+//! Created: April 2026
+
 use crate::output_writer::OutputWriter;
 use crate::particle::Particle;
 use std::fs::File;

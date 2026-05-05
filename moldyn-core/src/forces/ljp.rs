@@ -21,6 +21,13 @@ impl Force for LennardJonesForce {
         "lennard-jones"
     }
 
+    fn matches_name(&self, name: &str) -> bool {
+        matches!(
+            name.to_ascii_lowercase().as_str(),
+            "lennardjones" | "lennard-jones" | "lj"
+        )
+    }
+
     fn potential(&self, particle: &Particle, other: &Particle) -> f64 {
         let distance = Particle::distance(particle, other);
 

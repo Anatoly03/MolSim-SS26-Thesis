@@ -1,7 +1,7 @@
 //! Defines a YAML writer for the simulation data.
 
 use super::OutputWriter;
-use moldyn_core::Simulation;
+use moldyn_core::SimulationTrait;
 use std::io::{BufWriter, Write};
 
 /// A simple YAML writer for the simulation data.
@@ -47,7 +47,7 @@ impl OutputWriter for YamlWriter {
     fn write_frame(
         &mut self,
         writer: &mut BufWriter<std::fs::File>,
-        state: &dyn Simulation,
+        state: &dyn SimulationTrait,
     ) -> std::io::Result<()> {
         writeln!(
             writer,
