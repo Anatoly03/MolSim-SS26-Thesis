@@ -3,17 +3,17 @@
 mod args;
 mod cells;
 mod container;
-mod sum;
 mod dynsim;
+mod sum;
 
 use crate::{Force, LennardJonesForce, Particle};
 pub use args::SimulationArgs;
 pub use cells::LinkedCells;
 pub use container::ParticleContainer;
-use serde::{Serialize};
+pub use dynsim::SimulationTrait;
+use serde::Serialize;
 use std::sync::Arc;
 pub use sum::DirectSum;
-pub use dynsim::SimulationTrait;
 
 /// An interface-level abstraction of a molecular dynamics simulation. A
 /// [Simulation] is a method of organizing the particles and forces in a way

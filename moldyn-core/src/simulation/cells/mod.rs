@@ -1,10 +1,8 @@
 //! TODO document
 
-use crate::{DirectSum, ParticleContainer, SimulationArgs, Vec3};
-use crate::{Force, LennardJonesForce};
-use crate::{Particle, simulation::Simulation};
+use crate::Particle;
+use crate::{ParticleContainer, Vec3};
 use std::collections::HashMap;
-use std::sync::Arc;
 
 /// The [LinkedCells] simulation method is the a simple optimization of particle
 /// management over the quadratic [DirectSum][crate::DirectSum] method.
@@ -109,8 +107,7 @@ where
     fn add_particles(&mut self, particles: Vec<Particle>) {
         for p in particles {
             let cell_coords = self.get_cell_coords(p.get_position());
-            let cell_ref = self.cells.entry(cell_coords).or_insert_with(Cell::default);
-
+            let cell_ref = self.cells.entry(cell_coords).or_default();
             cell_ref.add_particles(vec![p]);
         }
     }
@@ -127,8 +124,8 @@ where
                 // Move particle to new cell.
                 new_cells
                     .entry(self.get_cell_coords(p.get_position()))
-                    .or_insert_with(Cell::default)
-                    .add_particles(vec![p.clone()]);
+                    .or_default()
+                    .add_particles(vec![*p]);
             }
         }
 

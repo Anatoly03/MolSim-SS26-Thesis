@@ -15,7 +15,7 @@ use std::sync::Arc;
 // - returning `Iter` and `IterMut` works for `particles` (`particles_mut`)
 //   but `particle_pairs` had implementation problems returning slide::IntoIter
 // - returning a `Box<dyn Iterator<Item = &Particle>>` had lifetime problems.
-// 
+//
 // works: boxed iterator with implicit lifetime
 
 /// Object-safe wrapper trait for dynamic simulations.
@@ -54,7 +54,7 @@ pub trait SimulationTrait {
     ///
     /// # Usage
     ///
-    /// ```rust,no_test,ignore 
+    /// ```rust,no_test,ignore
     /// simulation.for_each_particles(&mut |p| {
     ///     println!("Particle at position: {:?}", p.get_position());
     /// });

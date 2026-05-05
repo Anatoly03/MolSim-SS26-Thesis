@@ -1,4 +1,4 @@
-use moldyn_core::{DirectSum, Simulation};
+use moldyn_core::{DirectSum, Simulation, SimulationTrait};
 use wasm_bindgen::prelude::*;
 
 use crate::particle::ParticleWrapper;
@@ -7,7 +7,7 @@ use crate::particle::ParticleWrapper;
 #[wasm_bindgen(js_name = Simulation)]
 pub struct SimulationWrapper {
     #[wasm_bindgen(skip)]
-    sum: Box<dyn Simulation>,
+    sum: Box<dyn SimulationTrait>,
 }
 
 #[wasm_bindgen]
@@ -16,7 +16,7 @@ impl SimulationWrapper {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
         Self {
-            sum: Box::new(DirectSum::default()),
+            sum: Box::new(Simulation::<DirectSum>::default()),
         }
     }
 
@@ -43,6 +43,6 @@ impl SimulationWrapper {
     /// Retrieves the current particles in the simulation as readonly instances.
     #[wasm_bindgen]
     pub fn particles(&self) -> Vec<ParticleWrapper> {
-        self.sum.particles().iter().map(|p| (*p).into()).collect()
+        self.sum.particles().map(|p| (*p).into()).collect()
     }
 }

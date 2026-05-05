@@ -32,7 +32,11 @@ pub trait OutputWriter {
     fn next_frame_number(&mut self) -> usize;
 
     /// Writes a single frame of the simulation state to the provided writer.
-    fn write_frame(&mut self, writer: &mut BufWriter<File>, state: &dyn SimulationTrait) -> Result<()>;
+    fn write_frame(
+        &mut self,
+        writer: &mut BufWriter<File>,
+        state: &dyn SimulationTrait,
+    ) -> Result<()>;
 
     /// The file extension used in file writing.
     fn extension(&self) -> &str;

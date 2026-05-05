@@ -1,7 +1,6 @@
 //! TODO document
 
-use crate::{Force, LennardJonesForce, Particle, ParticleContainer, SimulationArgs};
-use std::sync::Arc;
+use crate::{Particle, ParticleContainer};
 
 /// The [DirectSum] simulation method is the most intuitive way to process
 /// a molecular dynamics simulation. It bases the computation on the
@@ -9,6 +8,7 @@ use std::sync::Arc;
 ///
 /// **Newton Pair Optimization**: The only optimization [DirectSum] performs
 /// is avoiding computing the same pair of particles twice.
+#[derive(Default)]
 pub struct DirectSum {
     // TODO explain in slides why Arc works and Box does not
     particles: Vec<Particle>,
@@ -56,14 +56,6 @@ impl ParticleContainer for DirectSum {
 
     fn add_particles(&mut self, particles: Vec<Particle>) {
         self.particles.extend(particles);
-    }
-}
-
-impl Default for DirectSum {
-    fn default() -> Self {
-        Self {
-            particles: Vec::new(),
-        }
     }
 }
 

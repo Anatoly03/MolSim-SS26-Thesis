@@ -6,7 +6,10 @@
 
 use serde::{Deserialize, Serialize, de::Visitor};
 use std::{
-    fmt::Display, hash::Hash, marker::PhantomData, ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign}
+    fmt::Display,
+    hash::Hash,
+    marker::PhantomData,
+    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
 };
 
 /// A struct representing a three-dimensional [mathematical vector](https://en.wikipedia.org/wiki/Vector_%28mathematics_and_physics%29).
@@ -359,7 +362,7 @@ impl<T: Display> Display for Vec3<T> {
     }
 }
 
-impl <T: Hash> Hash for Vec3<T> {
+impl<T: Hash> Hash for Vec3<T> {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
         self.x.hash(state);
         self.y.hash(state);
