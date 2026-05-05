@@ -4,14 +4,16 @@ mod args;
 mod cells;
 mod container;
 mod sum;
+mod dynsim;
 
 use crate::{Force, LennardJonesForce, Particle};
 pub use args::SimulationArgs;
 pub use cells::LinkedCells;
 pub use container::ParticleContainer;
-use serde::{Deserialize, Serialize, de::Visitor};
+use serde::{Serialize};
 use std::sync::Arc;
 pub use sum::DirectSum;
+pub use dynsim::SimulationTrait;
 
 // to self: tried to keep dyn-compatibility. following approaches failed:
 // - fn ...(... impl Fn) is technically generic
@@ -189,52 +191,6 @@ impl<Container: ParticleContainer> Simulation<Container> {
     // TODO PLOT PARTICLES
 }
 
-/// Object-safe wrapper trait for dynamic simulations.
-/// 
-/// Allows `Box<dyn SimulationDyn>` to be used when concrete container type is unknown.
-pub trait SimulationTrait {
-    fn system_name(&self) -> &str;
-    fn particles(&self) -> &[Particle];
-    fn particles_mut(&mut self) -> &mut [Particle];
-    fn for_each_particles(&self, f: &mut dyn FnMut(&Particle));
-    fn for_each_particles_mut(&mut self, f: &mut dyn FnMut(&mut Particle));
-    fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle));
-    fn particle_count(&self) -> usize;
-    fn add_particles(&mut self, particles: Vec<Particle>);
-    fn get_force(&self) -> Arc<dyn Force>;
-    fn set_force(&mut self, force: Arc<dyn Force>);
-    fn args(&self) -> SimulationArgs;
-    fn set_args(&mut self, args: SimulationArgs);
-    fn update_position(&mut self, delta_t: f64);
-    fn delay_force(&mut self);
-    fn update_force(&mut self);
-    fn update_velocity(&mut self, delta_t: f64);
-    fn step(&mut self, delta_t: f64);
-}
-
-impl<P> SimulationTrait for Simulation<P>
-where
-    P: ParticleContainer + 'static,
-{
-    fn system_name(&self) -> &str { Simulation::system_name(self) }
-    fn particles(&self) -> &[Particle] { Simulation::particles(self) }
-    fn particles_mut(&mut self) -> &mut [Particle] { Simulation::particles_mut(self) }
-    fn for_each_particles(&self, f: &mut dyn FnMut(&Particle)) { Simulation::for_each_particles(self, f) }
-    fn for_each_particles_mut(&mut self, f: &mut dyn FnMut(&mut Particle)) { Simulation::for_each_particles_mut(self, f) }
-    fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle)) { Simulation::for_each_particle_pairs_mut(self, f) }
-    fn particle_count(&self) -> usize { Simulation::particle_count(self) }
-    fn add_particles(&mut self, particles: Vec<Particle>) { Simulation::add_particles(self, particles) }
-    fn get_force(&self) -> Arc<dyn Force> { Simulation::get_force(self) }
-    fn set_force(&mut self, force: Arc<dyn Force>) { Simulation::set_force(self, force) }
-    fn args(&self) -> SimulationArgs { Simulation::args(self) }
-    fn set_args(&mut self, args: SimulationArgs) { Simulation::set_args(self, args) }
-    fn update_position(&mut self, delta_t: f64) { Simulation::update_position(self, delta_t) }
-    fn delay_force(&mut self) { Simulation::delay_force(self) }
-    fn update_force(&mut self) { Simulation::update_force(self) }
-    fn update_velocity(&mut self, delta_t: f64) { Simulation::update_velocity(self, delta_t) }
-    fn step(&mut self, delta_t: f64) { Simulation::step(self, delta_t) }
-}
-
 impl<P> Serialize for Simulation<P>
 where
     P: ParticleContainer + Serialize,
@@ -244,61 +200,6 @@ where
         S: serde::Serializer,
     {
         serializer.serialize_str(self.system_name())
-    }
-}
-
-impl Serialize for Box<dyn SimulationTrait> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        serializer.serialize_str(self.system_name())
-    }
-}
-
-struct BoxSimVisitor;
-
-impl<'de> Visitor<'de> for BoxSimVisitor {
-    type Value = Box<dyn SimulationTrait>;
-
-    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-        formatter.write_str("a simulation type name (direct-sum, ds, linked-cells, or lc)")
-    }
-
-    /// If the simulation is represented as a string, parse it as a known simulation type.
-    /// Strings are case-insensitive.
-    ///
-    /// # Example
-    ///
-    /// ```yaml
-    /// # Particle definition input file example
-    /// name: halleys-comet
-    /// algorithm: direct-sum
-    /// ```
-    fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        match value.to_ascii_lowercase().as_str() {
-            "direct-sum" | "ds" => Ok(Box::new(Simulation::<DirectSum>::default())),
-            "linked-cells" | "lc" => Ok(Box::new(Simulation::<LinkedCells<DirectSum>>::default())),
-            _ => Err(E::custom(format!("Unknown simulation type: {value}"))),
-        }
-    }
-}
-
-impl<'de> Deserialize<'de> for Box<dyn SimulationTrait> {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        deserializer.deserialize_any(BoxSimVisitor)
-    }
-}
-
-impl Default for Box<dyn SimulationTrait> {
-    fn default() -> Self {
-        Box::new(Simulation::<DirectSum>::default())
     }
 }
 
