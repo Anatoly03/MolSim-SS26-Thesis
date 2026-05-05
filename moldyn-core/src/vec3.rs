@@ -449,6 +449,7 @@ impl Vec3<$t> {
 }
 
 impl Copy for Vec3<$t> {}
+impl Eq for Vec3<$t> {}
     )*};
 }
 

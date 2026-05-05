@@ -1,6 +1,6 @@
 //! TODO document
 
-use crate::{DirectSum, ParticleContainer, SimulationArgs};
+use crate::{DirectSum, ParticleContainer, SimulationArgs, Vec3};
 use crate::{Force, LennardJonesForce};
 use crate::{Particle, simulation::Simulation};
 use std::collections::HashMap;
@@ -16,10 +16,17 @@ pub struct LinkedCells<Cell: ParticleContainer> {
     /// The particles are stored in a hash map, where the key is the cell coordinates
     /// and the value representing the cell. The value is for LinkedCells a direct sum
     /// sub-simulation cell.
-    cells: HashMap<Vec<i32>, Cell>,
+    cells: HashMap<Vec3<i32>, Cell>,
+
+    /// The size of the space division in this simulation. The cell size should be larger
+    /// than the half the cut off radius.
+    cell_size: Vec3<f64>,
 }
 
-impl<Cell: ParticleContainer> ParticleContainer for LinkedCells<Cell> {
+impl<Cell> ParticleContainer for LinkedCells<Cell>
+where 
+    Cell: ParticleContainer + Default,
+{
     fn system_name(&self) -> &str {
         "linked-cells"
     }
@@ -44,7 +51,16 @@ impl<Cell: ParticleContainer> ParticleContainer for LinkedCells<Cell> {
     }
 
     fn add_particles(&mut self, particles: Vec<Particle>) {
-        todo!("add particles to cells not implemented")
+        for p in particles {
+            let cx = (p.get_position().x / self.cell_size.x).floor() as i32;
+            let cy = (p.get_position().y / self.cell_size.y).floor() as i32;
+            let cz = (p.get_position().z / self.cell_size.z).floor() as i32;
+
+            let cell_coords = Vec3::new(cx, cy, cz);
+            let cell_ref = self.cells.entry(cell_coords).or_insert_with(Cell::default);
+
+            cell_ref.add_particles(vec![p]);
+        }
     }
 }
 
@@ -52,6 +68,7 @@ impl<Cell: ParticleContainer> Default for LinkedCells<Cell> {
     fn default() -> Self {
         Self {
             cells: HashMap::new(),
+            cell_size: Vec3::new(5.0, 5.0, 5.0),
         }
     }
 }
