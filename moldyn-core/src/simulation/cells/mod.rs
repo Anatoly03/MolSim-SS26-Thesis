@@ -23,6 +23,20 @@ pub struct LinkedCells<Cell: ParticleContainer> {
     cell_size: Vec3<f64>,
 }
 
+impl<Cell> LinkedCells<Cell>
+where
+    Cell: ParticleContainer + Default,
+{
+    /// Computes the cell coordinates for a given position.
+    fn get_cell_coords(&self, pos: Vec3<f64>) -> Vec3<i32> {
+        Vec3::new(
+            (pos.x / self.cell_size.x).floor() as i32,
+            (pos.y / self.cell_size.y).floor() as i32,
+            (pos.z / self.cell_size.z).floor() as i32,
+        )
+    }
+}
+
 impl<Cell> ParticleContainer for LinkedCells<Cell>
 where
     Cell: ParticleContainer + Default,
@@ -94,15 +108,31 @@ where
 
     fn add_particles(&mut self, particles: Vec<Particle>) {
         for p in particles {
-            let cx = (p.get_position().x / self.cell_size.x).floor() as i32;
-            let cy = (p.get_position().y / self.cell_size.y).floor() as i32;
-            let cz = (p.get_position().z / self.cell_size.z).floor() as i32;
-
-            let cell_coords = Vec3::new(cx, cy, cz);
+            let cell_coords = self.get_cell_coords(p.get_position());
             let cell_ref = self.cells.entry(cell_coords).or_insert_with(Cell::default);
 
             cell_ref.add_particles(vec![p]);
         }
+    }
+
+    /// Reallocate particles into new cells after position update.
+    fn on_after_position_update(&mut self) {
+        let mut new_cells: HashMap<Vec3<i32>, Cell> = HashMap::new();
+
+        // TODO currently if particle moves "forward" it will be iterated over twice:
+        // old cell reindex
+        // new cell check
+        for cell in self.cells.values() {
+            for p in cell.particles() {
+                // Move particle to new cell.
+                new_cells
+                    .entry(self.get_cell_coords(p.get_position()))
+                    .or_insert_with(Cell::default)
+                    .add_particles(vec![p.clone()]);
+            }
+        }
+
+        self.cells = new_cells;
     }
 }
 
