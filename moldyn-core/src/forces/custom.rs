@@ -95,8 +95,8 @@ mod test {
         );
     }
 
-    /// This test validates that the variable `r` in custom force expression
-    /// is the distance between particles.
+    /// This test validates that the the potential formula `M / r` is
+    /// equivalent to the Newtonian potential with no gravity factor.
     #[test]
     fn custom_newton_equivalence() {
         let custom = CustomForce::from_expr("M / r");
