@@ -187,7 +187,7 @@ mod equivalence_tests {
 mod benchmark {
     use crate::{
         CustomForce, DirectSum, LennardJonesForce, LinkedCells, NewtonForce, Particle, Simulation,
-        SimulationArgs, Vec3,
+        SimulationArgs, Vec3, simulation,
     };
     use meval::Expr;
     use std::sync::Arc;
@@ -202,6 +202,7 @@ mod benchmark {
         }
 
         let mut simulation = Simulation::<LinkedCells<DirectSum>>::default();
+        simulation.container.cell_size = Vec3::new(3.0, 3.0, 3.0);
         simulation.set_force(Arc::new(NewtonForce::default()));
         simulation.add_particles(particles);
 
@@ -219,6 +220,7 @@ mod benchmark {
         }
 
         let mut simulation = Simulation::<LinkedCells<DirectSum>>::default();
+        simulation.container.cell_size = Vec3::new(3.0, 3.0, 3.0);
         simulation.set_force(Arc::new(LennardJonesForce::default()));
         simulation.add_particles(particles);
 
@@ -238,6 +240,7 @@ mod benchmark {
         }
 
         let mut simulation = Simulation::<LinkedCells<DirectSum>>::default();
+        simulation.container.cell_size = Vec3::new(3.0, 3.0, 3.0);
         simulation.set_force(Arc::new(NewtonForce::default()));
         simulation.add_particles(particles);
 
@@ -257,6 +260,7 @@ mod benchmark {
         }
 
         let mut simulation = Simulation::<LinkedCells<DirectSum>>::default();
+        simulation.container.cell_size = Vec3::new(3.0, 3.0, 3.0);
         simulation.set_force(Arc::new(LennardJonesForce::default()));
         simulation.add_particles(particles);
 
@@ -278,6 +282,7 @@ mod benchmark {
         }
 
         let mut simulation = Simulation::<LinkedCells<DirectSum>>::default();
+        simulation.container.cell_size = Vec3::new(3.0, 3.0, 3.0);
         simulation.set_force(Arc::new(NewtonForce::default()));
         simulation.add_particles(particles);
 
@@ -299,6 +304,96 @@ mod benchmark {
         }
 
         let mut simulation = Simulation::<LinkedCells<DirectSum>>::default();
+        simulation.container.cell_size = Vec3::new(3.0, 3.0, 3.0);
+        simulation.set_force(Arc::new(LennardJonesForce::default()));
+        simulation.add_particles(particles);
+
+        b.iter(|| {
+            simulation.step(0.01);
+        });
+    }
+
+    #[bench]
+    fn ten_thousand_bodies(b: &mut Bencher) {
+        let mut particles = vec![];
+
+        for x in 0..100 {
+            for y in 0..10 {
+                for z in 0..10 {
+                    particles.push(Particle::at(x as f64, y as f64, 0.0).with_mass(1.0));
+                }
+            }
+        }
+
+        let mut simulation = Simulation::<LinkedCells<DirectSum>>::default();
+        simulation.container.cell_size = Vec3::new(3.0, 3.0, 3.0);
+        simulation.set_force(Arc::new(NewtonForce::default()));
+        simulation.add_particles(particles);
+
+        b.iter(|| {
+            simulation.step(0.01);
+        });
+    }
+
+    #[bench]
+    fn ten_thousand_bodies_lennard_jones(b: &mut Bencher) {
+        let mut particles = vec![];
+
+        for x in 0..100 {
+            for y in 0..10 {
+                for z in 0..10 {
+                    particles.push(Particle::at(x as f64, y as f64, 0.0).with_mass(1.0));
+                }
+            }
+        }
+
+        let mut simulation = Simulation::<LinkedCells<DirectSum>>::default();
+        simulation.container.cell_size = Vec3::new(3.0, 3.0, 3.0);
+        simulation.set_force(Arc::new(LennardJonesForce::default()));
+        simulation.add_particles(particles);
+
+        b.iter(|| {
+            simulation.step(0.01);
+        });
+    }
+
+    #[bench]
+    fn hundred_thousand_bodies(b: &mut Bencher) {
+        let mut particles = vec![];
+
+        for x in 0..100 {
+            for y in 0..100 {
+                for z in 0..10 {
+                    particles.push(Particle::at(x as f64, y as f64, 0.0).with_mass(1.0));
+                }
+            }
+        }
+
+        let mut simulation = Simulation::<LinkedCells<DirectSum>>::default();
+        simulation.container.cell_size = Vec3::new(3.0, 3.0, 3.0);
+        simulation.set_force(Arc::new(NewtonForce::default()));
+        simulation.add_particles(particles);
+
+        b.iter(|| {
+            simulation.step(0.01);
+        });
+    }
+
+    #[bench]
+    #[ignore = "test is too slow"]
+    fn hundred_thousand_bodies_lennard_jones(b: &mut Bencher) {
+        let mut particles = vec![];
+
+        for x in 0..100 {
+            for y in 0..100 {
+                for z in 0..10 {
+                    particles.push(Particle::at(x as f64, y as f64, 0.0).with_mass(1.0));
+                }
+            }
+        }
+
+        let mut simulation = Simulation::<LinkedCells<DirectSum>>::default();
+        simulation.container.cell_size = Vec3::new(3.0, 3.0, 3.0);
         simulation.set_force(Arc::new(LennardJonesForce::default()));
         simulation.add_particles(particles);
 

@@ -21,7 +21,7 @@ pub use sum::DirectSum;
 pub struct Simulation<Container: ParticleContainer> {
     // TODO explain in slides why Arc works and Box does not
     force: Arc<dyn Force>,
-    container: Container,
+    pub container: Container,
     args: SimulationArgs,
 }
 
