@@ -23,6 +23,13 @@ impl Force for NewtonForce {
         "newton"
     }
 
+    fn matches_name(&self, name: &str) -> bool {
+        matches!(
+            name.to_ascii_lowercase().as_str(),
+            "newton" | "gravitational" | "gravity"
+        )
+    }
+
     /// Calculates the potential energy between two particles according to Newton's
     /// law of universal gravitation.
     ///
