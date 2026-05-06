@@ -18,7 +18,8 @@ target_include_directories(MolSimCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cpp-mol
 
 # Library for the file system bindings and input/output operations
 add_library(MolSimIO ${IO_SRC})
-target_include_directories(MolSimCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cpp-moldyn-io)
+target_link_libraries(MolSimIO PRIVATE MolSimCore)
+target_include_directories(MolSimIO PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cpp-moldyn-io)
 
 # Executable for the command-line interface application
 add_executable(MolSim ${CLI_SRC})
