@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(MolDyn VERSION 0.0.1 LANGUAGES CXX)
@@ -18,7 +18,8 @@ target_include_directories(MolSimCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cpp-mol
 
 # Library for the file system bindings and input/output operations
 add_library(MolSimIO ${IO_SRC})
-target_include_directories(MolSimCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cpp-moldyn-io)
+target_link_libraries(MolSimIO PRIVATE MolSimCore)
+target_include_directories(MolSimIO PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cpp-moldyn-io)
 
 # Executable for the command-line interface application
 add_executable(MolSim ${CLI_SRC})
