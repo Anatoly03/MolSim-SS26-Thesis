@@ -4,6 +4,7 @@
 
 #include "Force.h"
 #include "Particle.h"
+#include "Vec3.h"
 
 /**
  * @brief Calculates the force between two particles equivalent to the
