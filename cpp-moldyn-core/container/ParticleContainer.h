@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <functional>
 #include "Particle.h"
 
 /**
@@ -12,110 +13,46 @@
  */
 class ParticleContainer
 {
-    /**
-     * Abstraction of a generic input iterator.
-     */
-    template <typename T>
-    using input_iterator = std::iterator<
-        std::input_iterator_tag,
-        T,
-        std::ptrdiff_t,
-        T *,
-        T &>;
-
-    /**
-     * @brief An iterator type for iterating over particles in the container.
-     */
-    using particle_iterator = input_iterator<const Particle>;
-
-    /**
-     * @brief An iterator type for iterating over particles in the container.
-     */
-    using particle_mut_iterator = input_iterator<Particle>;
-
-    /**
-     * @brief An iterator type for iterating over pairs of particles in
-     * the container.
-     */
-    using particle_pair_iterator = input_iterator<std::pair<const Particle, const Particle>>;
-
-    /**
-     * @brief An iterator type for iterating over pairs of particles in
-     * the container.
-     */
-    using particle_pair_mut_iterator = input_iterator<std::pair<Particle, Particle>>;
-
 public:
     /**
      * @brief Iterates over each particle.
-     *
+     * 
      * # Example
-     *
+     * 
      * ```cpp
      * ParticleContainer container;
-     *
-     * for (Particle &p : container.particles())
-     * {
-     *     // do something with p
-     * }
+     * 
+     * container.for_each_particles([](const Particle &particle) {
+     *     // do something with particle
+     * });
      * ```
      */
-    virtual particle_iterator &particles() = 0;
+    virtual void for_each_particles(std::function<void(const Particle&)> callback) const = 0;
 
     /**
-     * @brief Iterates over each particle.
-     *
+     * @brief Iterates over each particle mutably.
+     * 
      * # Example
-     *
+     * 
      * ```cpp
      * ParticleContainer container;
-     *
-     * for (Particle &p : container.particles_mut())
-     * {
-     *     p.apply_force(Vec3<double>(1.0, 0.0, 0.0));
-     * }
+     * 
+     * container.for_each_particles([](const Particle &particle) {
+     *     // do something with particle mutably
+     * });
      * ```
      */
-    virtual particle_mut_iterator &particles_mut() = 0;
-
-    /**
-     * @brief Iterates over each pair of particles.
-     *
-     * # Example
-     *
-     * ```cpp
-     * ParticleContainer container;
-     *
-     * for (std::pair<Particle, Particle> &pp : container.particle_pairs())
-     * {
-     *     Particle &p1 = pp.first;
-     *     Particle &p2 = pp.second;
-     *
-     *     // do something with p1 and p2
-     * }
-     * ```
-     */
-    virtual particle_pair_iterator &particle_pairs() = 0;
+    virtual void for_each_particles_mut(std::function<void(Particle&)> callback) = 0;
 
     /**
      * @brief Iterates over each pair of particles.
-     *
-     * # Example
-     *
-     * ```cpp
-     * ParticleContainer container;
-     * Force force;
-     *
-     * for (std::pair<Particle, Particle> &pp : container.particle_pairs())
-     * {
-     *     Particle &p1 = pp.first;
-     *     Particle &p2 = pp.second;
-     *
-     *     force.apply(p1, p2);
-     * }
-     * ```
      */
-    virtual particle_pair_mut_iterator &particle_pairs_mut() = 0;
+    virtual void for_each_particle_pairs(std::function<void(const std::pair<Particle&, Particle&>)> callback) const = 0;
+
+    /**
+     * @brief Iterates over each pair of particles.
+     */
+    virtual void for_each_particle_pairs_mut(std::function<void(std::pair<Particle&, Particle&>)> callback) = 0;
 
     /**
      * Amount of particles in the container.
