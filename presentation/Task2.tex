@@ -208,6 +208,43 @@ pub struct LinkedCell<Cell : ParticleContainer>; // ^ also
     \end{lstlisting}
 \end{frame}
 
+\simpleframe\begin{frame}[t]{Comparing Error Messages}{Wrong Mutability Modifier}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.5\textwidth}
+            \includegraphics[width=\textwidth]{media/error-rs-mut.png}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \includegraphics[width=\textwidth]{media/error-cpp-mut.png}
+        \end{column}
+    \end{columns}
+
+    \vspace{1em}
+    For many errors, the Rust compiler is capable of giving a very precise solution to fix the problem, showing what tokens to add or remove.
+
+    \vspace{1em}
+    \gray{Sometimes it even feels like fancy presentations of the error message, instead of a `stack dump' like in C++.}
+\end{frame}
+
+\simpleframe\begin{frame}[t]{Comparing Error Messages}{Copying Not Implemented}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.5\textwidth}
+            \includegraphics[width=\textwidth]{media/error-rs-clone.png}
+
+            \vspace{1em}
+            The Rust error messages remain clear, while you have to search through the \blue{C++ error stack} to find the root cause of the problem.
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \includegraphics[width=\textwidth]{media/error-cpp-clone.png}
+            $\ldots$
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\simpleframe\begin{frame}{Comparing Error Messages}{Rust Lifetimes}
+    \centering
+    \includegraphics[width=0.8\textwidth]{media/error-rs-lifetime.png}
+\end{frame}
+
 \simpleframe\begin{frame}{Ferris will answer questions}
     \centering
     % image from:
@@ -215,8 +252,8 @@ pub struct LinkedCell<Cell : ParticleContainer>; // ^ also
     \includegraphics[width=0.5\textwidth]{media/ferris.png}
 \end{frame}
 
-\headerframe\begin{frame}[allowframebreaks]{References}
-  \printbibliography
-\end{frame}
+% \headerframe\begin{frame}[allowframebreaks]{References}
+%   \printbibliography
+% \end{frame}
 
 \end{document}
