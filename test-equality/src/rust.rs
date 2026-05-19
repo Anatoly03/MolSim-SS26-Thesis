@@ -25,7 +25,7 @@ pub fn run(name: &str, delta: f64, frames: usize) {
         &format!("output/rs/{name}.xyz"),
     ];
 
-    let cmd = format!("`target/release/moldyn-cli {}`", args.join(" "));
+    let cmd = format!("`./target/release/moldyn-cli {}`", args.join(" "));
     Log::Success.log("Running", &cmd);
     let rs_moldyn_status = Command::new("./target/release/moldyn-cli")
         .args(args)

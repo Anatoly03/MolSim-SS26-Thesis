@@ -1,7 +1,7 @@
 use crate::Log;
 
 /// Compares `.xyz` files in `output/rs` and `output/cpp` for content equality
-pub fn run(name: &str, frames: usize) {
+pub fn run(name: &str, frames: usize, tolerance: f64) {
     Log::Success.log("Testing", &format!("`{name}`"));
 
     let prefix = format!("{name}_");
@@ -65,16 +65,15 @@ pub fn run(name: &str, frames: usize) {
                     .expect("Failed to parse C++ particle data");
 
                 // tolerance for floating-point comparison
-                let tol = 1e-6;
-                if (rs - cpp).abs() < tol {
+                if (rs - cpp).abs() < tolerance {
                     continue;
                 }
 
-                let s = format!("assertion failed: `{rs}` != `{cpp}` in line {line}:");
+                let s = format!("assertion failed: `{rs}` != `{cpp}` in {}:{}:", rs_path, line + 3);
                 Log::Failure.log("Fail", &s);
                 Log::Info.log("Cpp", &rs_line);
                 Log::Info.log("Rust", &cpp_line);
-                break;
+                return;
             }
         }
 

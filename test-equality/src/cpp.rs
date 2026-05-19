@@ -47,7 +47,7 @@ pub fn run(name: &str, delta: f64, frames: usize) {
         &format!("output/cpp/{name}.xyz"),
     ];
 
-    let cmd = format!("`target/cpp/MolSim {}`", args.join(" "));
+    let cmd = format!("`./target/cpp/MolSim {}`", args.join(" "));
     Log::Success.log("Running", &cmd);
     let cpp_molsim_status = Command::new("./target/cpp/MolSim")
         .args(args)

@@ -56,8 +56,8 @@ impl OutputWriter for YamlWriter {
 # https://en.wikipedia.org/wiki/YAML for file format documentation.
 
 name: null
-force: {}
 algorithm: {}
+force: {}
             ",
             state.system_name(),
             state.get_force().system_name(),

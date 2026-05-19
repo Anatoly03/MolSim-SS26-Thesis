@@ -16,6 +16,7 @@
 #include "container/DirectSum.h"
 #include "container/ParticleContainer.h"
 #include "force/Newton.h"
+#include "force/LennardJones.h"
 #include "Reader.h"
 #include "Simulation.h"
 #include "Vec3.h"
@@ -106,6 +107,12 @@ namespace YAML
                 if (system_name == "newton" || system_name == "gravitational")
                 {
                     rhs = std::make_unique<Newton>();
+                    return true;
+                }
+
+                if (system_name == "lennard-jones")
+                {
+                    rhs = std::make_unique<LennardJones>();
                     return true;
                 }
             }
