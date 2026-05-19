@@ -8,6 +8,7 @@
 
 #include "Args.h"
 #include <filesystem>
+#include "container/DirectSum.h"
 
 /**
  * @brief Entry point for the application.
@@ -17,7 +18,7 @@ int main(int argc, char *argv[])
     std::filesystem::path input_file_path;
     std::filesystem::path output_pattern = "./output/out.vtk";
 
-    // Runs the argument parser and stores the input values.
+    // Parses the command line arguments and sets the input variables.
     Args()
         .required_details(&input_file_path, "The input file for the simulation. The parser will be selected from the file extension.")
         .required_details('o', "output", &output_pattern, "The output directory for the simulation results.")
@@ -30,6 +31,11 @@ int main(int argc, char *argv[])
     printf("Output prefix: %s\n", output_pattern.stem().string().c_str());
     printf("Output extension: %s\n", output_pattern.extension().string().c_str());
     std::filesystem::create_directories(output_pattern.parent_path());
+
+    DirectSum container;
+    container.add_particle(Particle());
+
+    std::cout << "Hello, C++!\n";
 
     return 0;
 }

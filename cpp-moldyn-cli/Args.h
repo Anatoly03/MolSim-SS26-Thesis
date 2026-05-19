@@ -1,7 +1,7 @@
 /**
  * @file Args.h
  * @author Anatoly Weinstein
- * 
+ *
  * @brief Definition of the Args class for CLI argument parsing,
  * wrapping around [getopt](https://www.man7.org/linux/man-pages/man3/getopt.3.html)
  * and `getopt_long` for parsing.
@@ -26,6 +26,9 @@
 #ifndef PROGRAM_VERSION
 #define PROGRAM_VERSION "unknown"
 #endif
+
+#include "force/Force.h"
+#include "force/Newton.h"
 
 /**
  * @brief A CLI argument parser inspired by the [argparse](https://github.com/p-ranav/argparse)

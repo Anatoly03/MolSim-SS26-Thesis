@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Particle.h"
+#include "Vec3.h"
 
 /**
  * @brief [Interface](https://www.tutorialspoint.com/cplusplus/cpp_interfaces.htm)
