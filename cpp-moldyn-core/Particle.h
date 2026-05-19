@@ -49,10 +49,10 @@ public:
     Particle(const Vec3<double> position, const Vec3<double> velocity, double mass)
         : position(position.clone()), velocity(velocity.clone()), force(), old_force(), mass(mass) {}
 
-    // remove implicit copy constructors
+    // TODO remove implicit copy constructors
     // https://stackoverflow.com/questions/33776697/deleting-copy-constructors-and-copy-assignment-operators-which-of-them-are-esse
-    Particle(const Particle &) = delete;
-    Particle &operator=(const Particle &) = delete;
+    Particle(const Particle &) = default;
+    Particle &operator=(const Particle &) = default;
     inline Particle clone() const { return Particle(position.clone(), velocity.clone(), mass); }
 
     /**

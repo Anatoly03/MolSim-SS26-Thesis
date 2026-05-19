@@ -15,44 +15,54 @@ class ParticleContainer
 {
 public:
     /**
+     * @brief Default constructor.
+     */
+    ParticleContainer() = default;
+
+    /**
      * @brief Iterates over each particle.
-     * 
+     *
      * # Example
-     * 
+     *
      * ```cpp
      * ParticleContainer container;
-     * 
+     *
      * container.for_each_particles([](const Particle &particle) {
      *     // do something with particle
      * });
      * ```
      */
-    virtual void for_each_particles(std::function<void(const Particle&)> callback) const = 0;
+    virtual void for_each_particles(std::function<void(const Particle &)> callback) const = 0;
 
     /**
      * @brief Iterates over each particle mutably.
-     * 
+     *
      * # Example
-     * 
+     *
      * ```cpp
      * ParticleContainer container;
-     * 
+     *
      * container.for_each_particles([](const Particle &particle) {
      *     // do something with particle mutably
      * });
      * ```
      */
-    virtual void for_each_particles_mut(std::function<void(Particle&)> callback) = 0;
+    virtual void for_each_particles_mut(std::function<void(Particle &)> callback) = 0;
 
     /**
      * @brief Iterates over each pair of particles.
      */
-    virtual void for_each_particle_pairs(std::function<void(const std::pair<Particle&, Particle&>)> callback) const = 0;
+    virtual void for_each_particle_pairs(std::function<void(const Particle &, const Particle &)> callback) const = 0;
 
     /**
      * @brief Iterates over each pair of particles.
      */
-    virtual void for_each_particle_pairs_mut(std::function<void(std::pair<Particle&, Particle&>)> callback) = 0;
+    virtual void for_each_particle_pairs_mut(std::function<void(Particle &, Particle &)> callback) = 0;
+
+    /**
+     * @brief Adds a new particle to the container by cloning.
+     */
+    virtual void add_particle(const Particle &particle) = 0;
 
     /**
      * Amount of particles in the container.
