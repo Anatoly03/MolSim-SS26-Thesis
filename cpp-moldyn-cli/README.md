@@ -14,3 +14,7 @@ cmake . -B target/cpp
 make -C target/cpp -j4 --no-print-directory
 ./target/cpp/MolSim --help
 ```
+
+### CMake Features
+
+- `ENABLE_VTK_SUPPORT`: Enables support for writing to the `.vtu` file format.

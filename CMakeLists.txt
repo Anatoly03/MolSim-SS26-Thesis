@@ -12,6 +12,11 @@ file(GLOB_RECURSE IO_SRC "${CMAKE_CURRENT_SOURCE_DIR}/cpp-moldyn-io/*.cpp")
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/.cmake)
 
+# Compiler Flags
+# option(ENABLE_YAML_SUPPORT "Enables YAML support" ON)
+option(ENABLE_VTK_SUPPORT "Enables VTK support" OFF)
+# option(ENABLE_JSON_SUPPORT "Enables JSON support" OFF)
+
 # Library for the core molecular dynamics simulation logic
 add_library(MolSimCore ${CORE_SRC})
 target_include_directories(MolSimCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cpp-moldyn-core)
@@ -38,6 +43,7 @@ include(doxygen)
 include(test-google)
 include(spdlog)
 include(yaml)
+include(vtk-config)
 
 # https://cmake.org/cmake/help/latest/module/GoogleTest.html
 # do not remove. the issue is that gitub ci uses command `ctest --test-dir

@@ -30,17 +30,13 @@ int main(int argc, char *argv[])
     Args()
         .required_details(&input_file_path, "The input file for the simulation. The parser will be selected from the file extension.")
         .required_details('o', "output", &output_pattern, "The output directory for the simulation results.")
-        .optional_details('d', "delta_time", &delta_time, "The time step for the simulation.")
-        .optional_details('t', "total_time", &total_time, "The total time for the simulation to run.")
-        .optional_details('f', "frame_period", &frame_period, "The period (in frames) for writing the simulation output. This defines the frequency of output writes.")
+        .optional_details('d', "delta-time", &delta_time, "The time step for the simulation.")
+        .optional_details('t', "total-time", &total_time, "The total time for the simulation to run.")
+        .optional_details('f', "frame-period", &frame_period, "The period (in frames) for writing the simulation output. This defines the frequency of output writes.")
         .help("Molecular Dynamics Thesis Code. This library implements a simple engine to simulate molecular dynamics.")
         .version()
         .parse(argc, argv);
 
-    printf("Input file: %s\n", input_file_path.c_str());
-    printf("Output directory: %s\n", output_pattern.parent_path().string().c_str());
-    printf("Output prefix: %s\n", output_pattern.stem().string().c_str());
-    printf("Output extension: %s\n", output_pattern.extension().string().c_str());
     std::filesystem::create_directories(output_pattern.parent_path());
 
     DirectSum container;
@@ -56,8 +52,11 @@ int main(int argc, char *argv[])
     int frame_period_v = frame_period.value_or(250);
     double total_frames = total_time_v / delta_time_v;
 
-    simulation.for_each_particles([](const Particle &particle)
-                                  { std::cout << "Particle position: " << particle.get_position() << "\n"; });
+    printf("Total Time: %f\n", total_time_v);
+    printf("Delta Time: %f\n", delta_time_v);
+    printf("Frame Period: %d\n", frame_period_v);
+    printf("Total Frames: %f\n", total_frames);
+    exit(1);
 
     for (int frame = 0; frame < total_frames; frame++)
     {
@@ -66,9 +65,6 @@ int main(int argc, char *argv[])
         if (frame % frame_period_v == 0)
             writer->write(frame);
     }
-
-    simulation.for_each_particles([](const Particle &particle)
-                                  { std::cout << "Resulting particle position: " << particle.get_position() << "\n"; });
 
     return 0;
 }

@@ -56,7 +56,7 @@ public:
      */
     std::string frame_file_path(const int frame) const
     {
-        return output_prefix.string() + "-" + std::to_string(frame) + output_extension;
+        return output_prefix.string() + "_" + std::to_string(frame) + output_extension;
     }
 
     /**

@@ -1,27 +1,45 @@
-/*
- * VTKWriter.cpp
+/**
+ * @file VTKWriter.h
+ * @author Anatoly Weinstein
  *
- *  Created on: 01.03.2010
- *      Author: eckhardw
+ * @brief
  */
+
 #ifdef ENABLE_VTK_SUPPORT
 
-#include "VTKWriter.h"
-
-#include <vtkCellArray.h>
-#include <vtkDoubleArray.h>
-#include <vtkFloatArray.h>
-#include <vtkIntArray.h>
-#include <vtkPointData.h>
-#include <vtkXMLUnstructuredGridWriter.h>
-
-#include <iomanip>
+#include <fstream>
+#include <iostream>
+#include <memory>
 #include <sstream>
+#include <string>
 
-namespace outputWriter
+#include "yaml-cpp/yaml.h"
+
+#include "YAMLImplementation.h"
+#include "Writer.h"
+#include "container/DirectSum.h"
+#include "container/ParticleContainer.h"
+#include "force/Newton.h"
+#include "Reader.h"
+#include "Simulation.h"
+#include "Vec3.h"
+
+struct VTKWriter : public Writer
 {
+public:
+    /**
+     * @brief Creates a new VTK file writer.
+     */
+    VTKWriter(const std::filesystem::path file_path, const Simulation<DirectSum> &simulation) : Writer(file_path, simulation)
+    {
+        // override extension for VTK files
+        output_extension = ".vtu";
+    }
 
-    void VTKWriter::plotParticles(std::list<Particle> particles, const std::string &filename, int iteration)
+    /**
+     * @brief Consume the VTK file and return a Simulation struct.
+     */
+    void write(const int frame) const override
     {
         // Initialize points
         auto points = vtkSmartPointer<vtkPoints>::New();
@@ -62,18 +80,14 @@ namespace outputWriter
         grid->GetPointData()->AddArray(forceArray);
         grid->GetPointData()->AddArray(typeArray);
 
-        // Create filename with iteration number
-        std::stringstream strstr;
-        strstr << filename << "_" << std::setfill('0') << std::setw(4) << iteration << ".vtu";
-
         // Create writer and set data
         vtkNew<vtkXMLUnstructuredGridWriter> writer;
-        writer->SetFileName(strstr.str().c_str());
+        writer->SetFileName(frame_file_path(frame).c_str());
         writer->SetInputData(grid);
         writer->SetDataModeToAscii();
 
         // Write the file
         writer->Write();
     }
-} // namespace outputWriter
+};
 #endif
