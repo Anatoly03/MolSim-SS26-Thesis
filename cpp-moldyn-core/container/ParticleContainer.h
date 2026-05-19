@@ -20,6 +20,14 @@ public:
     ParticleContainer() = default;
 
     /**
+     * @brief Returns the name (or identifier) of the algorithm used for serialization.
+     */
+    virtual std::string algorithm_name() const
+    {
+        return "unknown";
+    }
+
+    /**
      * @brief Iterates over each particle.
      *
      * # Example

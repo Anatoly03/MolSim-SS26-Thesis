@@ -145,7 +145,6 @@ public:
     /**
      * TODO document (see rust)
      */
-
     void step(const double delta_t)
     {
         update_position(delta_t);
@@ -161,4 +160,8 @@ public:
     }
 
     // TODO PLOT PARTICLES
+
+    std::string algorithm_name() const {
+        return particle_container.algorithm_name();
+    }
 };

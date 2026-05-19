@@ -24,6 +24,14 @@ public:
      */
     DirectSum() : particles_vec() {};
 
+    /**
+     * @brief Returns the identifier `direct_sum` for this algorithm.
+     */
+    virtual std::string algorithm_name() const
+    {
+        return "direct_sum";
+    }
+
     // /**
     //  * @brief Constructor from a vector of particles.
     //  */
