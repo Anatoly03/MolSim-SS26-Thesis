@@ -11,6 +11,7 @@
 
 #include <cxxabi.h>
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <getopt.h>
 #include <iostream>
@@ -127,6 +128,8 @@ private:
             if (type_hint == typeid(std::optional<std::string>).hash_code())
                 return "[string]";
             if (type_hint == typeid(std::unique_ptr<std::ifstream>).hash_code())
+                return "file path";
+            if (type_hint == typeid(std::filesystem::path).hash_code())
                 return "file path";
 
             // https://stackoverflow.com/questions/12877521/human-readable-type-info-name
@@ -290,6 +293,12 @@ private:
             }
 
             *v = std::move(pointer);
+            return true;
+        }
+
+        if (const auto v = ref.try_get<std::filesystem::path>())
+        {
+            *v = std::filesystem::path(optarg);
             return true;
         }
 
