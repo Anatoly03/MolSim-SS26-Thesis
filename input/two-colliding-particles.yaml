@@ -1,0 +1,12 @@
+
+name: Two Colliding Particles
+force: gravitational
+algorithm: direct-sum
+
+particles:
+  - position: [0.0, 0.0, 0.0]
+    mass: 1.0
+  - position: [0.0, 1.0, 0.0]
+    velocity:
+      x: -0.01
+    mass: 1.0

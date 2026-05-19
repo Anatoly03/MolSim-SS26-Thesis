@@ -1,18 +1,18 @@
 use crate::Log;
 
 /// Compares `.xyz` files in `output/rs` and `output/cpp` for content equality
-pub fn run(name: &str) {
+pub fn run(name: &str, frames: usize) {
     Log::Success.log("Testing", &format!("`{name}`"));
 
     let prefix = format!("{name}_");
     const SUFFIX: &str = ".xyz";
 
-    for i in 1..72 {
+    for i in 1..=frames {
         let rs_path = format!("output/rs/{prefix}{i:04}{SUFFIX}");
         let cpp_path = format!("output/cpp/{prefix}{i:04}{SUFFIX}");
 
         if !std::path::Path::new(&rs_path).exists() || !std::path::Path::new(&cpp_path).exists() {
-            break;
+            unreachable!("output files do not exist. rs: `{rs_path}` vs cpp: `{cpp_path}`");
         }
 
         let rs_content =
@@ -82,6 +82,6 @@ pub fn run(name: &str) {
         // Log::Success.log("Pass", &display);
     }
 
-    let display = format!("72 steps");
+    let display = format!("{frames} steps");
     Log::Success.log("Pass", &display);
 }

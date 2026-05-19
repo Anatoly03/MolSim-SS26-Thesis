@@ -12,7 +12,7 @@ pub fn build() {
 }
 
 /// Runs Rust
-pub fn run(name: &str) {
+pub fn run(name: &str, delta: f64, frames: usize) {
     Log::Success.log("Running", "`target/release/moldyn-cli`");
 
     // make directories: `output/rs`, `output/cpp`
@@ -23,9 +23,9 @@ pub fn run(name: &str) {
         .args([
             &format!("input/{name}.yaml"),
             "-t",
-            "0.1",
+            &(delta * (frames as f64)).to_string(),
             "-d",
-            "0.0014",
+            &delta.to_string(),
             "-s",
             "1",
             "-o",

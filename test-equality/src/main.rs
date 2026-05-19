@@ -13,7 +13,11 @@ fn main() {
     cpp::build();
     rust::build();
     // println!("=== Generate. Outputs ===");
-    cpp::run("halleys-comet");
-    rust::run("halleys-comet");
-    test::run("halleys-comet");
+    cpp::run("halleys-comet", 0.0014, 250);
+    rust::run("halleys-comet", 0.0014, 250);
+    test::run("halleys-comet", 250);
+
+    cpp::run("two-colliding-particles", 0.0014, 100);
+    rust::run("two-colliding-particles", 0.0014, 100);
+    test::run("two-colliding-particles", 100);
 }

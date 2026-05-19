@@ -34,16 +34,16 @@ pub fn build() {
 }
 
 /// Runs C++
-pub fn run(name: &str) {
+pub fn run(name: &str, delta: f64, frames: usize) {
     Log::Success.log("Running", "`target/cpp/MolSim`");
 
     let cpp_molsim_status = Command::new("./target/cpp/MolSim")
         .args([
             &format!("input/{name}.yaml"),
             "-t",
-            "0.1",
+            &(delta * (frames as f64)).to_string(),
             "-d",
-            "0.0014",
+            &delta.to_string(),
             "-s",
             "1",
             "-o",
