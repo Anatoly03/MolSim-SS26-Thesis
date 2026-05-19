@@ -39,6 +39,12 @@ make -C target/cpp -j4 --no-print-directory
 ./target/cpp/MolSimTest
 ```
 
+## Runninng Equality Tests
+
+```
+cargo run -p test-equality
+```
+
 ## Benchmarking
 
 ```sh
