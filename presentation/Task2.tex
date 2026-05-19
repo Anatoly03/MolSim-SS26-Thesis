@@ -1,6 +1,6 @@
 \documentclass[aspectratio=169]{beamer}
 \usepackage{babel}
-\usepackage{array, colortbl, tikz, transparent, listings}
+\usepackage{array, colortbl, tikz, transparent, listings, pgfplots}
 \usepackage[export]{adjustbox}
 \usepackage[skins,theorems]{tcolorbox}
 \usepackage[backend=biber,style=verbose-ibid,citetracker=true,ibidtracker=constrict,autocite=footnote]{biblatex}
@@ -268,6 +268,51 @@ cargo run -p test-equality
     \end{lstlisting}
 \end{frame}
 
+\nofooterframe\begin{frame}{Something is severely wrong with C++ performance\footcite{benchmark-1}}
+    
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=\textwidth,  
+                height=0.7\textheight,
+                xlabel={Steps},
+                ylabel={Runtime (ms)},
+                xtick={0, 20, 50},
+                scaled x ticks=false,  
+                scaled y ticks=false,
+                ymajorgrids=true, 
+                grid style=dashed,
+                xmin=-5,
+                xmax=55,
+                legend style={at={(0.23,1)},anchor=north},
+            ]
+            
+            \addplot[
+                color=blue,
+                mark=square,
+                line width=1pt,
+                ]
+                coordinates {
+                    (0, 1140)(20, 10999)(50, 25901)
+                };
+            
+            \addplot[
+                color=orange,
+                mark=triangle,
+                line width=1pt,
+                ]
+                coordinates {
+                    (0, 55)(20, 819)(50, 1961)
+                };
+                
+            \legend{C++, Rust}
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+
+    Tested with 2400 particles from the \texttt{two-bodies-collision-0001} dataset.
+\end{frame}
+
 \simpleframe\begin{frame}{Ferris will answer questions}
     \centering
     % image from:
@@ -275,8 +320,8 @@ cargo run -p test-equality
     \includegraphics[width=0.5\textwidth]{media/ferris.png}
 \end{frame}
 
-% \headerframe\begin{frame}[allowframebreaks]{References}
-%   \printbibliography
-% \end{frame}
+\headerframe\begin{frame}[allowframebreaks]{References}
+  \printbibliography
+\end{frame}
 
 \end{document}
