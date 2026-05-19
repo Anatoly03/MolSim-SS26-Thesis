@@ -14,6 +14,8 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include "Simulation.h"
+#include "container/DirectSum.h"
 
 class Reader
 {
@@ -70,11 +72,10 @@ public:
     }
 
     /**
-     * @brief Consumes the file stream and produces a Simulation struct from
-     * the input data.
+     * @brief Consumes the file stream and returns a Simulation struct.
      */
-    virtual Simulation consume() = 0;
-
+    virtual Simulation<DirectSum> consume() = 0;
+  
     /**
      * @brief Static factory method to create a Reader instance based on the
      * file etxension.

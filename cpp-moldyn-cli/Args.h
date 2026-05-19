@@ -33,6 +33,18 @@
 /**
  * @brief A CLI argument parser inspired by the [argparse](https://github.com/p-ranav/argparse)
  * library for C++.
+ * 
+ * # Argument Types
+ * 
+ * Arguments can be either named (`-s` or `--long`) or positional (`<arg>`). Furthermore,
+ * there are two different argument types that can be registered with the parser.
+ * 
+ * 1. Required: Arguments that need to be provided by the user or the program will terminate
+ *    early.
+ * 
+ * 2. Optional: Arguments that may or may not be provided by the user and are wrapped in an
+ *    `std::optional` type. If not provided, the value will be `std::nullopt` or a
+ *    programmatic default value.
  *
  * # Example
  *
@@ -41,11 +53,13 @@
  *     int int_arg;
  *     double double_arg;
  *     std::string string_arg;
+ *     std::optional<std::string> optional_string_arg;
  *
  *     Args()
  *         .required<int>('i', &int_arg)
  *         .required<double>('d', &double_arg)
  *         .required<std::string>('s', "string", &string_arg)
+ *         .optional_details<std::string>('o', "optional_string", &optional_string_arg, "This is an optional string argument.")
  *         .help("This is a help message for the CLI application.")
  *         .parse(argc, argv);
  * }

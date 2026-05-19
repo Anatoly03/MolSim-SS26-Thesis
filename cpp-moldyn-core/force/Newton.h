@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <string>
+
 #include "Force.h"
 #include "Newton.h"
 #include "Particle.h"
@@ -17,6 +19,14 @@ class Newton : public Force
 public:
     // @brief the
     double factor = 1.0;
+
+    /**
+     * @brief Returns the name of the force system.
+     */
+    std::string system_name() const override
+    {
+        return "newton";
+    }
 
     // @brief Calculates the Newtons' potential between two particles. The formula
     // is given by `U = -G * M / r` where `G = -1` is the gravitational constant and

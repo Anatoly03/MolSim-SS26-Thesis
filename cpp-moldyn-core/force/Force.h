@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <string>
+
 #include "Particle.h"
 #include "Vec3.h"
 
@@ -14,6 +16,11 @@
 class Force
 {
 public:
+    /**
+     * Name of the force system.
+     */
+    virtual std::string system_name() const = 0;
+
     /**
      * @brief Calculates the potential energy between two particles.
      * 

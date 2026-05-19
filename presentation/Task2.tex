@@ -245,6 +245,15 @@ pub struct LinkedCell<Cell : ParticleContainer>; // ^ also
     \includegraphics[width=0.8\textwidth]{media/error-rs-lifetime.png}
 \end{frame}
 
+\simpleframe\begin{frame}{Enforcing Ownership Model in C++}
+    \begin{center}
+        \includegraphics[width=0.8\textwidth]{media/error-cpp-mut-in-code.png}
+    \end{center}
+
+    % \vspace{0.5em}
+    I have enforced \texttt{mut} convention in C++ and it works, but since there is no borrow checker in \texttt{gcc}, it is pretty useless.
+\end{frame}
+
 \simpleframe\begin{frame}{Ferris will answer questions}
     \centering
     % image from:

@@ -7,6 +7,8 @@
 
 #include <cmath>
 #include <optional>
+#include <iostream>
+#include <type_traits>
 
 /**
  * @brief A struct representing a three-dimensional [mathematical vector](https://en.wikipedia.org/wiki/Vector_%28mathematics_and_physics%29).
@@ -218,3 +220,11 @@ public:
         return Vec3<K>(static_cast<K>(x), static_cast<K>(y), static_cast<K>(z));
     }
 };
+
+// stream output operator overload for Vec3
+template <typename T>
+inline std::ostream &operator<<(std::ostream &os, const Vec3<T> &vec)
+{
+    os << "[" << vec.x << ", " << vec.y << ", " << vec.z << "]";
+    return os;
+}
