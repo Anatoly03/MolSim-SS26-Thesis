@@ -11,9 +11,9 @@ pub use log::Log;
 fn main() {
     // println!("=== Build Binaries ===");
     cpp::build();
-    cpp::run();
     rust::build();
-    rust::run();
-    // println!("=== Test Evaluations ===");
-    test::run();
+    // println!("=== Generate. Outputs ===");
+    cpp::run("halleys-comet");
+    rust::run("halleys-comet");
+    test::run("halleys-comet");
 }

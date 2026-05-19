@@ -34,12 +34,12 @@ pub fn build() {
 }
 
 /// Runs C++
-pub fn run() {
+pub fn run(name: &str) {
     Log::Success.log("Running", "`target/cpp/MolSim`");
 
     let cpp_molsim_status = Command::new("./target/cpp/MolSim")
         .args([
-            "input/halleys-comet.yaml",
+            &format!("input/{name}.yaml"),
             "-t",
             "0.1",
             "-d",
@@ -47,7 +47,7 @@ pub fn run() {
             "-s",
             "1",
             "-o",
-            "output/cpp/halleys-comet.xyz",
+            &format!("output/cpp/{name}.xyz"),
         ])
         .stdout(Stdio::null())
         .status()

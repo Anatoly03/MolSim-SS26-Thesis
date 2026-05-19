@@ -12,7 +12,7 @@ pub fn build() {
 }
 
 /// Runs Rust
-pub fn run() {
+pub fn run(name: &str) {
     Log::Success.log("Running", "`target/release/moldyn-cli`");
 
     // make directories: `output/rs`, `output/cpp`
@@ -21,7 +21,7 @@ pub fn run() {
 
     let rs_moldyn_status = Command::new("./target/release/moldyn-cli")
         .args([
-            "input/halleys-comet.yaml",
+            &format!("input/{name}.yaml"),
             "-t",
             "0.1",
             "-d",
@@ -29,7 +29,7 @@ pub fn run() {
             "-s",
             "1",
             "-o",
-            "output/rs/halleys-comet.xyz",
+            &format!("output/rs/{name}.xyz"),
         ])
         .stdout(Stdio::null())
         .status()
