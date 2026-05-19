@@ -3,9 +3,9 @@
  */
 
 #include "YamlReader.h"
+#include "yaml-cpp/yaml.h"
 
-Simulation YamlReader::consume()
+Simulation<DirectSum> YamlReader::consume()
 {
-    // TODO implement YAML parsing and return a Simulation struct
-    return Simulation();
+    return Simulation<DirectSum>();
 }

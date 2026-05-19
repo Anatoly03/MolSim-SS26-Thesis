@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "simulation/Simulation.h"
-
 #include <filesystem>
 #include <fstream>
 #include <iostream>

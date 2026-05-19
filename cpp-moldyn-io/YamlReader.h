@@ -3,11 +3,13 @@
  */
 
 #include "Reader.h"
+#include "Simulation.h"
+#include "container/DirectSum.h"
 
 struct YamlReader : public Reader
 {
 public:
-    YamlReader(const std::string &filename) : Reader(filename) {}
+    YamlReader(const std::filesystem::path &filename) : Reader(filename) {}
 
-    Simulation consume() override;
+    Simulation<DirectSum> consume() override;
 };
