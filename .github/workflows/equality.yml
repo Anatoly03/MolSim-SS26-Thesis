@@ -4,6 +4,13 @@ name: Rust and C++ Equality Tests
 
 on:
   push:
+    paths:
+      - cpp-moldyn-cli/**
+      - cpp-moldyn-core/**
+      - cpp-moldyn-io/**
+      - moldyn-cli/**
+      - moldyn-core/**
+      - moldyn-io/**
 
 concurrency:
   group: "equality"

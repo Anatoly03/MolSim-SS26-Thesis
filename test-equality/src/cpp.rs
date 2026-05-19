@@ -47,6 +47,9 @@ pub fn run(name: &str, delta: f64, frames: usize) {
         &format!("output/cpp/{name}.xyz"),
     ];
 
+    // current time
+    let current_time = std::time::SystemTime::now();
+
     let cmd = format!("`./target/cpp/MolSim {}`", args.join(" "));
     Log::Success.log("Running", &cmd);
     let cpp_molsim_status = Command::new("./target/cpp/MolSim")
@@ -54,6 +57,12 @@ pub fn run(name: &str, delta: f64, frames: usize) {
         .stdout(Stdio::null())
         .status()
         .expect("Failed to execute cmake");
+
+    // log elapsed time
+    if let Ok(elapsed) = current_time.elapsed() {
+        let elapsed_nano = elapsed.as_nanos();
+        Log::Info.log("Bench", &format!("{} ms", elapsed_nano as f64 / 1e6));
+    }
 
     if !cpp_molsim_status.success() {
         Log::Failure.log("Error", "failed to run `target/cpp/MolSim`");

@@ -57,14 +57,14 @@ pub fn run(name: &str, frames: usize) {
             let rs_parts: Vec<&str> = rs_line.split_whitespace().collect();
             let cpp_parts: Vec<&str> = cpp_line.split_whitespace().collect();
 
-            for i in 0..3 {
+            for j in 0..3 {
                 let rs: f64 = rs_parts
-                    .get(i)
+                    .get(j)
                     .expect("Missing particle data in Rust output")
                     .parse()
                     .expect("Failed to parse Rust particle data");
                 let cpp: f64 = cpp_parts
-                    .get(i)
+                    .get(j)
                     .expect("Missing particle data in C++ output")
                     .parse()
                     .expect("Failed to parse C++ particle data");
@@ -78,6 +78,8 @@ pub fn run(name: &str, frames: usize) {
                 // accumulated over many steps
                 if (rs - cpp).abs() < tolerance * tolerance_relax_factor {
                     tolerance *= tolerance_relax_factor;
+                    let msg = format!("at step {i}, tolerance = {tolerance:.2e}");
+                    Log::Warn.log("Retolerate", &msg);
                     continue;
                 }
 
