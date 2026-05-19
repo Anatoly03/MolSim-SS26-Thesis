@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "Force.h"
-#include "ParticleContainer.h"
+#include "force/Force.h"
+#include "container/ParticleContainer.h"
 
 /**
  * @brief A struct representing a simulation, which contains the particles and
@@ -124,11 +124,10 @@ public:
     void apply_force()
     {
         for_each_particle_pairs(
-            [this](const Particle &p1, const Particle &p2)
+            [this](Particle &p1, Particle &p2)
             {
-            Vec3<double> force = this->force->calculate(p1, p2);
-            p1.apply_force(force);
-            p2.apply_force(-force); });
+                this->force->apply(p1, p2);
+            });
     }
 
     /**
@@ -147,11 +146,12 @@ public:
      * TODO document (see rust)
      */
 
-    void step(const double delta_t) {
+    void step(const double delta_t)
+    {
         update_position(delta_t);
         // self.container.on_after_position_update();
         delay_force();
-        update_force();
+        apply_force();
         // APPLY GRAVITY HERE
         // self.container.on_after_force_update();
         // TODO CALCULATE BORDER BEHAVIOUR in `on_after_force_update`

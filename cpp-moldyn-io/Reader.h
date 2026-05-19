@@ -11,8 +11,10 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include "Simulation.h"
+#include "container/DirectSum.h"
 
-struct Reader
+class Reader
 {
 protected:
     /**
@@ -66,5 +68,8 @@ public:
         }
     }
 
-    // TODO Reader.consume() -> Simulation
+    /**
+     * @brief Consumes the file stream and returns a Simulation struct.
+     */
+    virtual Simulation<DirectSum> consume() = 0;
 };

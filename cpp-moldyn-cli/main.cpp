@@ -8,6 +8,7 @@
 
 #include "Args.h"
 #include "container/DirectSum.h"
+#include "YAMLReader.h"
 
 /**
  * @brief Entry point for the application.
@@ -23,10 +24,12 @@ int main(int argc, char *argv[])
         .version()
         .parse(argc, argv);
 
-    DirectSum container;
-    container.add_particle(Particle());
+    YAMLReader reader(input_file_path);
+    auto simulation = reader.consume();
 
-    std::cout << "Hello, C++!\n";
+    simulation.for_each_particles([](const Particle &particle) {
+        std::cout << "Particle position: " << particle.get_position() << "\n";
+    });
 
     return 0;
 }

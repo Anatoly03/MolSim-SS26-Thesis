@@ -37,3 +37,10 @@ void Force::apply(Particle &particle, Particle other) const
     particle.apply_force(f);
     other.apply_force(-f);
 }
+
+double Force::potential(const Particle &particle, const Particle &other) const
+{
+    // Default potential: no interaction. Concrete force implementations
+    // (e.g., Newton) should override this.
+    return 0.0;
+}
