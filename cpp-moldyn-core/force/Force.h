@@ -36,5 +36,5 @@ public:
     Vec3<double> force(const Particle &particle, const Particle &other) const;
 
     // @brief Applies the calculated force to a particle pair.
-    void apply(Particle &particle, Particle other) const;
+    void apply(Particle &particle, Particle &other) const;
 };
