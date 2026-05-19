@@ -123,7 +123,7 @@ public:
      */
     void apply_force()
     {
-        for_each_particle_pairs(
+        for_each_particle_pairs_mut(
             [this](Particle &p1, Particle &p2)
             {
                 this->force->apply(p1, p2);
