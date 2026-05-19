@@ -60,7 +60,7 @@ public:
                 particles.push_back(particle);
             });
 
-        // node["force"] = simulation.force.get();
+        node["force"] = simulation.force.get()->system_name();
         node["particles"] = particles;
 
         std::ofstream output_file(frame_file_path(frame));
