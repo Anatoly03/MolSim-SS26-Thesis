@@ -18,7 +18,8 @@ target_include_directories(MolSimCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cpp-mol
 
 # Library for the file system bindings and input/output operations
 add_library(MolSimIO ${IO_SRC})
-target_include_directories(MolSimCore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cpp-moldyn-io)
+target_include_directories(MolSimIO PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cpp-moldyn-io)
+target_link_libraries(MolSimIO PUBLIC yaml-cpp::yaml-cpp)
 
 # Executable for the command-line interface application
 add_executable(MolSim ${CLI_SRC})
@@ -29,12 +30,14 @@ target_compile_definitions(MolSim PRIVATE PROGRAM_VERSION="${CMAKE_PROJECT_VERSI
 
 # Executable for the test runner
 add_executable(MolSimTest ${TEST_SRC})
-target_link_libraries(MolSimTest gtest gtest_main MolSimCore)
+target_link_libraries(MolSimTest gtest gtest_main MolSimCore MolSimIO)
 target_include_directories(MolSimTest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp-moldyn-test)
 
 # CMake Dependency Configurations
 include(doxygen)
 include(test-google)
+include(spdlog)
+include(yaml)
 
 # https://cmake.org/cmake/help/latest/module/GoogleTest.html
 # do not remove. the issue is that gitub ci uses command `ctest --test-dir

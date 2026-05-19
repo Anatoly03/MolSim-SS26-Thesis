@@ -14,7 +14,7 @@
 
 struct Reader
 {
-private:
+protected:
     /**
      * @brief The input file stream for reading particle data. The parser
      * will be selected from the file extension.

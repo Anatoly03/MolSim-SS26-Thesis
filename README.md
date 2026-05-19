@@ -20,9 +20,12 @@ This project implements molecular dynamics simulations in C++ and Rust. The goal
 
 ## Building & Running Rust
 
-```
+```sh
 cargo build --release
 ./target/release/moldyn-cli --help
+
+# testing
+cargo test
 ```
 
 ## Building & Running C++
@@ -31,6 +34,9 @@ cargo build --release
 cmake . -B target/cpp
 make -C target/cpp -j4 --no-print-directory
 ./target/cpp/MolSim --help
+
+# testing
+./target/cpp/MolSimTest
 ```
 
 ## Benchmarking
