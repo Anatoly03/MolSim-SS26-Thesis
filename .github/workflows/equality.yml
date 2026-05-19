@@ -26,4 +26,4 @@ jobs:
           restore-keys: ${{ runner.os }}-target-
 
       - run: rustup update stable && rustup default stable
-      - run: cargo run --bin test-equality --release --verbose
+      - run: cargo run -p test-equality
