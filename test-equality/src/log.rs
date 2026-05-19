@@ -7,6 +7,7 @@ pub enum Log {
     Success,
     Warn,
     Failure,
+    Info,
 }
 
 impl Log {
@@ -17,6 +18,7 @@ impl Log {
             Log::Success => Colour::Green,
             Log::Warn => Colour::Yellow,
             Log::Failure => Colour::Red,
+            Log::Info => Colour::Cyan,
         };
 
         println!("{} {message}", prefix_color.bold().paint(format!("{title:>12}")));
