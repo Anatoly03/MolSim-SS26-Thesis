@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     double total_time_v = total_time.value_or(1000.0);
     double delta_time_v = delta_time.value_or(0.0014);
     int frame_period_v = frame_period.value_or(250);
-    
+
     double current_time = start_time;
     int frame = 0;
 

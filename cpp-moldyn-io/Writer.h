@@ -59,9 +59,8 @@ public:
      */
     std::string frame_file_path()
     {
-        auto current_frame = frame++;
         std::ostringstream ss;
-        ss << std::setw(4) << std::setfill('0') << current_frame;
+        ss << std::setw(4) << std::setfill('0') << ++frame;
         auto frame_padded = ss.str();
 
         return output_prefix.string() + "_" + frame_padded + output_extension;

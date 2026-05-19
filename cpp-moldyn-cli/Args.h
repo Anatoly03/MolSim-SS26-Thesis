@@ -682,9 +682,9 @@ public:
     Args &optional_details(char short_name, const char *long_name, std::optional<T> *value, const char *details)
     {
         optstring += short_name;
-        optstring += "::";
+        optstring += ":";
 
-        options.push_back(option{long_name, optional_argument, nullptr, short_name});
+        options.push_back(option{long_name, required_argument, nullptr, short_name});
         references.insert({short_name, ArgsRef::with_brief<std::optional<T>>(value, details)});
         return *this;
     }

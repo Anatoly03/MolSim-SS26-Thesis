@@ -63,13 +63,15 @@ struct Args {
     #[arg(short, long, default_value = "output/out.vtk")]
     output: PathBuf,
 
-    /// The time step for the simulation.
-    #[arg(short, long, default_value_t = 0.0014)]
-    delta_time: f64,
+    /// The time step for the simulation. If provided, this will override the
+    /// value from the input file.
+    #[arg(short, long)]
+    delta_time: Option<f64>,
 
-    /// The total time for the simulation to run.
-    #[arg(short, long, default_value_t = 1000.0)]
-    total_time: f64,
+    /// The total time for the simulation to run. If provided, this will override
+    /// the value from the input file.
+    #[arg(short, long)]
+    total_time: Option<f64>,
 
     /// The period (in frames) for writing the simulation output. This defines the
     /// frequency of output writes.
@@ -121,8 +123,16 @@ pub fn main() {
         };
 
     let mut current_time = simulation.args().time_start.unwrap_or(0.0);
-    let delta_time = simulation.args().time_step.unwrap_or(args.delta_time);
-    let end_time = simulation.args().time_end.unwrap_or(args.total_time);
+    // Prefer CLI values when present, otherwise fall back to the input file,
+    // and finally to the hard-coded defaults.
+    let delta_time = args
+        .delta_time
+        .or(simulation.args().time_step)
+        .unwrap_or(0.0014);
+    let end_time = args
+        .total_time
+        .or(simulation.args().time_end)
+        .unwrap_or(1000.0);
 
     let mut frame = 0;
     while current_time < end_time {

@@ -43,7 +43,7 @@ fn run_cpp() {
     Log::Success.log("Running", "`target/cpp/MolSim`");
 
     let cpp_molsim_status = Command::new("./target/cpp/MolSim")
-        .args(["input/halleys-comet.yaml", "-t", "0.001", "-d", "0.0014", "-s", "250", "-o", "output/cpp/halleys-comet.xyz"])
+        .args(["input/halleys-comet.yaml", "-t", "0.1", "-d", "0.0014", "-s", "1", "-o", "output/cpp/halleys-comet.xyz"])
         .stdout(Stdio::null())
         .status()
         .expect("Failed to execute cmake");
@@ -73,7 +73,7 @@ fn run_rs() {
     std::fs::create_dir_all("output/cpp").expect("");
 
     let rs_moldyn_status = Command::new("./target/release/moldyn-cli")
-        .args(["input/halleys-comet.yaml", "-t", "0.001", "-d", "0.0014", "-s", "250", "-o", "output/rs/halleys-comet.xyz"])
+        .args(["input/halleys-comet.yaml", "-t", "0.1", "-d", "0.0014", "-s", "1", "-o", "output/rs/halleys-comet.xyz"])
         .stdout(Stdio::null())
         .status()
         .expect("Failed to execute cmake");

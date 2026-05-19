@@ -63,6 +63,26 @@ public:
         // Simulation force
         sim.force = config["force"] ? config["force"].as<std::unique_ptr<Force>>() : std::make_unique<Newton>();
 
+        // Parse simulations args
+        // TODO
+        // YAML::Node args = config["args"];
+        // if (args) {
+        //     if (args["delta_time"])
+        //     {
+        //         sim.delta_time = args["delta_time"].as<double>();
+        //     }
+
+        //     if (args["total_time"])
+        //     {
+        //         sim.total_time = args["total_time"].as<double>();
+        //     }
+
+        //     if (args["frame_period"])
+        //     {
+        //         sim.frame_period = args["frame_period"].as<int>();
+        //     }
+        // }
+
         // Simulation particles
         YAML::Node particles = config["particles"];
         if (particles && particles.IsSequence())
