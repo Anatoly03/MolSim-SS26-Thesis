@@ -44,6 +44,5 @@ pub fn run(name: &str, delta: f64, frames: usize) {
 
     if !rs_moldyn_status.success() {
         Log::Failure.log("Error", "failed to run `target/release/moldyn-cli`");
-        std::process::exit(1);
     }
 }

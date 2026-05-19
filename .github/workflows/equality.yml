@@ -11,6 +11,7 @@ on:
       - moldyn-cli/**
       - moldyn-core/**
       - moldyn-io/**
+      - test-equality/**
 
 concurrency:
   group: "equality"

@@ -34,6 +34,12 @@ fn main() {
 
     // this benchmark additionally measures the accumulation of floating-point errors
     // over many steps
+    cpp::run("two-bodies-collision-0001", 0.0007, 20);
+    rust::run("two-bodies-collision-0001", 0.0007, 20);
+    // test::run("two-bodies-collision-0001", 20);
+
+    // this benchmark additionally measures the accumulation of floating-point errors
+    // over many steps
     cpp::run("two-bodies-collision-0001", 0.0007, 50);
     rust::run("two-bodies-collision-0001", 0.0007, 50);
     test::run("two-bodies-collision-0001", 50);
