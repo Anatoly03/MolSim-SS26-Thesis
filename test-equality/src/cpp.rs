@@ -35,20 +35,22 @@ pub fn build() {
 
 /// Runs C++
 pub fn run(name: &str, delta: f64, frames: usize) {
-    Log::Success.log("Running", "`target/cpp/MolSim`");
+    let args = [
+        &format!("input/{name}.yaml"),
+        "-t",
+        &(delta * (frames as f64)).to_string(),
+        "-d",
+        &delta.to_string(),
+        "-s",
+        "1",
+        "-o",
+        &format!("output/cpp/{name}.xyz"),
+    ];
 
+    let cmd = format!("`target/cpp/MolSim {}`", args.join(" "));
+    Log::Success.log("Running", &cmd);
     let cpp_molsim_status = Command::new("./target/cpp/MolSim")
-        .args([
-            &format!("input/{name}.yaml"),
-            "-t",
-            &(delta * (frames as f64)).to_string(),
-            "-d",
-            &delta.to_string(),
-            "-s",
-            "1",
-            "-o",
-            &format!("output/cpp/{name}.xyz"),
-        ])
+        .args(args)
         .stdout(Stdio::null())
         .status()
         .expect("Failed to execute cmake");

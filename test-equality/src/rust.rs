@@ -13,24 +13,22 @@ pub fn build() {
 
 /// Runs Rust
 pub fn run(name: &str, delta: f64, frames: usize) {
-    Log::Success.log("Running", "`target/release/moldyn-cli`");
+    let args = [
+        &format!("input/{name}.yaml"),
+        "-t",
+        &(delta * (frames as f64)).to_string(),
+        "-d",
+        &delta.to_string(),
+        "-s",
+        "1",
+        "-o",
+        &format!("output/rs/{name}.xyz"),
+    ];
 
-    // make directories: `output/rs`, `output/cpp`
-    std::fs::create_dir_all("output/rs").expect("");
-    std::fs::create_dir_all("output/cpp").expect("");
-
+    let cmd = format!("`target/release/moldyn-cli {}`", args.join(" "));
+    Log::Success.log("Running", &cmd);
     let rs_moldyn_status = Command::new("./target/release/moldyn-cli")
-        .args([
-            &format!("input/{name}.yaml"),
-            "-t",
-            &(delta * (frames as f64)).to_string(),
-            "-d",
-            &delta.to_string(),
-            "-s",
-            "1",
-            "-o",
-            &format!("output/rs/{name}.xyz"),
-        ])
+        .args(args)
         .stdout(Stdio::null())
         .status()
         .expect("Failed to execute cmake");

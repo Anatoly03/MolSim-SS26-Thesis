@@ -254,6 +254,20 @@ pub struct LinkedCell<Cell : ParticleContainer>; // ^ also
     I have enforced \texttt{mut} convention in C++ and it works, but since there is no borrow checker in \texttt{gcc}, it is pretty useless.
 \end{frame}
 
+\simpleframe\begin{frame}[fragile]{How do we check equality?}
+    \begin{center}
+        \includegraphics[width=0.8\textwidth]{media/equality-rs-cpp.png}
+    \end{center}
+
+    \vspace{0.5em}
+    A custom testing framework for checking the equality of output files between Rust and C++ will be good help.
+
+    \vspace{1em}
+    \begin{lstlisting}[frame=single]
+cargo run -p test-equality
+    \end{lstlisting}
+\end{frame}
+
 \simpleframe\begin{frame}{Ferris will answer questions}
     \centering
     % image from:
