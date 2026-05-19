@@ -37,6 +37,7 @@ fn main() {
     cpp::run("two-bodies-collision-0001", 0.0007, 20);
     rust::run("two-bodies-collision-0001", 0.0007, 20);
     // test::run("two-bodies-collision-0001", 20);
+    println!("{}", "-".repeat(50));
 
     // this benchmark additionally measures the accumulation of floating-point errors
     // over many steps
