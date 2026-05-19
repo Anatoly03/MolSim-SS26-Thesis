@@ -19,12 +19,16 @@ class Writer
 {
 private:
     std::filesystem::path output_prefix;
-    std::string output_extension;
 
 protected:
     const Simulation<DirectSum> &simulation;
 
 public:
+    /**
+     * @brief The output file extension, including the dot (e.g., `.yaml`).
+     */
+    std::string output_extension;
+
     /**
      * TODO document
      *
@@ -52,7 +56,7 @@ public:
      */
     std::string frame_file_path(const int frame) const
     {
-        return output_prefix.string() + "-" + std::to_string(frame) + ".yaml";
+        return output_prefix.string() + "-" + std::to_string(frame) + output_extension;
     }
 
     /**

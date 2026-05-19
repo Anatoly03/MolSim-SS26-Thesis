@@ -45,11 +45,11 @@ int main(int argc, char *argv[])
 
     DirectSum container;
     container.add_particle(Particle());
-    std::string output_file_path = "output/out";
+    std::filesystem::path output_file_path = "output/out.xyz";
 
     YAMLReader reader(input_file_path);
     auto simulation = reader.consume();
-    YAMLWriter writer(output_file_path, simulation);
+    auto writer = Writer::create(output_file_path, simulation);
 
     double total_time_v = total_time.value_or(1000.0);
     double delta_time_v = delta_time.value_or(0.0014);
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
         simulation.step(delta_time_v);
 
         if (frame % frame_period_v == 0)
-            writer.write(frame);
+            writer->write(frame);
     }
 
     simulation.for_each_particles([](const Particle &particle)
