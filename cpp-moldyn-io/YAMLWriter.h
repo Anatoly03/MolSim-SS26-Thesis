@@ -15,6 +15,8 @@
 
 #include "yaml-cpp/yaml.h"
 
+#include "YAMLImplementation.h"
+#include "Writer.h"
 #include "container/DirectSum.h"
 #include "container/ParticleContainer.h"
 #include "force/Newton.h"
@@ -22,34 +24,18 @@
 #include "Simulation.h"
 #include "Vec3.h"
 
-struct YAMLWriter
+struct YAMLWriter : public Writer
 {
-private:
-    /**
-     * @brief The prefix for the output file path.
-     */
-    std::string prefix;
-
-    /**
-     * @brief The simulation to write.
-     */
-    Simulation<DirectSum> &simulation;
-
 public:
     /**
      * @brief Creates a new YAML file writer.
      */
-    YAMLWriter(std::string prefix, Simulation<DirectSum> &simulation) : prefix(prefix), simulation(simulation) {}
-
-    std::string frame_file_path(const int frame) const
-    {
-        return prefix + "-" + std::to_string(frame) + ".yaml";
-    }
+    YAMLWriter(const std::filesystem::path file_path, const Simulation<DirectSum> &simulation) : Writer(file_path, simulation) {}
 
     /**
      * @brief Consume the YAML file and return a Simulation struct.
      */
-    void write(const int frame) const
+    void write(const int frame) const override
     {
         YAML::Node node;
         YAML::Node particles = YAML::Node(YAML::NodeType::Sequence);
