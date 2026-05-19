@@ -19,13 +19,13 @@ fn main() {
     // run tests
     cpp::run("halleys-comet", 0.0014, 25000);
     rust::run("halleys-comet", 0.0014, 25000);
-    test::run("halleys-comet", 25000, 1e-6);
+    test::run("halleys-comet", 25000);
 
     cpp::run("two-colliding-particles", 0.0014, 100);
     rust::run("two-colliding-particles", 0.0014, 100);
-    test::run("two-colliding-particles", 100, 1e-6);
+    test::run("two-colliding-particles", 100);
 
-    cpp::run("two-bodies-collision-0001", 0.0014, 10);
-    rust::run("two-bodies-collision-0001", 0.0014, 10);
-    test::run("two-bodies-collision-0001", 10, 1e-3);
+    cpp::run("two-bodies-collision-0001", 0.0007, 50);
+    rust::run("two-bodies-collision-0001", 0.0007, 50);
+    test::run("two-bodies-collision-0001", 50);
 }

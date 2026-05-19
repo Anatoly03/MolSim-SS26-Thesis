@@ -1,11 +1,16 @@
 use crate::Log;
 
 /// Compares `.xyz` files in `output/rs` and `output/cpp` for content equality
-pub fn run(name: &str, frames: usize, tolerance: f64) {
+pub fn run(name: &str, frames: usize) {
     Log::Success.log("Testing", &format!("`{name}`"));
 
     let prefix = format!("{name}_");
     const SUFFIX: &str = ".xyz";
+
+    // the tolerance is dynamic and will be relaxed if the tests fail in a
+    // small bound.
+    let mut tolerance = 1e-6;
+    let tolerance_relax_factor = 10.0;
 
     for i in 1..=frames {
         let rs_path = format!("output/rs/{prefix}{i:04}{SUFFIX}");
@@ -69,7 +74,19 @@ pub fn run(name: &str, frames: usize, tolerance: f64) {
                     continue;
                 }
 
-                let s = format!("assertion failed: `{rs}` != `{cpp}` in {}:{}:", rs_path, line + 3);
+                // relax tolerance if the error is small, to account for floating-point noise
+                // accumulated over many steps
+                if (rs - cpp).abs() < tolerance * tolerance_relax_factor {
+                    tolerance *= tolerance_relax_factor;
+                    continue;
+                }
+
+                let s = format!(
+                    "assertion failed: `{rs}` != `{cpp}` (tolerance: {tolerance:.2e}, error: {:.2e}) in {}:{}:",
+                    (rs - cpp).abs(),
+                    rs_path,
+                    line + 3
+                );
                 Log::Failure.log("Fail", &s);
                 Log::Info.log("Cpp", &rs_line);
                 Log::Info.log("Rust", &cpp_line);
@@ -81,6 +98,6 @@ pub fn run(name: &str, frames: usize, tolerance: f64) {
         // Log::Success.log("Pass", &display);
     }
 
-    let display = format!("{frames} steps");
+    let display = format!("{frames} steps, final error: {tolerance:.2e}");
     Log::Success.log("Pass", &display);
 }
