@@ -11,6 +11,7 @@
 #include "Args.h"
 #include "container/DirectSum.h"
 #include "YAMLReader.h"
+#include "YAMLWriter.h"
 
 /**
  * @brief Entry point for the application.
@@ -33,8 +34,11 @@ int main(int argc, char *argv[])
         .version()
         .parse(argc, argv);
 
+    std::string output_file_path = "output/out";
+
     YAMLReader reader(input_file_path);
     auto simulation = reader.consume();
+    YAMLWriter writer(output_file_path, simulation);
 
     double total_time_v = total_time.value_or(1000.0);
     double delta_time_v = delta_time.value_or(0.0014);
@@ -48,11 +52,8 @@ int main(int argc, char *argv[])
     {
         simulation.step(delta_time_v);
 
-        // if (frame % frame_period_v == 0)
-        // {
-        //     std::cout << "Frame " << frame << " / " << total_frames << "\n";
-        //     // TODO write output
-        // }
+        if (frame % frame_period_v == 0)
+            writer.write(frame);
     }
 
     simulation.for_each_particles([](const Particle &particle)
