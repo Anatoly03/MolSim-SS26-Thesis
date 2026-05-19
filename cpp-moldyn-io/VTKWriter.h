@@ -39,7 +39,7 @@ public:
     /**
      * @brief Consume the VTK file and return a Simulation struct.
      */
-    void write(const int frame) const override
+    void write() override
     {
         // Initialize points
         auto points = vtkSmartPointer<vtkPoints>::New();
@@ -82,7 +82,7 @@ public:
 
         // Create writer and set data
         vtkNew<vtkXMLUnstructuredGridWriter> writer;
-        writer->SetFileName(frame_file_path(frame).c_str());
+        writer->SetFileName(frame_file_path().c_str());
         writer->SetInputData(grid);
         writer->SetDataModeToAscii();
 
