@@ -37,7 +37,7 @@ std::unique_ptr<Writer> Writer::create(const std::filesystem::path &file_path, c
     }
 
     #ifdef ENABLE_VTK_SUPPORT
-    if (extension == ".vtu")
+    if (extension == ".vtk" || extension == ".vtu")
     {
         return std::make_unique<VTKWriter>(file_path, simulation);
     }

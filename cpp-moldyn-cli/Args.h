@@ -296,6 +296,18 @@ private:
             return true;
         }
 
+        if (const auto v = ref.try_get<std::optional<double>>())
+        {
+            *v = optarg ? std::optional<double>(atof(optarg)) : std::nullopt;
+            return true;
+        }
+
+        if (const auto v = ref.try_get<std::optional<int>>())
+        {
+            *v = optarg ? std::optional<int>(atoi(optarg)) : std::nullopt;
+            return true;
+        }
+
         if (const auto v = ref.try_get<std::filesystem::path>())
         {
             *v = std::filesystem::path(optarg);
@@ -765,10 +777,8 @@ public:
                 const auto ref = references.find(opt)->second;
 
                 if (parse_into_ref(optarg, ref))
-                    ;
-                break;
+                    continue;
 
-                // We land here if the option type could not be parsed.
                 std::cerr << "Error: Failed to parse argument for option -"
                           << (char)opt << ". expected type: `" << ref.type_human_readable()
                           << "`. received value: `" << (optarg ? optarg : "null") << "`\n";
@@ -799,8 +809,8 @@ public:
             {
                 pos_index += 1;
                 optind += 1;
+                continue;
             }
-            break;
 
             // We land here if the option type could not be parsed.
             std::cerr << "Error: Failed to parse argument at position " << pos_index + 1
