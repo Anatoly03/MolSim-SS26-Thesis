@@ -268,8 +268,7 @@ cargo run -p test-equality
     \end{lstlisting}
 \end{frame}
 
-\nofooterframe\begin{frame}{Something is severely wrong with C++ performance\footcite{benchmark-1}}
-    
+\nofooterframe\begin{frame}{First Cross-Language Benchmark Results\footcite{benchmark-1}}
     \begin{center}
         \begin{tikzpicture}
             \begin{axis}[
@@ -284,40 +283,45 @@ cargo run -p test-equality
                 grid style=dashed,
                 xmin=-5,
                 xmax=55,
-                legend style={at={(0.23,1)},anchor=north},
+                legend style={at={(0.05,0.95)},anchor=north west},
             ]
-            
+
             \addplot[
                 color=blue,
                 mark=square,
                 line width=1pt,
                 ]
                 coordinates {
-                    (0, 1140)(20, 10999)(50, 25901)
+                    (0, 109)(20, 509)(50, 1080)
                 };
-            
+
             \addplot[
                 color=orange,
                 mark=triangle,
                 line width=1pt,
                 ]
                 coordinates {
-                    (0, 55)(20, 819)(50, 1961)
+                    (0, 66)(20, 1046)(50, 2522)
                 };
-                
+
             \legend{C++, Rust}
             \end{axis}
         \end{tikzpicture}
     \end{center}
 
-    Tested with 2400 particles from the \texttt{two-bodies-collision-0001} dataset.
+    \vspace{-1.5em}
+    Tested with 2400 particles from the \texttt{two-bodies-collision-0001} dataset on the \texttt{direct-sum} algorithm in release mode on GitHub Actions.
 \end{frame}
 
-\simpleframe\begin{frame}{Ferris will answer questions}
-    \centering
-    % image from:
-    % https://en.wikipedia.org/wiki/List_of_computing_mascots
-    \includegraphics[width=0.5\textwidth]{media/ferris.png}
+\simpleframe\begin{frame}{Memotion of the week}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            `Help! I can't stop the simulation!'
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \includegraphics[width=0.8\textwidth]{media/meme-can-not-close.png}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 \headerframe\begin{frame}[allowframebreaks]{References}

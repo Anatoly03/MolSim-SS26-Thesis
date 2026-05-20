@@ -45,7 +45,7 @@ make -C target/cpp -j4 --no-print-directory
 cargo run -p test-equality
 ```
 
-This script will compile and run Rust and C++ binaries and verify their output equivalence, as well as record execution benchmarks.
+This script will compile and run Rust and C++ binaries in release mode and verify their output equivalence, as well as record execution benchmarks.
 
 ## Benchmarking
 
