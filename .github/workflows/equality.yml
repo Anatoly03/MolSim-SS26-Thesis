@@ -12,6 +12,7 @@ on:
       - moldyn-core/**
       - moldyn-io/**
       - test-equality/**
+  workflow_dispatch:
 
 concurrency:
   group: "equality"

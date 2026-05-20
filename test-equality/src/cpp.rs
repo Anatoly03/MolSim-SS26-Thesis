@@ -11,7 +11,7 @@ pub fn build() {
     Log::Success.log("Compiling", "target-cpp");
 
     let cmake_status = Command::new("cmake")
-        .args([".", "-B", "target/cpp"])
+        .args([".", "-B", "target/cpp", "-DCMAKE_BUILD_TYPE=Release"])
         .stdout(Stdio::null())
         .status()
         .expect("Failed to execute cmake");
@@ -23,7 +23,7 @@ pub fn build() {
 
     let make_status = Command::new("make")
         .args(["-C", "target/cpp", "-j4", "--no-print-directory"])
-        .stdout(Stdio::null())
+        // .stdout(Stdio::null())
         .status()
         .expect("Failed to execute make");
 

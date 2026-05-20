@@ -39,11 +39,13 @@ make -C target/cpp -j4 --no-print-directory
 ./target/cpp/MolSimTest
 ```
 
-## Runninng Equality Tests
+## Runninng Equality Tests [![Rust and C++ Equality Tests](https://github.com/Anatoly03/MolSim-SS26-Thesis/actions/workflows/equality.yml/badge.svg)](https://github.com/Anatoly03/MolSim-SS26-Thesis/actions/workflows/equality.yml)
 
 ```
 cargo run -p test-equality
 ```
+
+This script will compile and run Rust and C++ binaries and verify their output equivalence, as well as record execution benchmarks.
 
 ## Benchmarking
 
