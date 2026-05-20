@@ -11,7 +11,7 @@ pub fn build() {
     Log::Success.log("Compiling", "target-cpp");
 
     let cmake_status = Command::new("cmake")
-        .args([".", "-B", "target/cpp", "--config", "Release"])
+        .args([".", "-B", "target/cpp", "-DCMAKE_BUILD_TYPE=Release"])
         .stdout(Stdio::null())
         .status()
         .expect("Failed to execute cmake");
