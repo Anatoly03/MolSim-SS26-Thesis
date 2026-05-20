@@ -49,10 +49,10 @@ public:
     Particle(const Vec3<double> position, const Vec3<double> velocity, double mass)
         : position(position.clone()), velocity(velocity.clone()), force(), old_force(), mass(mass) {}
 
-    // remove implicit copy constructors
+    // TODO remove implicit copy constructors
     // https://stackoverflow.com/questions/33776697/deleting-copy-constructors-and-copy-assignment-operators-which-of-them-are-esse
-    Particle(const Particle &) = delete;
-    Particle &operator=(const Particle &) = delete;
+    Particle(const Particle &) = default;
+    Particle &operator=(const Particle &) = default;
     inline Particle clone() const { return Particle(position.clone(), velocity.clone(), mass); }
 
     /**
@@ -90,7 +90,8 @@ public:
      * @brief Applies the given force to the particle (addition). It assumes that
      * the force was reset with [Particle::delay_force] in a timestep.
      */
-    inline void apply_force(const Vec3<double> &new_force) {
+    inline void apply_force(const Vec3<double> &new_force)
+    {
         force += new_force;
     }
 
@@ -99,7 +100,8 @@ public:
      * step. This functionality is constant across different simulation algorithms,
      * so it is implemented here.
      */
-    inline void update_position(const double delta_time) {
+    inline void update_position(const double delta_time)
+    {
         position += velocity * delta_time + force * (delta_time * delta_time / (2.0 * mass));
     }
 
@@ -108,45 +110,50 @@ public:
      * step. This functionality is constant across different simulation algorithms,
      * so it is implemented here.
      */
-    inline void update_velocity(const double delta_time) {
+    inline void update_velocity(const double delta_time)
+    {
         velocity += (force + old_force) * (delta_time / (2.0 * mass));
     }
 
     /**
      * @brief Calculate the vector difference between two particles' positions. Note
      * that the order of the particles affects the sign.
-     * 
+     *
      * - `direction(a, b) == -direction(b, a)`.
      */
-    inline Vec3<double> position_difference(const Particle &other) const {
+    inline Vec3<double> position_difference(const Particle &other) const
+    {
         return position - other.position;
     }
 
     /**
      * @brief Calculate the normalized vector difference between two particles'
      * positions. Note that the order of the particles affects the sign.
-     * 
+     *
      * - If result is `Some`: `direction(a, b) == -direction(b, a)`.
      * - If result is `None`: `direction(a, b) == direction(b, a) == None`.
      */
-    inline std::optional<Vec3<double>> direction(const Particle &other) const {
+    inline std::optional<Vec3<double>> direction(const Particle &other) const
+    {
         return position_difference(other).normal();
     }
 
     /**
      * @brief Calculate the distance between two particles' positions. This
      * function is symmetric:
-     * 
+     *
      * - `distance(a, b) == distance(b, a)`.
      */
-    inline double distance(const Particle &other) const {
+    inline double distance(const Particle &other) const
+    {
         return position_difference(other).length();
     }
 
     /**
      * @brief Calculate the product of the masses of two particles.
      */
-    inline double mass_product(const Particle &other) const {
+    inline double mass_product(const Particle &other) const
+    {
         return mass * other.mass;
     }
 };

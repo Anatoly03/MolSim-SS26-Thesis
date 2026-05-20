@@ -1,7 +1,7 @@
 /**
  * @file Args.h
  * @author Anatoly Weinstein
- * 
+ *
  * @brief Definition of the Args class for CLI argument parsing,
  * wrapping around [getopt](https://www.man7.org/linux/man-pages/man3/getopt.3.html)
  * and `getopt_long` for parsing.
@@ -11,6 +11,7 @@
 
 #include <cxxabi.h>
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <getopt.h>
 #include <iostream>
@@ -26,9 +27,24 @@
 #define PROGRAM_VERSION "unknown"
 #endif
 
+#include "force/Force.h"
+#include "force/Newton.h"
+
 /**
  * @brief A CLI argument parser inspired by the [argparse](https://github.com/p-ranav/argparse)
  * library for C++.
+ * 
+ * # Argument Types
+ * 
+ * Arguments can be either named (`-s` or `--long`) or positional (`<arg>`). Furthermore,
+ * there are two different argument types that can be registered with the parser.
+ * 
+ * 1. Required: Arguments that need to be provided by the user or the program will terminate
+ *    early.
+ * 
+ * 2. Optional: Arguments that may or may not be provided by the user and are wrapped in an
+ *    `std::optional` type. If not provided, the value will be `std::nullopt` or a
+ *    programmatic default value.
  *
  * # Example
  *
@@ -37,11 +53,13 @@
  *     int int_arg;
  *     double double_arg;
  *     std::string string_arg;
+ *     std::optional<std::string> optional_string_arg;
  *
  *     Args()
  *         .required<int>('i', &int_arg)
  *         .required<double>('d', &double_arg)
  *         .required<std::string>('s', "string", &string_arg)
+ *         .optional_details<std::string>('o', "optional_string", &optional_string_arg, "This is an optional string argument.")
  *         .help("This is a help message for the CLI application.")
  *         .parse(argc, argv);
  * }
@@ -110,6 +128,8 @@ private:
             if (type_hint == typeid(std::optional<std::string>).hash_code())
                 return "[string]";
             if (type_hint == typeid(std::unique_ptr<std::ifstream>).hash_code())
+                return "file path";
+            if (type_hint == typeid(std::filesystem::path).hash_code())
                 return "file path";
 
             // https://stackoverflow.com/questions/12877521/human-readable-type-info-name
@@ -273,6 +293,24 @@ private:
             }
 
             *v = std::move(pointer);
+            return true;
+        }
+
+        if (const auto v = ref.try_get<std::optional<double>>())
+        {
+            *v = optarg ? std::optional<double>(atof(optarg)) : std::nullopt;
+            return true;
+        }
+
+        if (const auto v = ref.try_get<std::optional<int>>())
+        {
+            *v = optarg ? std::optional<int>(atoi(optarg)) : std::nullopt;
+            return true;
+        }
+
+        if (const auto v = ref.try_get<std::filesystem::path>())
+        {
+            *v = std::filesystem::path(optarg);
             return true;
         }
 
@@ -644,9 +682,9 @@ public:
     Args &optional_details(char short_name, const char *long_name, std::optional<T> *value, const char *details)
     {
         optstring += short_name;
-        optstring += "::";
+        optstring += ":";
 
-        options.push_back(option{long_name, optional_argument, nullptr, short_name});
+        options.push_back(option{long_name, required_argument, nullptr, short_name});
         references.insert({short_name, ArgsRef::with_brief<std::optional<T>>(value, details)});
         return *this;
     }
@@ -739,10 +777,8 @@ public:
                 const auto ref = references.find(opt)->second;
 
                 if (parse_into_ref(optarg, ref))
-                    ;
-                break;
+                    continue;
 
-                // We land here if the option type could not be parsed.
                 std::cerr << "Error: Failed to parse argument for option -"
                           << (char)opt << ". expected type: `" << ref.type_human_readable()
                           << "`. received value: `" << (optarg ? optarg : "null") << "`\n";
@@ -773,8 +809,8 @@ public:
             {
                 pos_index += 1;
                 optind += 1;
+                continue;
             }
-            break;
 
             // We land here if the option type could not be parsed.
             std::cerr << "Error: Failed to parse argument at position " << pos_index + 1

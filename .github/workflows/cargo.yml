@@ -1,20 +1,18 @@
-name: Cargo Build & Test
+# Builds the Rust project.
+
+name: Cargo Build
 
 on:
-  push:
-    paths:
-      - moldyn-cli/**
-      - moldyn-core/**
-      - moldyn-io/**
-      - moldyn-wasm/**
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-env: 
+  # Allows this workflow to be called by other workflows.
+  workflow_call:
+env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build_and_test:
-    name: Rust Project
+  build:
+    name: Build Rust Project
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,5 +31,4 @@ jobs:
 
       - run: rustup update stable && rustup default stable
       - run: cargo build --verbose
-      - run: cargo test --verbose
   

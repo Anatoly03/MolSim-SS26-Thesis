@@ -7,14 +7,17 @@
 
 #pragma once
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <memory>
 #include <string>
+#include "Simulation.h"
+#include "container/DirectSum.h"
 
-struct Reader
+class Reader
 {
-private:
+protected:
     /**
      * @brief The input file stream for reading particle data. The parser
      * will be selected from the file extension.
@@ -43,7 +46,7 @@ public:
      * Reader reader("input.yaml");
      * ```
      */
-    Reader(std::string file_path) {
+    Reader(std::filesystem::path file_path) {
         std::unique_ptr<std::ifstream> pointer = std::make_unique<std::ifstream>(file_path);
 
         if (!pointer.get()->is_open())
@@ -66,5 +69,14 @@ public:
         }
     }
 
-    // TODO Reader.consume() -> Simulation
+    /**
+     * @brief Consumes the file stream and returns a Simulation struct.
+     */
+    virtual Simulation<DirectSum> consume() = 0;
+  
+    /**
+     * @brief Static factory method to create a Reader instance based on the
+     * file etxension.
+     */
+    static std::unique_ptr<Reader> create(const std::filesystem::path &file_path);
 };

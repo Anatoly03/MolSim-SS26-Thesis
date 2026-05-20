@@ -6,7 +6,7 @@
  */
 
 #pragma once
-#ifdef ENABLE_VTK_OUTPUT
+#ifdef ENABLE_VTK_SUPPORT
 
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>

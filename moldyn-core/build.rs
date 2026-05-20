@@ -3,7 +3,7 @@
 use std::{env, ffi::OsString, process::Command};
 
 fn main() {
-    // 
+    //
     println!("cargo:rustc-check-cfg=cfg(nightly)");
 
     // https://docs.rs/select-rustc/0.1.2/src/rustc/rustc.rs.html#50

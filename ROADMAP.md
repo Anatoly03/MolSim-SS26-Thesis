@@ -70,3 +70,7 @@ https://doc.rust-lang.org/nightly/unstable-book/library-features/test.html
 meval alternative for c++:
 https://mathparser.org/mxparser-tutorial/simple-expressions/
 https://mathparser.org/mxparser-tutorial/user-defined-arguments/
+
+gpu:
+https://github.com/chelsea0x3b/cudarc/blob/main/examples/04-streams.rs
+

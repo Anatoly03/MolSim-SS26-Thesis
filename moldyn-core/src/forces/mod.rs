@@ -26,6 +26,12 @@ pub trait Force {
     /// deserialization. The characters are expected to be in `dash-case`.
     fn system_name(&self) -> &str;
 
+    /// Checks if the input is the name or alias of this force system. Used for
+    /// deserialization of the force system from a string.
+    fn matches_name(&self, name: &str) -> bool {
+        self.system_name().eq_ignore_ascii_case(name)
+    }
+
     /// Calculates the potential energy between two particles.
     fn potential(&self, particle: &Particle, other: &Particle) -> f64;
 

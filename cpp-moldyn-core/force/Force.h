@@ -4,7 +4,10 @@
 
 #pragma once
 
+#include <string>
+
 #include "Particle.h"
+#include "Vec3.h"
 
 /**
  * @brief [Interface](https://www.tutorialspoint.com/cplusplus/cpp_interfaces.htm)
@@ -13,6 +16,11 @@
 class Force
 {
 public:
+    /**
+     * Name of the force system.
+     */
+    virtual std::string system_name() const = 0;
+
     /**
      * @brief Calculates the potential energy between two particles.
      * 
@@ -28,5 +36,5 @@ public:
     Vec3<double> force(const Particle &particle, const Particle &other) const;
 
     // @brief Applies the calculated force to a particle pair.
-    void apply(Particle &particle, Particle other) const;
+    void apply(Particle &particle, Particle &other) const;
 };

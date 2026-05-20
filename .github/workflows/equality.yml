@@ -1,0 +1,38 @@
+# Runs the equality comparator tests
+
+name: Rust and C++ Equality Tests
+
+on:
+  push:
+    paths:
+      - cpp-moldyn-cli/**
+      - cpp-moldyn-core/**
+      - cpp-moldyn-io/**
+      - moldyn-cli/**
+      - moldyn-core/**
+      - moldyn-io/**
+      - test-equality/**
+  workflow_dispatch:
+
+concurrency:
+  group: "equality"
+  cancel-in-progress: true
+
+jobs:
+  equality:
+    name: Equality Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # cache target directory to speed up builds
+      - name: Cache target directory
+        uses: actions/cache@v4
+        with:
+          path: |
+            target
+          key: ${{ runner.os }}-target-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-target-
+
+      - run: rustup update stable && rustup default stable
+      - run: cargo run -p test-equality

@@ -20,9 +20,12 @@ This project implements molecular dynamics simulations in C++ and Rust. The goal
 
 ## Building & Running Rust
 
-```
+```sh
 cargo build --release
 ./target/release/moldyn-cli --help
+
+# testing
+cargo test
 ```
 
 ## Building & Running C++
@@ -31,7 +34,18 @@ cargo build --release
 cmake . -B target/cpp
 make -C target/cpp -j4 --no-print-directory
 ./target/cpp/MolSim --help
+
+# testing
+./target/cpp/MolSimTest
 ```
+
+## Runninng Equality Tests [![Rust and C++ Equality Tests](https://github.com/Anatoly03/MolSim-SS26-Thesis/actions/workflows/equality.yml/badge.svg)](https://github.com/Anatoly03/MolSim-SS26-Thesis/actions/workflows/equality.yml)
+
+```
+cargo run -p test-equality
+```
+
+This script will compile and run Rust and C++ binaries in release mode and verify their output equivalence, as well as record execution benchmarks.
 
 ## Benchmarking
 
@@ -43,17 +57,12 @@ Rust benchmarking is currently done on the nightly channel using the macro [`#[b
 
 ## Documentation [![Rust Documentation](https://badges.ws/badge?icon=rust&value=Rustdoc)](https://anatoly03.github.io/MolSim-SS26-Thesis/moldyn_core/index.html) [![C++ Documentation](https://badges.ws/badge?icon=c%2b%2b&value=Doxygen)](https://anatoly03.github.io/MolSim-SS26-Thesis/cpp/index.html)
 
-You can find a very detailed code documentation generated with [Rustdoc](https://doc.rust-lang.org/rustdoc/index.html) for the Rust codebase and [Doxygen](https://www.doxygen.nl/index.html) for the C++ codebase. You can build the documentation locally by running the following shell commands.
+You can find a very detailed code documentation generated with [Rustdoc](https://doc.rust-lang.org/rustdoc/index.html) for the Rust codebase and [Doxygen](https://www.doxygen.nl/index.html) for the C++ codebase. You can build the documentation locally by running the following shell commands. Respectively in order, the commands below are for Rust and C++.
 
 ```sh
-# rust documentation only
 cargo doc --no-deps --workspace
+```
 
-# c++ documentation only
-mkdir target/doc
-doxygen Doxyfile
-
-# rust + c++ documentation together
-cargo doc --no-deps --workspace
+```sh
 doxygen Doxyfile
 ```

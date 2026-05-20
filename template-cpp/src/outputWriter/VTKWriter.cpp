@@ -4,7 +4,7 @@
  *  Created on: 01.03.2010
  *      Author: eckhardw
  */
-#ifdef ENABLE_VTK_OUTPUT
+#ifdef ENABLE_VTK_SUPPORT
 
 #include "VTKWriter.h"
 

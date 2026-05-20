@@ -23,9 +23,16 @@ impl Force for NewtonForce {
         "newton"
     }
 
+    fn matches_name(&self, name: &str) -> bool {
+        matches!(
+            name.to_ascii_lowercase().as_str(),
+            "newton" | "gravitational" | "gravity"
+        )
+    }
+
     /// Calculates the potential energy between two particles according to Newton's
     /// law of universal gravitation.
-    /// 
+    ///
     /// ```text
     /// potential = -G * M / r
     /// potential = -M / r          (assuming G = 1)
@@ -116,12 +123,12 @@ mod test {
     }
 
     /// This test validates the correctness of the potential energy calculation.
-    /// 
+    ///
     /// In this test, the distance is strictly `1.0` and the masses are `1.0`.
     /// Therefore, the potential energy should be `-1.0`.
-    /// 
+    ///
     /// # Equation
-    /// 
+    ///
     /// ```text
     /// U = -G *         M / r
     ///   = -1 * 1.0 * 1.0 / 1.0
@@ -146,13 +153,13 @@ mod test {
     }
 
     /// This test validates the correctness of the potential energy calculation.
-    /// 
+    ///
     /// In this test, the distance is strictly `1.0` and the masses are respectively
     /// `1.0` and `4.0`. Since the product of masses is in the numerator, the potential
     /// energy should scale by the factor `4`, yielding the potential energy `-4.0`.
-    /// 
+    ///
     /// # Equation
-    /// 
+    ///
     /// ```text
     /// U = -G *         M / r
     ///   = -1 * 1.0 * 4.0 / 1.0
@@ -177,14 +184,14 @@ mod test {
     }
 
     /// This test validates the correctness of the potential energy calculation.
-    /// 
+    ///
     /// In this test, the distance is strictly `1.0` and the masses are `4.0`.
     /// Since the product of masses is in the numerator, the potential energy
     /// should scale by the factor squared `16`, yielding the potential energy
     /// `-16.0`.
-    /// 
+    ///
     /// # Equation
-    /// 
+    ///
     /// ```text
     /// U = -G *         M / r
     ///   = -1 * 4.0 * 4.0 / 1.0
@@ -211,24 +218,24 @@ mod test {
     /// This test validates the correctness of the potential energy calculation. This
     /// test depends on [potential_energy_validation2] and [potential_energy_validation3],
     /// which validate the masses being in the numerator.
-    /// 
+    ///
     /// In this test, the distance is strictly `2.0` and the masses are `1.0`.
     /// Since the masses do not affect the equation as covered by other tests, the
     /// potential energy should scale by in the inverse factor, yielding `-0.5`.
-    /// 
+    ///
     /// # Equation
-    /// 
+    ///
     /// ```text
     /// U = -G *         M / r
     ///   = -1 * 1.0 * 1.0 / 2.0
     ///   = -0.5
     /// ```
-    /// 
+    ///
     /// This test validates the correctness of the potential energy calculation.
     /// In this test, the distance is strictly 2.0 and the masses are strictly 1.0.
     /// Since the tests [potential_energy_validation2] and [potential_energy_validation3]
     /// validate the masses being in the numerator, we expect the numerator to be -1.0.
-    /// 
+    ///
     /// Since the distance is in the denominator, we expect the potential energy to be -0.5.
     #[test]
     fn potential_energy_validation4() {
@@ -250,9 +257,9 @@ mod test {
 
     /// This test validates the correctness of the potential energy calculation
     /// in a more complex scenario.
-    /// 
+    ///
     /// # Equation
-    /// 
+    ///
     /// ```text
     /// U = -G *         M / r
     ///   = -1 * 5.0 * 2.0 / 10.0
@@ -278,16 +285,16 @@ mod test {
 
     /// This test validates the correctness of the force calculation. The
     /// formula is taken from the article [Wikipedia - Newton's law of universal gravitation](https://en.wikipedia.org/wiki/Newton%27s_law_of_universal_gravitation)
-    /// 
+    ///
     /// In this test, the distance and the masses are strictly `1.0`.
-    /// 
+    ///
     /// # Equation
-    /// 
+    ///
     /// ```text
     /// U = -G *         M / r
     ///   = -1 * 1.0 * 1.0 / 1.0
     ///   = -1.0
-    /// 
+    ///
     /// F =  -U / r
     ///   = 1.0 / 1.0
     /// ```
@@ -310,17 +317,17 @@ mod test {
     }
 
     /// This test validates the correctness of the force calculation.
-    /// 
+    ///
     /// In this test, the distance is strictly `1.0` and one of the bodies has
     /// the mass `4.0`.
-    /// 
+    ///
     /// # Equation
-    /// 
+    ///
     /// ```text
     /// U = -G *         M / r
     ///   = -1 * 1.0 * 4.0 / 1.0
     ///   = -4.0
-    /// 
+    ///
     /// F =  -U / r
     ///   = 4.0 / 1.0
     /// ```
@@ -343,14 +350,14 @@ mod test {
     }
 
     /// This test validates the correctness of the force calculation.
-    /// 
+    ///
     /// # Equation
-    /// 
+    ///
     /// ```text
     /// U = -G *         M / r
     ///   = -1 * 4.0 * 4.0 / 1.0
     ///   = -16.0
-    /// 
+    ///
     /// F =   -U / r
     ///   = 16.0 / 1.0
     /// ```
@@ -373,14 +380,14 @@ mod test {
     }
 
     /// This test validates the correctness of the force calculation.
-    /// 
+    ///
     /// # Equation
-    /// 
+    ///
     /// ```text
     /// U = -G *         M / r
     ///   = -1 * 1.0 * 1.0 / 2.0
     ///   = -0.5
-    /// 
+    ///
     /// F =   -U / r
     ///   =  0.5 / 2.0
     ///   =  0.25
@@ -400,19 +407,23 @@ mod test {
 
         let force = newton.force(&p1, &p2);
 
-        assert_ne!(force.length(), 0.5, "newton force should not be 0.5. force is missing division of potential (correct) by distance (missing)");
+        assert_ne!(
+            force.length(),
+            0.5,
+            "newton force should not be 0.5. force is missing division of potential (correct) by distance (missing)"
+        );
         assert_eq!(force.length(), 0.25, "force should be 0.25");
     }
 
     /// This test validates the correctness of the force calculation.
-    /// 
+    ///
     /// # Equation
-    /// 
+    ///
     /// ```text
     /// U = -G *         M / r
     ///   = -1 * 1.0 * 2.0 / 2.0
     ///   = -1.0
-    /// 
+    ///
     /// F =   -U / r
     ///   = 1.0 / 2.0
     ///   = 0.5
@@ -432,37 +443,39 @@ mod test {
 
         let force = newton.force(&p1, &p2);
 
-        assert_ne!(force.length(), 1.0, "newton force should not be 1.0. force is missing division of potential (correct) by distance (missing)");
+        assert_ne!(
+            force.length(),
+            1.0,
+            "newton force should not be 1.0. force is missing division of potential (correct) by distance (missing)"
+        );
         assert_eq!(force.length(), 0.5, "force should be 0.5");
     }
-
 }
 
+// /// This test validates the correctness of the potential energy calculation
+// /// in a more complex scenario.
+// ///
+// /// # Equation
+// ///
+// /// ```text
+// /// U = -G *         M / r
+// ///   = -1 * 5.0 * 2.0 / 10.0
+// ///   = -1.0
+// /// ```
+// #[test]
+// fn potential_energy_validation_complex() {
+//     let p1pos = Vec3::new(0.0, 0.0, 0.0);
+//     let p2pos = Vec3::new(10.0, 0.0, 0.0);
 
-    // /// This test validates the correctness of the potential energy calculation
-    // /// in a more complex scenario.
-    // /// 
-    // /// # Equation
-    // /// 
-    // /// ```text
-    // /// U = -G *         M / r
-    // ///   = -1 * 5.0 * 2.0 / 10.0
-    // ///   = -1.0
-    // /// ```
-    // #[test]
-    // fn potential_energy_validation_complex() {
-    //     let p1pos = Vec3::new(0.0, 0.0, 0.0);
-    //     let p2pos = Vec3::new(10.0, 0.0, 0.0);
+//     let p1m = 5.0;
+//     let p2m = 2.0;
 
-    //     let p1m = 5.0;
-    //     let p2m = 2.0;
+//     let newton = NewtonForce::with_gravity_factor(1.0);
 
-    //     let newton = NewtonForce::with_gravity_factor(1.0);
+//     let p1 = Particle::from_data(p1pos, Vec3::zero(), p1m);
+//     let p2 = Particle::from_data(p2pos, Vec3::zero(), p2m);
 
-    //     let p1 = Particle::from_data(p1pos, Vec3::zero(), p1m);
-    //     let p2 = Particle::from_data(p2pos, Vec3::zero(), p2m);
+//     let potential = newton.potential(&p1, &p2);
 
-    //     let potential = newton.potential(&p1, &p2);
-
-    //     assert_eq!(potential, -1.0, "potential energy should be -1.0");
-    // }
+//     assert_eq!(potential, -1.0, "potential energy should be -1.0");
+// }

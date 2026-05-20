@@ -1,5 +1,6 @@
 //! TODO document
 
+use crate::Vec3;
 use serde::{Deserialize, Serialize};
 
 /// The struct representing the global simulation settings, which includes the
@@ -17,6 +18,10 @@ pub struct SimulationArgs {
     /// TODO document
     #[serde(default)]
     pub time_step: Option<f64>,
+
+    /// The size of a simulation cell in the [LinkedCells][crate::LinkedCells]
+    /// method.
+    pub cell_size: Option<Vec3<f64>>,
 }
 
 #[cfg(test)]
@@ -27,6 +32,7 @@ impl SimulationArgs {
             time_start: Some(0.0),
             time_end: Some(time),
             time_step: Some(time_step),
+            cell_size: Some(Vec3::new(5.0, 5.0, 5.0)),
         }
     }
 
@@ -39,6 +45,7 @@ impl SimulationArgs {
             time_start: Some(0.0),
             time_end: Some(ticks as f64 * TIME_STEP),
             time_step: Some(TIME_STEP),
+            cell_size: Some(Vec3::new(5.0, 5.0, 5.0)),
         }
     }
 }

@@ -1,3 +1,8 @@
+//! For file reading.
+//!
+//! Author: Anatoly Weinstein
+//! Created: April 2026
+
 use std::fs::File;
 use std::io::{BufRead, BufReader, Result};
 

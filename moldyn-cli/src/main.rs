@@ -4,7 +4,7 @@
 //!
 //! The main function reads the input file, creates the output directories and starts
 //! the simulation loop.
-//! 
+//!
 //! # Help
 //!
 //! Below are two examples how to build the project and print the help message.
@@ -17,19 +17,19 @@
 //! ```sh
 //! cargo run --release -- --help
 //! ```
-//! 
+//!
 //! ### Output
-//! 
+//!
 //! The help message will look something like this.
-//! 
+//!
 //! ```text
 //! Molecular Dynamics Thesis Code. This library implements a simple engine to simulate molecular dynamics
-//! 
+//!
 //! Usage: moldyn-cli [OPTIONS] <INPUT>
-//! 
+//!
 //! Arguments:
 //!   <INPUT>  The input file for the simulation. The parser will be selected from the file extension. Supported formats are: YAML
-//! 
+//!
 //! Options:
 //!   -o, --output <OUTPUT>              The output file for the simulation results. If a deep path is provided, the directories along the path will be created if they do not exist. The output format will be selected from the file extension. Supported formats are: YAML [default: output/out.vtk]
 //!   -d, --delta-time <DELTA_TIME>      The time step for the simulation [default: 0.0014]
@@ -63,13 +63,15 @@ struct Args {
     #[arg(short, long, default_value = "output/out.vtk")]
     output: PathBuf,
 
-    /// The time step for the simulation.
-    #[arg(short, long, default_value_t = 0.0014)]
-    delta_time: f64,
+    /// The time step for the simulation. If provided, this will override the
+    /// value from the input file.
+    #[arg(short, long)]
+    delta_time: Option<f64>,
 
-    /// The total time for the simulation to run.
-    #[arg(short, long, default_value_t = 1000.0)]
-    total_time: f64,
+    /// The total time for the simulation to run. If provided, this will override
+    /// the value from the input file.
+    #[arg(short, long)]
+    total_time: Option<f64>,
 
     /// The period (in frames) for writing the simulation output. This defines the
     /// frequency of output writes.
@@ -106,7 +108,7 @@ pub fn main() {
     };
 
     // generate simulation
-    let mut simulation: Box<dyn Simulation> = input.into();
+    let mut simulation: Box<dyn SimulationTrait> = input.into();
 
     // set up output writer
     let output_extension = args.output.extension().unwrap_or(std::ffi::OsStr::new(""));
@@ -121,8 +123,16 @@ pub fn main() {
         };
 
     let mut current_time = simulation.args().time_start.unwrap_or(0.0);
-    let delta_time = simulation.args().time_step.unwrap_or(args.delta_time);
-    let end_time = simulation.args().time_end.unwrap_or(args.total_time);
+    // Prefer CLI values when present, otherwise fall back to the input file,
+    // and finally to the hard-coded defaults.
+    let delta_time = args
+        .delta_time
+        .or(simulation.args().time_step)
+        .unwrap_or(0.0014);
+    let end_time = args
+        .total_time
+        .or(simulation.args().time_end)
+        .unwrap_or(1000.0);
 
     let mut frame = 0;
     while current_time < end_time {

@@ -1,4 +1,7 @@
 //! This module contains the [Particle] struct.
+//!
+//! Author: Anatoly Weinstein
+//! Created: April 2026
 
 /// A struct representing a particle record in the simulation.
 #[derive(Debug, PartialEq)]

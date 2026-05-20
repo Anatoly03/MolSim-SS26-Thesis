@@ -7,6 +7,7 @@
 use serde::{Deserialize, Serialize, de::Visitor};
 use std::{
     fmt::Display,
+    hash::Hash,
     marker::PhantomData,
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
 };
@@ -361,6 +362,14 @@ impl<T: Display> Display for Vec3<T> {
     }
 }
 
+impl<T: Hash> Hash for Vec3<T> {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.x.hash(state);
+        self.y.hash(state);
+        self.z.hash(state);
+    }
+}
+
 macro_rules! impl_for_primitives {
     ($($t:ty),*) => {$(
 impl Vec3<$t> {
@@ -443,6 +452,7 @@ impl Vec3<$t> {
 }
 
 impl Copy for Vec3<$t> {}
+impl Eq for Vec3<$t> {}
     )*};
 }
 

@@ -19,7 +19,7 @@ pub use xyz::XyzWriter;
 #[cfg(feature = "yaml")]
 pub use yml::YamlWriter;
 
-use moldyn_core::Simulation;
+use moldyn_core::SimulationTrait;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::io::{Error, ErrorKind::InvalidInput, Result};
@@ -32,13 +32,17 @@ pub trait OutputWriter {
     fn next_frame_number(&mut self) -> usize;
 
     /// Writes a single frame of the simulation state to the provided writer.
-    fn write_frame(&mut self, writer: &mut BufWriter<File>, state: &dyn Simulation) -> Result<()>;
+    fn write_frame(
+        &mut self,
+        writer: &mut BufWriter<File>,
+        state: &dyn SimulationTrait,
+    ) -> Result<()>;
 
     /// The file extension used in file writing.
     fn extension(&self) -> &str;
 
     /// Writes the simulation results.
-    fn write(&mut self, path: &Path, state: &dyn Simulation) -> Result<()> {
+    fn write(&mut self, path: &Path, state: &dyn SimulationTrait) -> Result<()> {
         let full_file_path = path.parent().unwrap_or(Path::new(".")).join(format!(
             // https://stackoverflow.com/questions/50458144/what-is-the-easiest-way-to-pad-a-string-with-0-to-the-left
             "{}_{:0>4}.{}",
