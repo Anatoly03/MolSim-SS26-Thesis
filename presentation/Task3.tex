@@ -1,0 +1,156 @@
+\documentclass[aspectratio=169]{beamer}
+\usepackage{babel}
+\usepackage{array, colortbl, tikz, transparent, listings, pgfplots}
+\usepackage[export]{adjustbox}
+\usepackage[skins,theorems]{tcolorbox}
+\usepackage[backend=biber,style=verbose-ibid,citetracker=true,ibidtracker=constrict,autocite=footnote]{biblatex}
+
+\setbeamercovered{transparent}
+\lstdefinelanguage{Rust}{
+    sensitive=true,
+    morekeywords={as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl, in, let, loop, match, mod, move, mut, pub, ref, return, self, Self, static, struct, super, trait, true, type, unsafe, use, where, while, async, await, dyn, Result, Option, Ok, Err, panic},
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]",
+    morestring=[b]',
+}
+\lstdefinelanguage{Yaml}{
+    sensitive=true,
+    morekeywords={true, false, null, particles, type, cuboid, foreach, position, velocity, mass, sigma, brownian_sigma},
+    morecomment=[l]{\#},
+    morestring=[b]",
+}
+\lstset{
+    language=Rust,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{red},
+    commentstyle=\color{teal},
+    morekeywords={Result, Option, Ok, Err, Some, None, panic},
+    breaklines=true
+}
+\usetikzlibrary{automata,positioning}
+\addbibresource{Reference.bib}
+
+\title{Rust vs C++: Brief Introduction}
+\author{Anatoly Weinstein}
+\date{30th of April 2025}
+
+\newcommand{\framebackground}[3]{
+    \begin{tikzpicture}
+        \transparent{#1}
+        \node[inner sep=0] at (current page.center) {
+            \includegraphics[height=\paperheight, right]{./media/tum-uhrenturm.png}
+        };
+        \transparent{#2}
+        \node[anchor=south, text width=\paperwidth, text height=1.5cm, draw=none, align=center] at (current page.south) {
+            \insertpagenumber
+        };
+        \transparent{#3}
+        \node[anchor=south, text width=\paperwidth, text height=1.5cm, draw=none, align=right] at (current page.south) {
+            \small Anatoly W. \,\,
+        };
+    \end{tikzpicture}
+}
+
+\newcommand{\headerframe}{
+    \usebackgroundtemplate{
+        \framebackground{0.2}{1}{1}
+    }
+}
+
+\newcommand{\simpleframe}{
+    \usebackgroundtemplate{
+        \framebackground{0}{1}{1}
+    }
+}
+
+\newcommand{\nofooterframe}{
+    \usebackgroundtemplate{
+        \framebackground{0}{0}{1}
+    }
+}
+
+\newcommand{\blue}[1]{{\color{beamer@blendedblue} #1}}
+\newcommand{\yellow}[1]{{\color[HTML]{AF8F10} #1}}
+\newcommand{\gray}[1]{{\color[HTML]{8F8F8F} #1}}
+\newcommand{\red}[1]{{\color[HTML]{FF5F5F} #1}}
+
+\begin{document}
+
+%
+% Frame
+%
+\usebackgroundtemplate{\framebackground{0.2}{0}{0}}
+\begin{frame}
+    \maketitle
+\end{frame}
+
+\nofooterframe\begin{frame}{Cross-Language Benchmark Results\footcite{benchmark-1}\footcite{benchmark-15}}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=\textwidth,  
+                height=0.7\textheight,
+                xlabel={},
+                ylabel={Runtime (ms)},
+                xtick={0, 20, 50},
+                scaled x ticks=false,  
+                scaled y ticks=false,
+                ymajorgrids=true, 
+                grid style=dashed,
+                xmin=-5,
+                xmax=55,
+                legend style={at={(0.05,0.95)},anchor=north west},
+            ]
+
+            \addplot[
+                color=blue,
+                mark=square,
+                line width=1pt,
+                ]
+                coordinates {
+                    (0, 109)(20, 509)(50, 1080)
+                };
+
+            \addplot[
+                color=orange,
+                mark=triangle,
+                line width=1pt,
+                ]
+                coordinates {
+                    (0, 66)(20, 1046)(50, 2522)
+                };
+
+            \addplot[
+                color=cyan,
+                mark=square,
+                line width=1pt,
+                ]
+                coordinates {
+                    (20, 454)(50, 1031)
+                };
+
+            \addplot[
+                color=red,
+                mark=triangle,
+                line width=1pt,
+                ]
+                coordinates {
+                    (20, 979)(50, 2478)
+                };
+
+            \legend{C++ (Ci 11), Rust (Ci 11), C++ (Ci 15), Rust (Ci 15)}
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+
+    \vspace{-0.2em}
+    The workflow 15 removed printing output and records average of 5 runs.
+\end{frame}
+
+\headerframe\begin{frame}[allowframebreaks]{References}
+  \printbibliography
+\end{frame}
+
+\end{document}
