@@ -7,6 +7,8 @@
 
 This project implements molecular dynamics simulations in C++ and Rust. The goal of this workspace is to look at the programming languages in terms of (developer experience of) program architecture design and comparative benchmarking.
 
+> **Benchmark Result**: On average, sequential Rust code performs slower than the C++ equivalent in the field of molecular dynamics. This thesis codebase attempts to dive into the question of 'What?' performance and code architecture differences
+
 - [`cpp-moldyn-cli`](./cppmoldyn-cli/src/): C++ Executable Workspace
 - [`cpp-moldyn-core`](./cppmoldyn-core/src/): C++ Library Workspace
 - [`cpp-moldyn-io`](./cppmoldyn-io/src/): C++ File System Bindings

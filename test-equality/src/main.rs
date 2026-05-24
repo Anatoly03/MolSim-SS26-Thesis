@@ -17,6 +17,8 @@ fn main() {
     // this benchmark verifies halleys comet correctness over 25 thousand steps
     cpp::run("halleys-comet", 0.0014, 25000);
     rust::run("halleys-comet", 0.0014, 25000);
+    cpp::bench("halleys-comet", 0.0014, 25000000);
+    rust::bench("halleys-comet", 0.0014, 25000000);
     test::run("halleys-comet", 25000);
     println!("{}", "-".repeat(50));
 
@@ -34,15 +36,15 @@ fn main() {
 
     // this benchmark additionally measures the accumulation of floating-point errors
     // over many steps
-    cpp::run("two-bodies-collision-0001", 0.0007, 20);
-    rust::run("two-bodies-collision-0001", 0.0007, 20);
+    cpp::bench("two-bodies-collision-0001", 0.0007, 20);
+    rust::bench("two-bodies-collision-0001", 0.0007, 20);
     // test::run("two-bodies-collision-0001", 20);
     println!("{}", "-".repeat(50));
 
     // this benchmark additionally measures the accumulation of floating-point errors
     // over many steps
-    cpp::run("two-bodies-collision-0001", 0.0007, 50);
-    rust::run("two-bodies-collision-0001", 0.0007, 50);
-    test::run("two-bodies-collision-0001", 50);
+    cpp::bench("two-bodies-collision-0001", 0.0007, 50);
+    rust::bench("two-bodies-collision-0001", 0.0007, 50);
+    // test::run("two-bodies-collision-0001", 50);
     println!("{}", "-".repeat(50));
 }
