@@ -70,11 +70,13 @@ impl<Container: ParticleContainer> Simulation<Container> {
     /// });
     /// ```
     fn for_each_particles(&self, f: &mut dyn FnMut(&Particle)) {
+        let _ = tracy_client::span!("simulation particles iteration");
         self.container.for_each_particles(f);
     }
 
     /// Invokes a lambda callback for each particle (mutable) in the simulation.
     fn for_each_particles_mut(&mut self, f: &mut dyn FnMut(&mut Particle)) {
+        let _ = tracy_client::span!("simulation particles iteration [mut]");
         self.container.for_each_particles_mut(f);
     }
 
@@ -86,6 +88,7 @@ impl<Container: ParticleContainer> Simulation<Container> {
     /// - If you receive a pair `(a, b)` it is guaranteed that you will not receive `(b, a)`.
     /// - There is no guarantee you will receive all pairs.
     fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle)) {
+        let _ = tracy_client::span!("simulation particle pairs iteration [mut]");
         self.container.for_each_particle_pairs_mut(f);
     }
 

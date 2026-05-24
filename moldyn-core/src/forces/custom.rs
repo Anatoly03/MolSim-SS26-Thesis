@@ -42,6 +42,8 @@ impl TryFrom<Expr> for CustomForce {
     type Error = meval::Error;
 
     fn try_from(value: Expr) -> Result<Self, Self::Error> {
+        let _ = tracy_client::span!("custom force potential");
+
         let func = value.bind2("r", "M")?;
 
         let wrap = move |p1: &Particle, p2: &Particle| {
@@ -51,6 +53,7 @@ impl TryFrom<Expr> for CustomForce {
             if distance == 0.0 {
                 0.0
             } else {
+                let _ = tracy_client::span!("custom force potential [func]");
                 -func(distance, mul_mass)
             }
         };

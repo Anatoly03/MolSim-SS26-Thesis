@@ -138,10 +138,10 @@ pub fn main() {
     while current_time < end_time {
         let print_frame = frame % args.frame_period == 0;
 
-        println!(
-            "Step {frame: >8} [{current_time:.4} / {end_time:.4}] {}",
-            if print_frame { "WRITE" } else { "" }
-        );
+        // println!(
+        //     "Step {frame: >8} [{current_time:.4} / {end_time:.4}] {}",
+        //     if print_frame { "WRITE" } else { "" }
+        // );
 
         simulation.step(delta_time);
 

@@ -53,6 +53,7 @@ include(test-google)
 include(spdlog)
 include(yaml)
 include(vtk-config)
+include(tracy-config)
 
 # https://cmake.org/cmake/help/latest/module/GoogleTest.html
 # do not remove. the issue is that gitub ci uses command `ctest --test-dir

@@ -11,3 +11,4 @@ nightly = []
 [dependencies]
 meval = { version = "0.2", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
+tracy-client = "0.18"
