@@ -38,6 +38,8 @@ impl Force for NewtonForce {
     /// potential = -M / r          (assuming G = 1)
     /// ```
     fn potential(&self, particle: &Particle, other: &Particle) -> f64 {
+        let _ = tracy_client::span!("newton potential");
+
         let distance = Particle::distance(particle, other);
 
         if distance == 0.0 {

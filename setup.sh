@@ -36,6 +36,10 @@ else
     cmake --version | head -n 1
 fi
 
+# 3. Installs Tracy
+
+
+
 # TODO: install gcc, clang, etc.
 # TODO: remember macbook uses g++ and `xcode-select``
 

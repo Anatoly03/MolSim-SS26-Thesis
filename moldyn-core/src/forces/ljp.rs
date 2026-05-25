@@ -29,6 +29,8 @@ impl Force for LennardJonesForce {
     }
 
     fn potential(&self, particle: &Particle, other: &Particle) -> f64 {
+        let _ = tracy_client::span!("lennard-jones potential");
+
         let distance = Particle::distance(particle, other);
 
         if distance == 0.0 || distance > self.cutoff_radius {

@@ -67,6 +67,8 @@ pub trait Force {
     /// particle2.apply_force(-force);
     /// ```
     fn force(&self, particle: &Particle, other: &Particle) -> Vec3 {
+        let _ = tracy_client::span!("force calculation");
+
         let potential = self.potential(particle, other);
         let diff = Particle::position_difference(other, particle);
         let distance = diff.length2();

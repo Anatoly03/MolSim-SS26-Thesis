@@ -5,6 +5,7 @@
 #include "Force.h"
 #include "Particle.h"
 #include "Vec3.h"
+#include "TracyHelper.h"
 
 /**
  * @brief Calculates the force between two particles equivalent to the
@@ -12,6 +13,8 @@
  */
 Vec3<double> Force::force(const Particle &particle, const Particle &other) const
 {
+    PROFILE_ZONE_NAMED("force calculation");
+    
     auto potenergy = potential(particle, other);
     auto diff = other.position_difference(particle);
     auto dist2 = diff.length2();

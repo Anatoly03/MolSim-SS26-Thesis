@@ -9,6 +9,7 @@
 #include "Force.h"
 #include "Newton.h"
 #include "Particle.h"
+#include "TracyHelper.h"
 
 /**
  * @brief The Force representing a Lennard-Jones force, which implements
@@ -33,6 +34,8 @@ public:
     // `M` the product of particle masses.
     double potential(const Particle &particle, const Particle &other) const override
     {
+        PROFILE_ZONE_NAMED("lennard-jones potential");
+
         double epsilon = 5.0;
         double sigma = 1.0;
         double cutoff_radius = 3.0;
