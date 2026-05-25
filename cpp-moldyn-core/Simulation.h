@@ -7,6 +7,7 @@
 
 #include "force/Force.h"
 #include "container/ParticleContainer.h"
+#include "TracyHelper.h"
 
 /**
  * @brief A struct representing a simulation, which contains the particles and
@@ -45,6 +46,7 @@ public:
      */
     void for_each_particles(std::function<void(const Particle &)> callback) const
     {
+        PROFILE_ZONE_NAMED("simulation particles iteration");
         particle_container.for_each_particles(callback);
     }
 
@@ -63,6 +65,7 @@ public:
      */
     void for_each_particles_mut(std::function<void(Particle &)> callback)
     {
+        PROFILE_ZONE_NAMED("simulation particles iteration [mut]");
         particle_container.for_each_particles_mut(callback);
     }
 
@@ -71,6 +74,7 @@ public:
      */
     void for_each_particle_pairs(std::function<void(const Particle &, const Particle &)> callback) const
     {
+        PROFILE_ZONE_NAMED("simulation particle pairs iteration");
         particle_container.for_each_particle_pairs(callback);
     }
 
@@ -79,6 +83,7 @@ public:
      */
     void for_each_particle_pairs_mut(std::function<void(Particle &, Particle &)> callback)
     {
+        PROFILE_ZONE_NAMED("simulation particle pairs iteration [mut]");
         particle_container.for_each_particle_pairs_mut(callback);
     }
 

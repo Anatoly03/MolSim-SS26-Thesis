@@ -9,6 +9,7 @@
 #include "Force.h"
 #include "Newton.h"
 #include "Particle.h"
+#include "TracyHelper.h"
 
 /**
  * @brief The Force representing a Newton (or Coloumb-like) force, which implements
@@ -33,6 +34,8 @@ public:
     // `M` the product of particle masses.
     double potential(const Particle &particle, const Particle &other) const override
     {
+        PROFILE_ZONE_NAMED("newton potential");
+
         if (auto distance = particle.distance(other))
         {
             return -factor * particle.mass_product(other) / distance;

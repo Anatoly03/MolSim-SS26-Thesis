@@ -15,6 +15,7 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/.cmake)
 # Compiler Flags
 # option(ENABLE_YAML_SUPPORT "Enables YAML support" ON)
 option(ENABLE_VTK_SUPPORT "Enables VTK support" OFF)
+option(ENABLE_TRACY "Enables Tracy profiler" OFF)
 # option(ENABLE_JSON_SUPPORT "Enables JSON support" OFF)
 
 # let ccmake and cmake-gui offer the default build type options
