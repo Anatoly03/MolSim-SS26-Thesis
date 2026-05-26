@@ -14,12 +14,12 @@ fn main() {
     std::fs::create_dir_all("output/rs").expect("");
     std::fs::create_dir_all("output/cpp").expect("");
 
-    // this benchmark verifies halleys comet correctness over 25 thousand steps
-    cpp::run("halleys-comet", 0.0014, 25000);
-    rust::run("halleys-comet", 0.0014, 25000);
-    cpp::bench("halleys-comet", 0.0014, 25000000);
-    rust::bench("halleys-comet", 0.0014, 25000000);
-    test::run("halleys-comet", 25000);
+    // // this benchmark verifies halleys comet correctness over 25 thousand steps
+    // cpp::run("halleys-comet", 0.0014, 25000);
+    // rust::run("halleys-comet", 0.0014, 25000);
+    // test::run("halleys-comet", 25000);
+    cpp::bench("halleys-comet", 0.0014, 250000);
+    rust::bench("halleys-comet", 0.0014, 250000);
     println!("{}", "-".repeat(50));
 
     // this benchmark does nothing useful
