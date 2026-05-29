@@ -149,6 +149,68 @@
     The workflow 15 removed printing output and records average of 5 runs.
 \end{frame}
 
+\nofooterframe\begin{frame}{Cross-Algorithm Benchmark Results\footcite{benchmark-1}\footcite{benchmark-22}}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=\textwidth,  
+                height=0.7\textheight,
+                xlabel={},
+                ylabel={Runtime (ms)},
+                xtick={0, 20, 50},
+                scaled x ticks=false,  
+                scaled y ticks=false,
+                ymajorgrids=true, 
+                grid style=dashed,
+                xmin=-5,
+                xmax=55,
+                legend style={at={(0.05,0.95)},anchor=north west},
+            ]
+
+            \addplot[
+                color=blue,
+                mark=square,
+                line width=1pt,
+                ]
+                coordinates {
+                    (0, 109)(20, 509)(50, 1080)
+                };
+
+            \addplot[
+                color=orange,
+                mark=triangle,
+                line width=1pt,
+                ]
+                coordinates {
+                    (0, 66)(20, 1046)(50, 2522)
+                };
+
+            \addplot[
+                color=cyan,
+                mark=square,
+                line width=1pt,
+                ]
+                coordinates {
+                    (20, 83)(50, 178)
+                };
+
+            \addplot[
+                color=red,
+                mark=triangle,
+                line width=1pt,
+                ]
+                coordinates {
+                    (20, 589)(50, 1316)
+                };
+
+            \legend{C++ (direct-sum), Rust (direct-sum), C++ (linked-cells), Rust (linked-cells)}
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+
+    The cell size has been set to 5.0 units in every dimension for both implementations. \blue{Current C++ \texttt{direct-sum} implementation outperforms Rust \texttt{linked-cells}} on the \texttt{two-bodies-collision} input.
+\end{frame}
+
 \headerframe\begin{frame}[allowframebreaks]{References}
   \printbibliography
 \end{frame}
