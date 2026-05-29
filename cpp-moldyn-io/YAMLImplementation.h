@@ -14,6 +14,7 @@
 #include "yaml-cpp/yaml.h"
 
 #include "container/DirectSum.h"
+#include "container/LinkedCells.h"
 #include "container/ParticleContainer.h"
 #include "force/Newton.h"
 #include "force/LennardJones.h"
@@ -121,24 +122,57 @@ namespace YAML
         }
     };
 
-    template <typename ParticleContainerT>
-    struct convert<Simulation<ParticleContainerT>>
+    template <>
+    struct convert<std::unique_ptr<ParticleContainer>>
     {
-        // assert that particle container implements `convert<ParticleContainerT>`
-        static_assert(std::is_base_of<convert<ParticleContainerT>, convert<Simulation<ParticleContainerT>>>::value, "Simulation requires a ParticleContainer that implements YAML::convert");
+        /**
+         * @brief Returns the name of the force system.
+         */
+        static Node encode(const std::unique_ptr<ParticleContainer> &rhs)
+        {
+            return Node(rhs->algorithm_name());
+        }
 
-        static Node encode(const Simulation<ParticleContainerT> &rhs)
+        static bool decode(const Node &node, std::unique_ptr<ParticleContainer> &rhs)
+        {
+            if (node.IsScalar())
+            {
+                std::string system_name = node.as<std::string>();
+
+                if (system_name == "direct-sum")
+                {
+                    rhs = std::make_unique<DirectSum>();
+                    return true;
+                }
+
+                if (system_name == "linked-cells")
+                {
+                    rhs = std::make_unique<LinkedCells<DirectSum>>();
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    };
+
+    template<>
+    struct convert<Simulation>
+    {
+        static Node encode(const Simulation &rhs)
         {
             Node node;
 
-            node["force"] = rhs.force.get();
+            node["force"] = rhs.force->system_name();
+            node["algorithm"] = rhs.particle_container->algorithm_name();
 
             return node;
         }
 
-        static bool decode(const Node &node, Simulation<ParticleContainerT> &rhs)
+        static bool decode(const Node &node, Simulation &rhs)
         {
             rhs.force = node["force"] ? node["force"].as<std::unique_ptr<Force>>() : std::make_unique<Newton>();
+            rhs.particle_container = node["algorithm"] ? node["algorithm"].as<std::unique_ptr<ParticleContainer>>() : std::make_unique<DirectSum>();
 
             return false;
         }

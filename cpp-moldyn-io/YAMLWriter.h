@@ -20,6 +20,7 @@
 #include "container/DirectSum.h"
 #include "container/ParticleContainer.h"
 #include "force/Newton.h"
+#include "force/Force.h"
 #include "Reader.h"
 #include "Simulation.h"
 #include "Vec3.h"
@@ -30,7 +31,7 @@ public:
     /**
      * @brief Creates a new YAML file writer.
      */
-    YAMLWriter(const std::filesystem::path file_path, const Simulation<DirectSum> &simulation) : Writer(file_path, simulation) {}
+    YAMLWriter(const std::filesystem::path file_path, const Simulation &simulation) : Writer(file_path, simulation) {}
 
     /**
      * @brief Consume the YAML file and return a Simulation struct.
@@ -47,8 +48,8 @@ public:
             });
 
         node["name"] = YAML::Null;
-        node["force"] = simulation.force.get()->system_name();
-        node["algorithm"] = simulation.algorithm_name();
+        node["force"] = simulation.force->system_name();
+        node["algorithm"] = simulation.particle_container->algorithm_name();
         node["particles"] = particles;
 
         std::ofstream output_file(frame_file_path());

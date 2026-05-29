@@ -45,8 +45,17 @@ impl ParticleContainer for DirectSum {
             // newtons third law: skip same pairs
             for j in (i + 1)..count {
                 // https://doc.rust-lang.org/std/vec/struct.Vec.html#method.split_at_mut
-                let (left, right) = self.particles.split_at_mut(j);
 
+                // unsafe {
+                //     let particles_pointer = self.particles.as_mut_tr();
+
+                //     let left = particles_pointer.add(i);
+                //     let right = particles_pointer.add(j);
+
+                //     f(&mut *left, &mut *right);
+                // }
+
+                let (left, right) = self.particles.split_at_mut(j);
                 // conceptually:
                 //
                 // [p1,  p2,  p3,  p4,  p5]

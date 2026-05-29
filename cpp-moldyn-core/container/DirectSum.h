@@ -27,9 +27,9 @@ public:
     /**
      * @brief Returns the identifier `direct_sum` for this algorithm.
      */
-    virtual std::string algorithm_name() const
+    virtual std::string algorithm_name() const override
     {
-        return "direct_sum";
+        return "direct-sum";
     }
 
     // /**

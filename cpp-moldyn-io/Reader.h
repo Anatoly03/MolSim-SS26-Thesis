@@ -72,7 +72,7 @@ public:
     /**
      * @brief Consumes the file stream and returns a Simulation struct.
      */
-    virtual Simulation<DirectSum> consume() = 0;
+    virtual Simulation consume() = 0;
   
     /**
      * @brief Static factory method to create a Reader instance based on the

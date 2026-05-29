@@ -30,7 +30,7 @@ public:
     /**
      * @brief Creates a new VTK file writer.
      */
-    VTKWriter(const std::filesystem::path file_path, const Simulation<DirectSum> &simulation) : Writer(file_path, simulation)
+    VTKWriter(const std::filesystem::path file_path, const Simulation &simulation) : Writer(file_path, simulation)
     {
         // override extension for VTK files
         output_extension = ".vtu";

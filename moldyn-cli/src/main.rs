@@ -97,6 +97,8 @@ pub fn main() {
 
     if let Some(name) = &input.name {
         println!("simulation name: `{name}`");
+        println!("algorithm: `{}`", input.algorithm.system_name());
+        println!("force: `{}`", input.force.system_name());
     }
 
     // create output directory
