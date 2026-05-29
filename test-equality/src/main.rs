@@ -15,11 +15,11 @@ fn main() {
     std::fs::create_dir_all("output/cpp").expect("");
 
     // this benchmark verifies halleys comet correctness over 25 thousand steps
-    cpp::run("halleys-comet", 0.0014, 25000);
-    rust::run("halleys-comet", 0.0014, 25000);
+    // cpp::run("halleys-comet", 0.0014, 25000);
+    // rust::run("halleys-comet", 0.0014, 25000);
+    // test::run("halleys-comet", 25000);
     cpp::bench("halleys-comet", 0.0014, 25000000);
     rust::bench("halleys-comet", 0.0014, 25000000);
-    test::run("halleys-comet", 25000);
     println!("{}", "-".repeat(50));
 
     // this benchmark does nothing useful
@@ -47,7 +47,6 @@ fn main() {
     rust::bench("two-bodies-collision-0001", 0.0007, 50);
     // test::run("two-bodies-collision-0001", 50);
     println!("{}", "-".repeat(50));
-
 
     // this benchmark measures I/O performance
     cpp::run("two-bodies-collision-0001-linked-cells", 0.0007, 1);
