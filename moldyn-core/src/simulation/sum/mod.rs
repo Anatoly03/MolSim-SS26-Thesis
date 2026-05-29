@@ -72,6 +72,10 @@ impl ParticleContainer for DirectSum {
         self.particles.len()
     }
 
+    fn add_particle(&mut self, particle: Particle) {
+        self.particles.push(particle);
+    }
+
     fn add_particles(&mut self, particles: Vec<Particle>) {
         self.particles.extend(particles);
     }
