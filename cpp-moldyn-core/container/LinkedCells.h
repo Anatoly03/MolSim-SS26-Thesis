@@ -41,7 +41,7 @@ public:
     /**
      * @brief Default constructor.
      */
-    LinkedCells() {};
+    LinkedCells() : cell_size(5.0, 5.0, 5.0) {};
 
     /**
      * @brief Returns the identifier `linked-cells` for this algorithm.
