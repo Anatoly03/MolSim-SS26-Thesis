@@ -160,6 +160,16 @@ public:
         return (x != other.x) || (y != other.y) || (z != other.z);
     }
 
+    /**
+     * i need this to use vec3 as key in hashmap
+     */
+    inline constexpr bool operator<(const Vec3 &other) const
+    {
+        if (x != other.x) return x < other.x;
+        if (y != other.y) return y < other.y;
+        return z < other.z;
+    }
+
     // assignment operators
 
     /**

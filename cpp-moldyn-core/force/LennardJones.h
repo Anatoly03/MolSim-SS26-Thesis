@@ -38,7 +38,7 @@ public:
         double cutoff_radius = 3.0;
         double distance;
 
-        if (distance = particle.distance(other) && distance < cutoff_radius)
+        if ((distance = particle.distance(other)) && distance < cutoff_radius)
         {
             auto frac = sigma / distance;
             auto frac6 = pow(frac, 6);

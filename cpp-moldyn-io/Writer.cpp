@@ -22,7 +22,7 @@
 
 #include <filesystem>
 
-std::unique_ptr<Writer> Writer::create(const std::filesystem::path &file_path, const Simulation<DirectSum> &simulation)
+std::unique_ptr<Writer> Writer::create(const std::filesystem::path &file_path, const Simulation &simulation)
 {
     std::string extension = file_path.extension().string();
 

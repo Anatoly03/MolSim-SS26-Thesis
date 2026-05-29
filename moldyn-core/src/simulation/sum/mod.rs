@@ -31,13 +31,31 @@ impl ParticleContainer for DirectSum {
     fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle)) {
         let count = self.particle_count();
 
+        // when i had moved split_at_mut above, code performed ~150 ms slower
+        // probably cache misses
+        // for i in 0..count {
+        //     // https://doc.rust-lang.org/std/vec/struct.Vec.html#method.split_at_mut
+        //     let (left, right) = self.particles.split_at_mut(i + 1);
+            
+        //     // newtons third law: skip same pairs
+        //     for _ in (i + 1)..count {
+        //         // conceptually:
+
         for i in 0..count {
             // newtons third law: skip same pairs
             for j in (i + 1)..count {
-                // TODO maybe move this line one above, check efficiency of split_at_mut
                 // https://doc.rust-lang.org/std/vec/struct.Vec.html#method.split_at_mut
-                let (left, right) = self.particles.split_at_mut(j);
 
+                // unsafe {
+                //     let particles_pointer = self.particles.as_mut_tr();
+
+                //     let left = particles_pointer.add(i);
+                //     let right = particles_pointer.add(j);
+
+                //     f(&mut *left, &mut *right);
+                // }
+
+                let (left, right) = self.particles.split_at_mut(j);
                 // conceptually:
                 //
                 // [p1,  p2,  p3,  p4,  p5]

@@ -47,6 +47,15 @@ add_executable(MolSimTest ${TEST_SRC})
 target_link_libraries(MolSimTest gtest gtest_main MolSimCore MolSimIO)
 target_include_directories(MolSimTest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp-moldyn-test)
 
+# # activate all compiler warnings. Clean up your code :P
+# # depending on the compiler different flags are used
+# target_compile_options(MolSim
+#         PRIVATE
+#             $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -Wpedantic -Werror>
+#             # disable some spam warnings for icpc...
+#             $<$<CXX_COMPILER_ID:Intel>:-w3 -wd383,981,1418,1572,2259>
+# )
+
 # CMake Dependency Configurations
 include(doxygen)
 include(test-google)
