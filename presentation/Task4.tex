@@ -211,6 +211,17 @@
     The cell size has been set to 5.0 units in every dimension for both implementations. \blue{Current C++ \texttt{direct-sum} implementation outperforms Rust \texttt{linked-cells}} on the \texttt{two-bodies-collision} input.
 \end{frame}
 
+\nofooterframe\begin{frame}[t]{Performance Hotspots: C++ vs Rust}
+    \begin{columns}[T,onlytextwidth]
+        \begin{column}{0.5\textwidth}
+            \includegraphics[width=\textwidth]{media/perf-cpp-1.png}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \includegraphics[width=\textwidth]{media/perf-rs-1.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+
 \headerframe\begin{frame}[allowframebreaks]{References}
   \printbibliography
 \end{frame}

@@ -58,8 +58,9 @@ target_include_directories(MolSimTest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/cpp-mo
 
 # CMake Dependency Configurations
 include(doxygen)
-include(test-google)
+include(perf-config)
 include(spdlog)
+include(test-google)
 include(yaml)
 include(vtk-config)
 

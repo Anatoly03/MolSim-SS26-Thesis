@@ -57,6 +57,21 @@ cargo +nightly bench
 
 Rust benchmarking is currently done on the nightly channel using the macro [`#[bench]`](https://doc.rust-lang.org/nightly/unstable-book/library-features/test.html).
 
+## Benchmarking with `perf`
+
+```sh
+cmake . -B target/cpp -DCMAKE_BUILD_TYPE=Performance
+make -C target/cpp -j4 --no-print-directory
+perf record ./target/cpp/MolSim input/two-bodies-collision-0001-linked-cells.yaml -t 0.35 -d 0.0007 -s 0
+perf report
+```
+
+```sh
+cargo build --profile=bench
+perf record ./target/release/moldyn-cli input/two-bodies-collision-0001-linked-cells.yaml -t 0.35 -d 0.0007 -s 0
+perf report
+```
+
 ## Documentation [![Rust Documentation](https://badges.ws/badge?icon=rust&value=Rustdoc)](https://anatoly03.github.io/MolSim-SS26-Thesis/moldyn_core/index.html) [![C++ Documentation](https://badges.ws/badge?icon=c%2b%2b&value=Doxygen)](https://anatoly03.github.io/MolSim-SS26-Thesis/cpp/index.html)
 
 You can find a very detailed code documentation generated with [Rustdoc](https://doc.rust-lang.org/rustdoc/index.html) for the Rust codebase and [Doxygen](https://www.doxygen.nl/index.html) for the C++ codebase. You can build the documentation locally by running the following shell commands. Respectively in order, the commands below are for Rust and C++.
