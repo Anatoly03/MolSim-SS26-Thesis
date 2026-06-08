@@ -211,7 +211,36 @@
     The cell size has been set to 5.0 units in every dimension for both implementations. \blue{Current C++ \texttt{direct-sum} implementation outperforms Rust \texttt{linked-cells}} on the \texttt{two-bodies-collision} input.
 \end{frame}
 
-\nofooterframe\begin{frame}[t]{Performance Hotspots: C++ vs Rust}
+\nofooterframe\begin{frame}[t,fragile]{Performance Tool: \texttt{perf}}
+
+    \begin{lstlisting}
+echo 0 | sudo tee /proc/sys/kernel/perf_event_paranoid
+    \end{lstlisting}
+
+    First we fix missing permissions.\footcite{perf-fix-permissions}
+
+    \begin{lstlisting}
+perf record <command>
+    \end{lstlisting}
+
+    This will run the command and record performance by taking snapshots of the stack. This requires projects to be built in \blue{release mode} but with \blue{debug symbols}. This will write everything to the file \texttt{perf.data}.
+
+    In our case, \texttt{<command>} is roughly equivalent to the call \texttt{./target/.../moldyn input/... -s 0 -t ...}
+
+    When the file was created, we can analyze it with:
+
+    \begin{lstlisting}
+perf report
+    \end{lstlisting}
+\end{frame}
+
+\nofooterframe\begin{frame}[t]{Performance Hotspots: C++ vs Rust (Direct Sum)}
+    \centering
+    \includegraphics[width=0.8\textwidth]{media/perf-cpp-1-directsum.png}
+    \includegraphics[width=0.8\textwidth]{media/perf-rs-1-directsum.png}
+\end{frame}
+
+\nofooterframe\begin{frame}[t]{Performance Hotspots: C++ vs Rust (Linked Cells)}
     \begin{columns}[T,onlytextwidth]
         \begin{column}{0.5\textwidth}
             \includegraphics[width=\textwidth]{media/perf-cpp-1.png}
@@ -220,6 +249,60 @@
             \includegraphics[width=\textwidth]{media/perf-rs-1.png}
         \end{column}
     \end{columns}
+\end{frame}
+
+\nofooterframe\begin{frame}[t]{Performance Hotspots: C++}
+    Only three severe hotspots, covering 95\% of the runtime:
+
+    \vspace{0.5em}
+    \begin{tabular}{ m{0.16\textwidth} m{0.76\textwidth} } 
+        \blue{47.29\%} & Pairwise iteration \\
+        \blue{27.46\%} & Lennard Jones Potential \\
+        \blue{20.99\%} & Program Frame \\
+        2.64\% & Power Function \\
+        1.62\% & Other
+    \end{tabular}
+
+    % \begin{enumerate}
+    %     \item Pairwise iteration
+    %     \item Lennard Jones Potential
+    %     \item Program Frame
+    % \end{enumerate}
+\end{frame}
+
+\nofooterframe\begin{frame}[t]{Performance Hotspots: Rust}
+    A lot of hotspots, explaining the runtime of the Rust implementation. It seems to be an implementation-problem and not a language-problem.
+
+    % \vspace{0.5em}
+    % \begin{tabular}{ m{0.16\textwidth} m{0.76\textwidth} } 
+    %     \blue{47.29\%} & Pairwise iteration \texttt{Simulation::apply_force} \\
+    %     \blue{27.46\%} & Lennard Jones Potential \\
+    %     \blue{20.99\%} & Program Frame \\
+    %     0.66\% & \texttt{Iterator::next} \\
+    %     0.66\% & \texttt{Iterator::next} \\
+    %     0.66\% & \texttt{free} \\
+    %     0.59\% & Floor Function \\
+    %     - & Other
+    % \end{tabular}
+
+%      39.89%  moldyn-cli  moldyn-cli            [.] moldyn_core::forces::Force::apply_force
+%   15.45%  moldyn-cli  moldyn-cli            [.] <moldyn_core::forces::ljp::LennardJonesForce as moldyn_core::forces::Force>::potential
+%    9.42%  moldyn-cli  moldyn-cli            [.] moldyn_core::particle::Particle::apply_force
+%    7.30%  moldyn-cli  moldyn-cli            [.] <moldyn_core::simulation::cells::LinkedCells<Cell> as moldyn_core::simulation::container::ParticleContainer>::for_each_particle_pairs_mut
+%    6.03%  moldyn-cli  moldyn-cli            [.] moldyn_core::particle::Particle::position_difference
+%    6.01%  moldyn-cli  moldyn-cli            [.] moldyn_core::simulation::Simulation<Container>::update_force::{{closure}}
+%    2.49%  moldyn-cli  moldyn-cli            [.] <core::slice::iter::IterMut<T> as core::iter::traits::iterator::Iterator>::next
+%    1.95%  moldyn-cli  moldyn-cli            [.] core::hash::impls::<impl core::hash::Hash for i32>::hash
+%     1.40%  moldyn-cli  libc.so.6             [.] malloc
+%    1.34%  moldyn-cli  libc.so.6             [.] _int_free
+%    1.20%  moldyn-cli  moldyn-cli            [.] <moldyn_core::simulation::cells::LinkedCells<Cell> as moldyn_core::simulation::container::ParticleContainer>::on_after_position_update
+%    1.09%  moldyn-cli  libc.so.6             [.] cfree@GLIBC_2.2.5
+%    0.92%  moldyn-cli  moldyn-cli            [.] <moldyn_core::simulation::sum::DirectSum as moldyn_core::simulation::container::ParticleContainer>::for_each_particle_pairs_mut
+%    0.63%  moldyn-cli  moldyn-cli            [.] <moldyn_core::simulation::sum::DirectSum as moldyn_core::simulation::container::ParticleContainer>::particles_mut
+%    0.63%  moldyn-cli  moldyn-cli            [.] <core::iter::adapters::flatten::FlatMap<I,U,F> as core::iter::traits::iterator::Iterator>::next
+%    0.52%  moldyn-cli  moldyn-cli            [.] floor
+%    0.31%  moldyn-cli  moldyn-cli            [.] __rustc::__rdl_alloc
+%    0.26%  moldyn-cli  libc.so.6             [.] _int_malloc
 \end{frame}
 
 \headerframe\begin{frame}[allowframebreaks]{References}
