@@ -30,6 +30,7 @@ impl<Container: ParticleContainer> Simulation<Container> {
     ///
     /// Name of the simulation system, which is used for serialization and
     /// deserialization. The characters are expected to be in `lowercase`.
+    #[inline]
     fn system_name(&self) -> &str {
         self.container.system_name()
     }
@@ -43,6 +44,7 @@ impl<Container: ParticleContainer> Simulation<Container> {
     ///     println!("Particle at position: {:?}", particle.get_position());
     /// }
     /// ```
+    #[inline]
     fn particles(&self) -> Box<dyn Iterator<Item = &Particle> + '_> {
         self.container.particles()
     }
@@ -56,6 +58,7 @@ impl<Container: ParticleContainer> Simulation<Container> {
     ///     particle.update_position(0.01);
     /// }
     /// ```
+    #[inline]
     fn particles_mut(&mut self) -> Box<dyn Iterator<Item = &mut Particle> + '_> {
         self.container.particles_mut()
     }
@@ -69,11 +72,13 @@ impl<Container: ParticleContainer> Simulation<Container> {
     ///     println!("Particle at position: {:?}", p.get_position());
     /// });
     /// ```
+    #[inline]
     fn for_each_particles(&self, f: &mut dyn FnMut(&Particle)) {
         self.container.for_each_particles(f);
     }
 
     /// Invokes a lambda callback for each particle (mutable) in the simulation.
+    #[inline]
     fn for_each_particles_mut(&mut self, f: &mut dyn FnMut(&mut Particle)) {
         self.container.for_each_particles_mut(f);
     }
@@ -85,51 +90,61 @@ impl<Container: ParticleContainer> Simulation<Container> {
     /// - An iterator over distinct pairs of particles, accounting for symmetry.
     /// - If you receive a pair `(a, b)` it is guaranteed that you will not receive `(b, a)`.
     /// - There is no guarantee you will receive all pairs.
+    #[inline]
     fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle)) {
         self.container.for_each_particle_pairs_mut(f);
     }
 
     /// The number of particles in the simulation.
+    #[inline]
     fn particle_count(&self) -> usize {
         self.container.particle_count()
     }
 
     /// Set the particles in the simulation.
+    #[inline]
     fn add_particles(&mut self, particles: Vec<Particle>) {
         self.container.add_particles(particles);
     }
 
     /// Get the force calculation method.
+    #[inline]
     fn get_force(&self) -> Arc<dyn Force> {
         self.force.clone()
     }
 
     /// Set the force calculation method.
+    #[inline]
     fn set_force(&mut self, force: Arc<dyn Force>) {
         self.force = force;
     }
 
     /// Get the simulation arguments.
+    #[inline]
     fn args(&self) -> SimulationArgs {
         self.args.clone()
     }
 
     /// Set the simulation arguments.
+    #[inline]
     fn set_args(&mut self, args: SimulationArgs) {
         self.args = args;
     }
 
     /// Updates the position of all particles.
+    #[inline]
     fn update_position(&mut self, delta_t: f64) {
         self.for_each_particles_mut(&mut |p| p.update_position(delta_t));
     }
 
     /// Delays the force.
+    #[inline]
     fn delay_force(&mut self) {
         self.for_each_particles_mut(&mut |p| p.delay_force());
     }
 
     /// Updates the velocity of all particles.
+    #[inline]
     fn update_force(&mut self) {
         // cannot borrow `*self` as mutable because it is also borrowed as immutable
         // mutable borrow occurs hererustcClick for full compiler diagnostic
@@ -143,6 +158,7 @@ impl<Container: ParticleContainer> Simulation<Container> {
     }
 
     /// Updates the velocity of all particles.
+    #[inline]
     fn update_velocity(&mut self, delta_t: f64) {
         self.for_each_particles_mut(&mut |p| p.update_velocity(delta_t));
     }
