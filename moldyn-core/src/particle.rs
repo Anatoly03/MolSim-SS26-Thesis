@@ -110,6 +110,7 @@ impl Particle {
     ///
     /// - If result is `Some`: `direction(a, b) == -direction(b, a)`.
     /// - If result is `None`: `direction(a, b) == direction(b, a) == None`.
+    #[inline]
     pub fn direction(particle1: &Particle, particle2: &Particle) -> Option<Vec3> {
         Particle::position_difference(particle1, particle2).normal()
     }
@@ -118,11 +119,13 @@ impl Particle {
     /// symmetric:
     ///
     /// - `distance(a, b) == distance(b, a)`.
+    #[inline]
     pub fn distance(particle1: &Particle, particle2: &Particle) -> f64 {
         Particle::position_difference(particle1, particle2).length()
     }
 
     /// Calculate the product of the masses of two particles.
+    #[inline]
     pub fn mass_product(particle1: &Particle, particle2: &Particle) -> f64 {
         particle1.mass * particle2.mass
     }

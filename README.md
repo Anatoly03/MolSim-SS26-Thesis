@@ -72,6 +72,12 @@ perf record ./target/release/moldyn-cli input/two-bodies-collision-0001-linked-c
 perf report
 ```
 
+If you run into permission problems, please run the following command.
+
+```sh
+echo 0 | sudo tee /proc/sys/kernel/perf_event_paranoid
+```
+
 ## Documentation [![Rust Documentation](https://badges.ws/badge?icon=rust&value=Rustdoc)](https://anatoly03.github.io/MolSim-SS26-Thesis/moldyn_core/index.html) [![C++ Documentation](https://badges.ws/badge?icon=c%2b%2b&value=Doxygen)](https://anatoly03.github.io/MolSim-SS26-Thesis/cpp/index.html)
 
 You can find a very detailed code documentation generated with [Rustdoc](https://doc.rust-lang.org/rustdoc/index.html) for the Rust codebase and [Doxygen](https://www.doxygen.nl/index.html) for the C++ codebase. You can build the documentation locally by running the following shell commands. Respectively in order, the commands below are for Rust and C++.

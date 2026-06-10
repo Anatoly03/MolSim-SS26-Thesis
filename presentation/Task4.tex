@@ -212,6 +212,7 @@
 \end{frame}
 
 \nofooterframe\begin{frame}[t,fragile]{Performance Tool: \texttt{perf}}
+    Linux only.
 
     \begin{lstlisting}
 echo 0 | sudo tee /proc/sys/kernel/perf_event_paranoid
@@ -223,7 +224,7 @@ echo 0 | sudo tee /proc/sys/kernel/perf_event_paranoid
 perf record <command>
     \end{lstlisting}
 
-    This will run the command and record performance by taking snapshots of the stack. This requires projects to be built in \blue{release mode} but with \blue{debug symbols}. This will write everything to the file \texttt{perf.data}.
+    This will run the command and record performance by taking snapshots of the stack. This requires projects to be built in \blue{release mode} but with \blue{debug symbols}. This will write everything to the file \texttt{perf.data}.\ \gray{Apparently we don't need this for Rust.}
 
     In our case, \texttt{<command>} is roughly equivalent to the call \texttt{./target/.../moldyn input/... -s 0 -t ...}
 
@@ -287,12 +288,14 @@ perf report
 
 \nofooterframe\begin{frame}[t]{Idea for Thesis Table of Contents}
     \begin{enumerate}
-        \item Introduction: TBA
+        \item Introduction: Companies are switching to Rust, open questions: Why?
         \item Main Contents:
         \begin{enumerate}
-            \item TBA
+            \item Rust Ecosystem: Cargo, Crates (less fragmented)
+            \item Syntax Differences, learning curve and the Rust language
+            \item Benchmarking
         \end{enumerate}
-        \item Conclusion: TBA
+        \item Conclusion: Find evidence where Rust is faster, (data structures?)
     \end{enumerate}
 \end{frame}
 
