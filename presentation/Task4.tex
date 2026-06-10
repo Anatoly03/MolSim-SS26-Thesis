@@ -270,39 +270,30 @@ perf report
     % \end{enumerate}
 \end{frame}
 
-\nofooterframe\begin{frame}[t]{Performance Hotspots: Rust}
+\nofooterframe\begin{frame}[t]{Performance Hotspots: Attempts at Optimization}
     A lot of hotspots, explaining the runtime of the Rust implementation. It seems to be an implementation-problem and not a language-problem.
 
-    % \vspace{0.5em}
-    % \begin{tabular}{ m{0.16\textwidth} m{0.76\textwidth} } 
-    %     \blue{47.29\%} & Pairwise iteration \texttt{Simulation::apply_force} \\
-    %     \blue{27.46\%} & Lennard Jones Potential \\
-    %     \blue{20.99\%} & Program Frame \\
-    %     0.66\% & \texttt{Iterator::next} \\
-    %     0.66\% & \texttt{Iterator::next} \\
-    %     0.66\% & \texttt{free} \\
-    %     0.59\% & Floor Function \\
-    %     - & Other
-    % \end{tabular}
+    I believe, in summary, the \blue{hotspots in the Rust implementation are caused} by the following:
 
-%      39.89%  moldyn-cli  moldyn-cli            [.] moldyn_core::forces::Force::apply_force
-%   15.45%  moldyn-cli  moldyn-cli            [.] <moldyn_core::forces::ljp::LennardJonesForce as moldyn_core::forces::Force>::potential
-%    9.42%  moldyn-cli  moldyn-cli            [.] moldyn_core::particle::Particle::apply_force
-%    7.30%  moldyn-cli  moldyn-cli            [.] <moldyn_core::simulation::cells::LinkedCells<Cell> as moldyn_core::simulation::container::ParticleContainer>::for_each_particle_pairs_mut
-%    6.03%  moldyn-cli  moldyn-cli            [.] moldyn_core::particle::Particle::position_difference
-%    6.01%  moldyn-cli  moldyn-cli            [.] moldyn_core::simulation::Simulation<Container>::update_force::{{closure}}
-%    2.49%  moldyn-cli  moldyn-cli            [.] <core::slice::iter::IterMut<T> as core::iter::traits::iterator::Iterator>::next
-%    1.95%  moldyn-cli  moldyn-cli            [.] core::hash::impls::<impl core::hash::Hash for i32>::hash
-%     1.40%  moldyn-cli  libc.so.6             [.] malloc
-%    1.34%  moldyn-cli  libc.so.6             [.] _int_free
-%    1.20%  moldyn-cli  moldyn-cli            [.] <moldyn_core::simulation::cells::LinkedCells<Cell> as moldyn_core::simulation::container::ParticleContainer>::on_after_position_update
-%    1.09%  moldyn-cli  libc.so.6             [.] cfree@GLIBC_2.2.5
-%    0.92%  moldyn-cli  moldyn-cli            [.] <moldyn_core::simulation::sum::DirectSum as moldyn_core::simulation::container::ParticleContainer>::for_each_particle_pairs_mut
-%    0.63%  moldyn-cli  moldyn-cli            [.] <moldyn_core::simulation::sum::DirectSum as moldyn_core::simulation::container::ParticleContainer>::particles_mut
-%    0.63%  moldyn-cli  moldyn-cli            [.] <core::iter::adapters::flatten::FlatMap<I,U,F> as core::iter::traits::iterator::Iterator>::next
-%    0.52%  moldyn-cli  moldyn-cli            [.] floor
-%    0.31%  moldyn-cli  moldyn-cli            [.] __rustc::__rdl_alloc
-%    0.26%  moldyn-cli  libc.so.6             [.] _int_malloc
+    \begin{enumerate}
+        \item \textbf{Codeflow security, overflow checks}, validation of data, etc. (Example: slower but secure \texttt{<Hash for i32>::hash} function hotspot)
+        \item Different \blue{memory strategy} for \blue{Rust vectors} and \blue{C++ vectors}, leading to more \blue{allocations and frees}. (Reason: Allocation hotspot in linked cells run.)
+        \item Different allocation strategies (\texttt{\_int\_malloc} vs \texttt{malloc})
+        \item \blue{Using Iterator abstractions} in Rust, which use inefficient straategies. (Reason: \texttt{<IterMut<T> as Iterator>::next} hotspot)
+    \end{enumerate}
+
+    Note: I made a big mistake chosing wrong design patterns in the Rust implementation. (will mention this verbally in the presentation today). Recall: hash implemnentation, iterator implementation.
+\end{frame}
+
+\nofooterframe\begin{frame}[t]{Idea for Thesis Table of Contents}
+    \begin{enumerate}
+        \item Introduction: TBA
+        \item Main Contents:
+        \begin{enumerate}
+            \item TBA
+        \end{enumerate}
+        \item Conclusion: TBA
+    \end{enumerate}
 \end{frame}
 
 \headerframe\begin{frame}[allowframebreaks]{References}
