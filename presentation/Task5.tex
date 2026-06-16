@@ -1,0 +1,119 @@
+\documentclass[aspectratio=169]{beamer}
+\usepackage{babel}
+\usepackage{array, colortbl, tikz, transparent, listings, pgfplots}
+\usepackage[export]{adjustbox}
+\usepackage[skins,theorems]{tcolorbox}
+\usepackage[backend=biber,style=verbose-ibid,citetracker=true,ibidtracker=constrict,autocite=footnote]{biblatex}
+
+\setbeamercovered{transparent}
+\lstdefinelanguage{Rust}{
+    sensitive=true,
+    morekeywords={as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl, in, let, loop, match, mod, move, mut, pub, ref, return, self, Self, static, struct, super, trait, true, type, unsafe, use, where, while, async, await, dyn, Result, Option, Ok, Err, panic},
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]",
+    morestring=[b]',
+}
+\lstdefinelanguage{Yaml}{
+    sensitive=true,
+    morekeywords={true, false, null, particles, type, cuboid, foreach, position, velocity, mass, sigma, brownian_sigma},
+    morecomment=[l]{\#},
+    morestring=[b]",
+}
+\lstset{
+    language=Rust,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{red},
+    commentstyle=\color{teal},
+    morekeywords={Result, Option, Ok, Err, Some, None, panic},
+    breaklines=true
+}
+\usetikzlibrary{automata,positioning}
+\addbibresource{Reference.bib}
+
+\title{Rust vs C++: Brief Introduction}
+\author{Anatoly Weinstein}
+\date{30th of April 2025}
+
+\newcommand{\framebackground}[3]{
+    \begin{tikzpicture}
+        \transparent{#1}
+        \node[inner sep=0] at (current page.center) {
+            \includegraphics[height=\paperheight, right]{./media/tum-uhrenturm.png}
+        };
+        \transparent{#2}
+        \node[anchor=south, text width=\paperwidth, text height=1.5cm, draw=none, align=center] at (current page.south) {
+            \insertpagenumber
+        };
+        \transparent{#3}
+        \node[anchor=south, text width=\paperwidth, text height=1.5cm, draw=none, align=right] at (current page.south) {
+            \small Anatoly W. \,\,
+        };
+    \end{tikzpicture}
+}
+
+\newcommand{\headerframe}{
+    \usebackgroundtemplate{
+        \framebackground{0.2}{1}{1}
+    }
+}
+
+\newcommand{\simpleframe}{
+    \usebackgroundtemplate{
+        \framebackground{0}{1}{1}
+    }
+}
+
+\newcommand{\nofooterframe}{
+    \usebackgroundtemplate{
+        \framebackground{0}{0}{1}
+    }
+}
+
+\newcommand{\blue}[1]{{\color{beamer@blendedblue} #1}}
+\newcommand{\yellow}[1]{{\color[HTML]{AF8F10} #1}}
+\newcommand{\gray}[1]{{\color[HTML]{8F8F8F} #1}}
+\newcommand{\red}[1]{{\color[HTML]{FF5F5F} #1}}
+
+\begin{document}
+
+%
+% Frame
+%
+\usebackgroundtemplate{\framebackground{0.2}{0}{0}}
+\begin{frame}
+    \maketitle
+\end{frame}
+
+\nofooterframe\begin{frame}[t, fragile]{First of all: I was wrong!}
+    So far: Assumption that Rust does overflow checks that is why the code is slower.
+
+    \vspace{1em}
+    \red{Wrong!}
+
+    \vspace{1em}
+    While it is correct to say, that when you start cargo in development with `\texttt{cargo run}' overflows will panic, the release build is compiled without overflow checks.\footcite{rust-profiles}
+
+    \begin{lstlisting}
+[profile.dev]
+opt-level = 0
+debug = true
+overflow-checks = true
+
+[profile.release]
+opt-level = 3
+debug = false
+overflow-checks = false
+    \end{lstlisting}
+\end{frame}
+
+\nofooterframe\begin{frame}[t]{Benchmark: Outlining}
+    Done with new macro keyword \texttt{outline}, which we set conditionally to prevent inlining. The idea is to preserve the debug symbols in the stack similarly for Rust and C++.
+\end{frame}
+
+\headerframe\begin{frame}[allowframebreaks]{References}
+  \printbibliography
+\end{frame}
+
+\end{document}
