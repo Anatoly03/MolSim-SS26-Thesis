@@ -7,6 +7,7 @@
 
 #include <optional>
 #include "Vec3.h"
+#include "Macro.h"
 
 struct Particle
 {
@@ -100,7 +101,7 @@ public:
      * step. This functionality is constant across different simulation algorithms,
      * so it is implemented here.
      */
-    inline void update_position(const double delta_time)
+    inline outline void update_position(const double delta_time)
     {
         position += velocity * delta_time + force * (delta_time * delta_time / (2.0 * mass));
     }
@@ -110,7 +111,7 @@ public:
      * step. This functionality is constant across different simulation algorithms,
      * so it is implemented here.
      */
-    inline void update_velocity(const double delta_time)
+    inline outline void update_velocity(const double delta_time)
     {
         velocity += (force + old_force) * (delta_time / (2.0 * mass));
     }
@@ -133,7 +134,7 @@ public:
      * - If result is `Some`: `direction(a, b) == -direction(b, a)`.
      * - If result is `None`: `direction(a, b) == direction(b, a) == None`.
      */
-    inline std::optional<Vec3<double>> direction(const Particle &other) const
+    inline outline std::optional<Vec3<double>> direction(const Particle &other) const
     {
         return position_difference(other).normal();
     }
@@ -144,7 +145,7 @@ public:
      *
      * - `distance(a, b) == distance(b, a)`.
      */
-    inline double distance(const Particle &other) const
+    inline outline double distance(const Particle &other) const
     {
         return position_difference(other).length();
     }

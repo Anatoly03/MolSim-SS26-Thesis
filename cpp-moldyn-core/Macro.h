@@ -11,7 +11,7 @@
      * 
      * - **Outlining is enabled.**
      */
-    #define outline __declspec(noinline)
+    #define outline __attribute__((noinline))
 #else
     /**
      * Forces method to not be inlined in benchmarking builds.
