@@ -12,6 +12,7 @@
 #include "force/LennardJones.h"
 #include "container/ParticleContainer.h"
 #include "container/DirectSum.h"
+#include "Macro.h"
 
 /**
  * @brief A struct representing a simulation, which contains the particles and
@@ -106,7 +107,7 @@ public:
     /**
      * Updates the position of every particle.
      */
-    void update_position(const double delta_time)
+    outline void update_position(const double delta_time)
     {
         for_each_particles_mut(
             [delta_time](Particle &particle)
@@ -116,7 +117,7 @@ public:
     /**
      * Delays the force.
      */
-    void delay_force()
+    outline void delay_force()
     {
         for_each_particles_mut(
             [](Particle &particle)
@@ -126,7 +127,7 @@ public:
     /**
      * Applies the force to every particle.
      */
-    void apply_force()
+    outline void apply_force()
     {
         for_each_particle_pairs_mut(
             [this](Particle &p1, Particle &p2)
@@ -138,7 +139,7 @@ public:
     /**
      * Updates the velocity of every particle.
      */
-    void update_velocity(const double delta_time)
+    outline void update_velocity(const double delta_time)
     {
         for_each_particles_mut(
             [delta_time](Particle &particle)
@@ -150,7 +151,7 @@ public:
     /**
      * TODO document (see rust)
      */
-    void step(const double delta_t)
+    outline void step(const double delta_t)
     {
         update_position(delta_t);
         // self.container.on_after_position_update();

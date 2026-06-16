@@ -16,6 +16,7 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/.cmake)
 # option(ENABLE_YAML_SUPPORT "Enables YAML support" ON)
 option(ENABLE_VTK_SUPPORT "Enables VTK support" OFF)
 # option(ENABLE_JSON_SUPPORT "Enables JSON support" OFF)
+option(PERF "Performance Flag. Set to true if the project is being benchmarked." OFF)
 
 # let ccmake and cmake-gui offer the default build type options
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug;Release;RelWithDebInfo;MinSizeRel")

@@ -23,6 +23,7 @@
 #include "Reader.h"
 #include "Simulation.h"
 #include "Vec3.h"
+#include "Macro.h"
 
 struct YAMLReader : public Reader
 {
@@ -50,7 +51,7 @@ public:
     /**
      * @brief Consume the YAML file and return a Simulation struct.
      */
-    Simulation consume() override
+    outline Simulation consume() override
     {
         std::stringstream buffer;
         buffer << input_file->rdbuf();
