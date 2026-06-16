@@ -75,6 +75,9 @@ pub trait ParticleContainer {
     fn particle_count(&self) -> usize;
 
     /// Set the particles in the simulation.
+    fn add_particle(&mut self, particles: Particle);
+
+    /// Set the particles in the simulation.
     fn add_particles(&mut self, particles: Vec<Particle>);
 
     /// Event method for the simulation, after position was updated for all particles, but

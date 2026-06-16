@@ -149,58 +149,72 @@ where
         Simulation::particles_mut(self)
     }
 
+    #[inline]
     fn for_each_particles(&self, f: &mut dyn FnMut(&Particle)) {
         Simulation::for_each_particles(self, f)
     }
 
+    #[inline]
     fn for_each_particles_mut(&mut self, f: &mut dyn FnMut(&mut Particle)) {
         Simulation::for_each_particles_mut(self, f)
     }
 
+    #[inline]
     fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle)) {
         Simulation::for_each_particle_pairs_mut(self, f)
     }
 
+    #[inline]
     fn particle_count(&self) -> usize {
         Simulation::particle_count(self)
     }
 
+    #[inline]
     fn add_particles(&mut self, particles: Vec<Particle>) {
         Simulation::add_particles(self, particles)
     }
 
+    #[inline]
     fn get_force(&self) -> Arc<dyn Force> {
         Simulation::get_force(self)
     }
 
+    #[inline]
     fn set_force(&mut self, force: Arc<dyn Force>) {
         Simulation::set_force(self, force)
     }
 
+    #[inline]
     fn args(&self) -> SimulationArgs {
         Simulation::args(self)
     }
 
+    #[inline]
     fn set_args(&mut self, args: SimulationArgs) {
         Simulation::set_args(self, args)
     }
 
+    #[inline]
     fn update_position(&mut self, delta_t: f64) {
         Simulation::update_position(self, delta_t)
     }
 
+    #[inline]
     fn delay_force(&mut self) {
         Simulation::delay_force(self)
     }
 
+    #[inline]
     fn update_force(&mut self) {
         Simulation::update_force(self)
     }
 
+    #[inline]
     fn update_velocity(&mut self, delta_t: f64) {
         Simulation::update_velocity(self, delta_t)
     }
 
+    #[inline]
     fn step(&mut self, delta_t: f64) {
         Simulation::step(self, delta_t)
     }

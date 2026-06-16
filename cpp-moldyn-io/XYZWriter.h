@@ -13,9 +13,6 @@
 #include <sstream>
 #include <string>
 
-#include "yaml-cpp/yaml.h"
-
-#include "YAMLImplementation.h"
 #include "Writer.h"
 #include "container/DirectSum.h"
 #include "container/ParticleContainer.h"
@@ -30,7 +27,7 @@ public:
     /**
      * @brief Creates a new YAML file writer.
      */
-    XYZWriter(const std::filesystem::path file_path, const Simulation<DirectSum> &simulation) : Writer(file_path, simulation) {}
+    XYZWriter(const std::filesystem::path file_path, const Simulation &simulation) : Writer(file_path, simulation) {}
 
     /**
      * @brief Consume the YAML file and return a Simulation struct.

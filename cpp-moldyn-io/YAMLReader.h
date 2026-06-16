@@ -19,6 +19,7 @@
 #include "container/DirectSum.h"
 #include "container/ParticleContainer.h"
 #include "force/Newton.h"
+#include "force/Force.h"
 #include "Reader.h"
 #include "Simulation.h"
 #include "Vec3.h"
@@ -49,13 +50,13 @@ public:
     /**
      * @brief Consume the YAML file and return a Simulation struct.
      */
-    Simulation<DirectSum> consume() override
+    Simulation consume() override
     {
         std::stringstream buffer;
         buffer << input_file->rdbuf();
         YAML::Node config = YAML::Load(buffer.str());
 
-        Simulation<DirectSum> sim;
+        Simulation sim;
 
         // TODO parse different algorithms
         // config["algorithm"]

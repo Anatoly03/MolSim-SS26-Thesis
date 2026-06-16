@@ -34,7 +34,8 @@ pub fn build() {
 }
 
 /// Runs C++
-pub fn run(name: &str, delta: f64, frames: usize) {
+fn internal(name: &str, delta: f64, frames: usize, write_output: bool, program_runs: usize) {
+    let frame_period = if write_output { "1" } else { "0" };
     let args = [
         &format!("input/{name}.yaml"),
         "-t",
@@ -42,30 +43,60 @@ pub fn run(name: &str, delta: f64, frames: usize) {
         "-d",
         &delta.to_string(),
         "-s",
-        "1",
+        frame_period,
         "-o",
         &format!("output/cpp/{name}.xyz"),
     ];
 
-    // current time
-    let current_time = std::time::SystemTime::now();
-
     let cmd = format!("`./target/cpp/MolSim {}`", args.join(" "));
     Log::Success.log("Running", &cmd);
-    let cpp_molsim_status = Command::new("./target/cpp/MolSim")
-        .args(args)
-        .stdout(Stdio::null())
-        .status()
-        .expect("Failed to execute cmake");
 
-    // log elapsed time
-    if let Ok(elapsed) = current_time.elapsed() {
-        let elapsed_nano = elapsed.as_nanos();
-        Log::Info.log("Bench", &format!("{} ms", elapsed_nano as f64 / 1e6));
+    let mut run_durations = vec![];
+    for run_index in 0..program_runs {
+        // current time
+        let current_time = std::time::Instant::now();
+
+        let cpp_molsim_status = Command::new("./target/cpp/MolSim")
+            .args(args)
+            .stdout(Stdio::null())
+            .status()
+            .expect("Failed to execute cmake");
+
+        // log elapsed time
+        let elapsed_nano = current_time.elapsed().as_nanos();
+        Log::Info.log(
+            "Bench",
+            &format!("{} ms [run {}]", elapsed_nano as f64 / 1e6, run_index + 1),
+        );
+        run_durations.push(elapsed_nano);
+
+        if !cpp_molsim_status.success() {
+            Log::Failure.log("Error", "failed to run `target/cpp/MolSim`");
+            std::process::exit(1);
+        }
     }
 
-    if !cpp_molsim_status.success() {
-        Log::Failure.log("Error", "failed to run `target/cpp/MolSim`");
-        std::process::exit(1);
+    if run_durations.len() > 1 {
+        // i do not know how the math works, ask supervisor for meaningful benchmark data
+        let avg = run_durations.iter().sum::<u128>() as f64 / run_durations.len() as f64;
+        let min = run_durations.iter().min().unwrap_or(&0);
+        let max = run_durations.iter().max().unwrap_or(&0);
+        let threshold = (max - min) / 2;
+
+        // rust prints benchmarks like this: 32,118.43 ns/iter (+/- 565.76)
+        Log::Info.log(
+            "Bench",
+            &format!("{} +/- {} ms", avg as f64 / 1e6, threshold as f64 / 1e6),
+        );
     }
+}
+
+/// Runs C++
+pub fn run(name: &str, delta: f64, frames: usize) {
+    internal(name, delta, frames, true, 1);
+}
+
+/// Runs C++
+pub fn bench(name: &str, delta: f64, frames: usize) {
+    internal(name, delta, frames, false, 5);
 }

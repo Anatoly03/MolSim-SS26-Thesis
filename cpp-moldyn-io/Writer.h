@@ -24,7 +24,7 @@ private:
     int frame = 0;
 
 protected:
-    const Simulation<DirectSum> &simulation;
+    const Simulation &simulation;
 
 public:
     /**
@@ -38,7 +38,7 @@ public:
      * @param output_file_path Path to the output file, including file name prefix and
      * extension.
      */
-    Writer(const std::filesystem::path output_file_path, const Simulation<DirectSum> &simulation) : simulation(simulation)
+    Writer(const std::filesystem::path output_file_path, const Simulation &simulation) : simulation(simulation)
     {
         // save extension
         output_extension = output_file_path.extension().string();
@@ -70,5 +70,5 @@ public:
      * @brief Static factory method to create a Reader instance based on the
      * file etxension.
      */
-    static std::unique_ptr<Writer> create(const std::filesystem::path &file_path, const Simulation<DirectSum> &simulation);
+    static std::unique_ptr<Writer> create(const std::filesystem::path &file_path, const Simulation &simulation);
 };

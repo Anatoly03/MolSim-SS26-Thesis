@@ -104,11 +104,17 @@ where
             .count()
     }
 
+    fn add_particle(&mut self, p: Particle) {
+        let cell_coords = self.get_cell_coords(p.get_position());
+        let cell_ref = self.cells.entry(cell_coords).or_default();
+        cell_ref.add_particle(p);
+    }
+
     fn add_particles(&mut self, particles: Vec<Particle>) {
         for p in particles {
             let cell_coords = self.get_cell_coords(p.get_position());
             let cell_ref = self.cells.entry(cell_coords).or_default();
-            cell_ref.add_particles(vec![p]);
+            cell_ref.add_particle(p);
         }
     }
 
@@ -125,7 +131,7 @@ where
                 new_cells
                     .entry(self.get_cell_coords(p.get_position()))
                     .or_default()
-                    .add_particles(vec![*p]);
+                    .add_particle(*p);
             }
         }
 

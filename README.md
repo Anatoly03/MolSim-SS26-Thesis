@@ -7,6 +7,8 @@
 
 This project implements molecular dynamics simulations in C++ and Rust. The goal of this workspace is to look at the programming languages in terms of (developer experience of) program architecture design and comparative benchmarking.
 
+> **Benchmark Result**: On average, sequential Rust code performs slower than the C++ equivalent in the field of molecular dynamics. This thesis codebase attempts to dive into the question of 'What?' performance and code architecture differences
+
 - [`cpp-moldyn-cli`](./cppmoldyn-cli/src/): C++ Executable Workspace
 - [`cpp-moldyn-core`](./cppmoldyn-core/src/): C++ Library Workspace
 - [`cpp-moldyn-io`](./cppmoldyn-io/src/): C++ File System Bindings
@@ -54,6 +56,27 @@ cargo +nightly bench
 ```
 
 Rust benchmarking is currently done on the nightly channel using the macro [`#[bench]`](https://doc.rust-lang.org/nightly/unstable-book/library-features/test.html).
+
+## Benchmarking with `perf`
+
+```sh
+cmake . -B target/cpp -DCMAKE_BUILD_TYPE=Performance
+make -C target/cpp -j4 --no-print-directory
+perf record ./target/cpp/MolSim input/two-bodies-collision-0001-linked-cells.yaml -t 0.35 -d 0.0007 -s 0
+perf report
+```
+
+```sh
+cargo build --profile=bench
+perf record ./target/release/moldyn-cli input/two-bodies-collision-0001-linked-cells.yaml -t 0.35 -d 0.0007 -s 0
+perf report
+```
+
+If you run into permission problems, please run the following command.
+
+```sh
+echo 0 | sudo tee /proc/sys/kernel/perf_event_paranoid
+```
 
 ## Documentation [![Rust Documentation](https://badges.ws/badge?icon=rust&value=Rustdoc)](https://anatoly03.github.io/MolSim-SS26-Thesis/moldyn_core/index.html) [![C++ Documentation](https://badges.ws/badge?icon=c%2b%2b&value=Doxygen)](https://anatoly03.github.io/MolSim-SS26-Thesis/cpp/index.html)
 

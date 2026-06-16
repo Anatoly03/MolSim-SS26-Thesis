@@ -5,30 +5,35 @@
 
 #pragma once
 
+#include <memory>
+#include <type_traits>
+
 #include "force/Force.h"
+#include "force/LennardJones.h"
 #include "container/ParticleContainer.h"
+#include "container/DirectSum.h"
 
 /**
  * @brief A struct representing a simulation, which contains the particles and
  * the logic for updating their states over time.
  */
-template <typename ParticleContainerT>
 struct Simulation
 {
-    // assert that ParticleContainerT is a ParticleContainer
-    static_assert(std::is_base_of<ParticleContainer, ParticleContainerT>::value, "ParticleContainerT must extend ParticleContainer");
-
-private:
+public:
     /**
      * @brief The container which holds the particles in the simulation.
      */
-    ParticleContainerT particle_container;
+    std::unique_ptr<ParticleContainer> particle_container;
 
-public:
     /**
      * @brief The force method which calculates the forces between particles in the simulation.
      */
     std::unique_ptr<Force> force;
+
+    /**
+     * @brief Default constructor.
+     */
+    Simulation() : particle_container(std::make_unique<DirectSum>()), force(std::make_unique<LennardJones>()) {};
 
     /**
      * @brief Iterates over each particle.
@@ -45,7 +50,7 @@ public:
      */
     void for_each_particles(std::function<void(const Particle &)> callback) const
     {
-        particle_container.for_each_particles(callback);
+        particle_container->for_each_particles(callback);
     }
 
     /**
@@ -63,7 +68,7 @@ public:
      */
     void for_each_particles_mut(std::function<void(Particle &)> callback)
     {
-        particle_container.for_each_particles_mut(callback);
+        particle_container->for_each_particles_mut(callback);
     }
 
     /**
@@ -71,7 +76,7 @@ public:
      */
     void for_each_particle_pairs(std::function<void(const Particle &, const Particle &)> callback) const
     {
-        particle_container.for_each_particle_pairs(callback);
+        particle_container->for_each_particle_pairs(callback);
     }
 
     /**
@@ -79,7 +84,7 @@ public:
      */
     void for_each_particle_pairs_mut(std::function<void(Particle &, Particle &)> callback)
     {
-        particle_container.for_each_particle_pairs_mut(callback);
+        particle_container->for_each_particle_pairs_mut(callback);
     }
 
     /**
@@ -87,7 +92,7 @@ public:
      */
     void add_particle(const Particle &particle)
     {
-        particle_container.add_particle(particle);
+        particle_container->add_particle(particle);
     }
 
     /**
@@ -95,7 +100,7 @@ public:
      */
     size_t size() const
     {
-        return particle_container.size();
+        return particle_container->size();
     }
 
     /**
@@ -162,6 +167,6 @@ public:
     // TODO PLOT PARTICLES
 
     std::string algorithm_name() const {
-        return particle_container.algorithm_name();
+        return particle_container->algorithm_name();
     }
 };

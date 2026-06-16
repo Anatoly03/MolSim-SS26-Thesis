@@ -8,6 +8,13 @@ publish = false
 [features]
 nightly = []
 
+[profile.bench]
+inherits = "release"
+opt-level = 2 # optimize equally with c++
+
+# https://www.rustfaq.org/en/how-to-profile-rust-code-with-perf/
+debug = true
+
 [dependencies]
 meval = { version = "0.2", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }

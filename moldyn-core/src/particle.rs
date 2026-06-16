@@ -29,6 +29,7 @@ pub struct Particle {
 
 impl Particle {
     /// [Particle] constructor from position, initial velocity and mass.
+    #[inline]
     pub fn from_data(position: Vec3, velocity: Vec3, mass: f64) -> Self {
         Self {
             position,
@@ -39,6 +40,7 @@ impl Particle {
     }
 
     /// Returns the current force of the particle.
+    #[inline]
     pub fn get_force(&self) -> Vec3 {
         self.force
     }
@@ -46,6 +48,7 @@ impl Particle {
     /// Propagates the current force to the old force. This has to be called
     /// every time step before invoking [Particle::apply_force] to apply new
     /// forces.
+    #[inline]
     pub fn delay_force(&mut self) {
         self.old_force = self.force;
         self.force = Vec3::zero();
@@ -53,11 +56,13 @@ impl Particle {
 
     /// Applies the given force to the particle (addition). It assumes that the
     /// force was reset with [Particle::delay_force] in a timestep.
+    #[inline]
     pub fn apply_force(&mut self, force: Vec3) {
         self.force += force;
     }
 
     /// Returns the current position of the particle.
+    #[inline]
     pub fn get_position(&self) -> Vec3 {
         self.position
     }
@@ -65,12 +70,14 @@ impl Particle {
     /// Calculate the updated position of the particle given a delta time step.
     /// This functionality is constant across different simulation algorithms,
     /// so it is implemented here.
+    #[inline]
     pub fn update_position(&mut self, delta_time: f64) {
         self.position +=
             self.velocity * delta_time + self.force * (delta_time.powi(2) / (2.0 * self.mass));
     }
 
     /// Returns the current velocity of the particle.
+    #[inline]
     pub fn get_velocity(&self) -> Vec3 {
         self.velocity
     }
@@ -78,11 +85,13 @@ impl Particle {
     /// Calculate the updated velocity of the particle given a delta time step.
     /// This functionality is constant across different simulation algorithms,
     /// so it is implemented here.
+    #[inline]
     pub fn update_velocity(&mut self, delta_time: f64) {
         self.velocity += (self.force + self.old_force) * (delta_time / (2.0 * self.mass));
     }
 
     /// Returns the constant mass of the particle.
+    #[inline]
     pub fn get_mass(&self) -> f64 {
         self.mass
     }
@@ -91,6 +100,7 @@ impl Particle {
     /// that the order of the particles affects the sign.
     ///
     /// - `direction(a, b) == -direction(b, a)`.
+    #[inline]
     pub fn position_difference(particle1: &Particle, particle2: &Particle) -> Vec3 {
         particle1.position - particle2.position
     }
@@ -100,6 +110,7 @@ impl Particle {
     ///
     /// - If result is `Some`: `direction(a, b) == -direction(b, a)`.
     /// - If result is `None`: `direction(a, b) == direction(b, a) == None`.
+    #[inline]
     pub fn direction(particle1: &Particle, particle2: &Particle) -> Option<Vec3> {
         Particle::position_difference(particle1, particle2).normal()
     }
@@ -108,11 +119,13 @@ impl Particle {
     /// symmetric:
     ///
     /// - `distance(a, b) == distance(b, a)`.
+    #[inline]
     pub fn distance(particle1: &Particle, particle2: &Particle) -> f64 {
         Particle::position_difference(particle1, particle2).length()
     }
 
     /// Calculate the product of the masses of two particles.
+    #[inline]
     pub fn mass_product(particle1: &Particle, particle2: &Particle) -> f64 {
         particle1.mass * particle2.mass
     }

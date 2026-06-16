@@ -74,7 +74,8 @@ struct Args {
     total_time: Option<f64>,
 
     /// The period (in frames) for writing the simulation output. This defines the
-    /// frequency of output writes.
+    /// frequency of output writes.  If set to zero, disables output writing (used
+    /// for benchmarking).
     #[arg(short = 's', long, default_value_t = 250)]
     frame_period: usize,
 }
@@ -96,16 +97,20 @@ pub fn main() {
 
     if let Some(name) = &input.name {
         println!("simulation name: `{name}`");
+        println!("algorithm: `{}`", input.algorithm.system_name());
+        println!("force: `{}`", input.force.system_name());
     }
 
     // create output directory
-    match args.output.parent().map(fs::create_dir_all) {
-        Some(Ok(())) | None => (),
-        Some(Err(e)) => {
-            eprintln!("Error creating output directory: {e}");
-            std::process::exit(1);
-        }
-    };
+    if args.frame_period > 0 {
+        match args.output.parent().map(fs::create_dir_all) {
+            Some(Ok(())) | None => (),
+            Some(Err(e)) => {
+                eprintln!("Error creating output directory: {e}");
+                std::process::exit(1);
+            }
+        };
+    }
 
     // generate simulation
     let mut simulation: Box<dyn SimulationTrait> = input.into();
@@ -136,12 +141,12 @@ pub fn main() {
 
     let mut frame = 0;
     while current_time < end_time {
-        let print_frame = frame % args.frame_period == 0;
+        let print_frame = args.frame_period > 0 && frame % args.frame_period == 0;
 
-        println!(
-            "Step {frame: >8} [{current_time:.4} / {end_time:.4}] {}",
-            if print_frame { "WRITE" } else { "" }
-        );
+        // println!(
+        //     "Step {frame: >8} [{current_time:.4} / {end_time:.4}] {}",
+        //     if print_frame { "WRITE" } else { "" }
+        // );
 
         simulation.step(delta_time);
 
