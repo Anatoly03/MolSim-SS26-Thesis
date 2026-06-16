@@ -11,7 +11,7 @@
  * @brief Calculates the force between two particles equivalent to the
  * negative fraction of potential and distance.
  */
-Vec3<double> Force::force(const Particle &particle, const Particle &other) const
+outline Vec3<double> Force::force(const Particle &particle, const Particle &other) const
 {
     auto potenergy = potential(particle, other);
     auto diff = other.position_difference(particle);
