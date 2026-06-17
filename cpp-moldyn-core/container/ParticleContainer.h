@@ -20,6 +20,11 @@ public:
     ParticleContainer() = default;
 
     /**
+     * Destructor is virtual to allow for proper cleanup of derived classes.
+     */
+    virtual ~ParticleContainer() = default;
+
+    /**
      * @brief Returns the name (or identifier) of the algorithm used for serialization.
      */
     virtual std::string algorithm_name() const
