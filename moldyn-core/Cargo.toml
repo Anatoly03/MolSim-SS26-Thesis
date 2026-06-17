@@ -11,6 +11,8 @@ nightly = []
 [profile.bench]
 inherits = "release"
 opt-level = 2 # optimize equally with c++
+lto = true
+codegen-units = 1
 
 # https://www.rustfaq.org/en/how-to-profile-rust-code-with-perf/
 debug = true

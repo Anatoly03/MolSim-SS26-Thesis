@@ -86,7 +86,7 @@
     \maketitle
 \end{frame}
 
-\nofooterframe\begin{frame}[t, fragile]{First of all: I was wrong!}
+\nofooterframe\begin{frame}[t, fragile]{First of all: I was wrong! (kind of)}
     So far: Assumption that Rust does overflow checks that is why the code is slower.
 
     \vspace{1em}
@@ -106,6 +106,10 @@ opt-level = 3
 debug = false
 overflow-checks = false
     \end{lstlisting}
+\end{frame}
+
+\nofooterframe\begin{frame}[t, fragile]{First of all: I was wrong! (kind of)}
+    However this only affects arithmetic overflows. Out of bounds checks on arrays, slices and vectors are still present in release build and explain the slowdown in the `for each pair' loop.
 \end{frame}
 
 \nofooterframe\begin{frame}[t]{Benchmark: Outlining}
