@@ -57,10 +57,11 @@ public:
         buffer << input_file->rdbuf();
         YAML::Node config = YAML::Load(buffer.str());
 
-        Simulation sim;
-
-        // TODO parse different algorithms
-        // config["algorithm"]
+        // Simulation algorithm
+        auto particle_container = config["algorithm"] ? config["algorithm"].as<std::unique_ptr<ParticleContainer>>() : std::make_unique<DirectSum>();
+        
+        // Simulation struct
+        Simulation sim(std::move(particle_container));
         
         // Simulation force
         sim.force = config["force"] ? config["force"].as<std::unique_ptr<Force>>() : std::make_unique<Newton>();

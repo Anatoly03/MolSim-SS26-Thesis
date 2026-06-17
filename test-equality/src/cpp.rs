@@ -93,10 +93,12 @@ fn internal(name: &str, delta: f64, frames: usize, write_output: bool, program_r
 
 /// Runs C++
 pub fn run(name: &str, delta: f64, frames: usize) {
+    Log::header(format!("{name} (cpp)"));
     internal(name, delta, frames, true, 1);
 }
 
 /// Runs C++
 pub fn bench(name: &str, delta: f64, frames: usize) {
+    Log::header(format!("{name} (cpp)"));
     internal(name, delta, frames, false, 5);
 }

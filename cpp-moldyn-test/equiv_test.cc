@@ -9,11 +9,8 @@
  * @brief Tests equivalence between `direct-sum` and `linked-cells` algorithms.
  */
 TEST(DirectCellsTest, EquivalenceAssertions) {
-    Simulation simsum;
-    Simulation simcells;
-
-    simsum.particle_container = std::make_unique<DirectSum>();
-    simcells.particle_container = std::make_unique<LinkedCells<DirectSum>>();
+    Simulation simsum(std::make_unique<DirectSum>());
+    Simulation simcells(std::make_unique<LinkedCells<DirectSum>>());
 
     Particle p1(Vec3(0.0), Vec3(0.01), 1.0);
     Particle p2(Vec3(6.0), Vec3(-0.01), 1.0);

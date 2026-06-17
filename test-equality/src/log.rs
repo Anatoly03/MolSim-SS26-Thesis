@@ -23,4 +23,11 @@ impl Log {
 
         println!("{} {message}", prefix_color.bold().paint(format!("{title:>12}")));
     }
+
+    /// Logs a header with the given title.
+    pub fn header(title: String) {
+        println!("┌{}┐", "─".repeat(title.len() + 4));
+        println!("│  {title}  │");
+        println!("└{}┘", "─".repeat(title.len() + 4));
+    }
 }

@@ -65,7 +65,7 @@ public:
     /**
      * @brief Iterates over each pair of particles.
      */
-    virtual void for_each_particle_pairs_mut(std::function<void(Particle &, Particle &)> callback) = 0;
+    virtual void for_each_particle_pairs_mut(std::function<void(Particle &, const Particle &)> callback) = 0;
 
     /**
      * @brief Adds a new particle to the container by cloning.

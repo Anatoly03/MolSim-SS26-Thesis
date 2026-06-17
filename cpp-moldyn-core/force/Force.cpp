@@ -32,7 +32,18 @@ outline Vec3<double> Force::force(const Particle &particle, const Particle &othe
  * the third law of motion. For a computed force `F` on a particle,
  * the force `-F` is applied to the other particle.
  */
-outline void Force::apply(Particle &particle, Particle &other) const
+outline void Force::apply(Particle &particle, const Particle &other) const
+{
+    auto f = force(particle, other);
+    particle.apply_force(f);
+}
+
+/**
+ * @brief Applies the calculated force to a particle pair, invoking
+ * the third law of motion. For a computed force `F` on a particle,
+ * the force `-F` is applied to the other particle.
+ */
+outline void Force::apply_symmetric(Particle &particle, Particle &other) const
 {
     auto f = force(particle, other);
     particle.apply_force(f);

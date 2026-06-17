@@ -31,10 +31,16 @@ public:
      */
     std::unique_ptr<Force> force;
 
+    // /**
+    //  * @brief Default constructor.
+    //  */
+    // Simulation() : particle_container(std::make_unique<DirectSum>()), force(std::make_unique<LennardJones>()) {};
+
     /**
-     * @brief Default constructor.
+     * @brief Constructor from a particle container.
      */
-    Simulation() : particle_container(std::make_unique<DirectSum>()), force(std::make_unique<LennardJones>()) {};
+    Simulation(std::unique_ptr<ParticleContainer> particle_container)
+        : particle_container(std::move(particle_container)), force(std::make_unique<LennardJones>()) {}
 
     /**
      * @brief Iterates over each particle.
@@ -83,7 +89,7 @@ public:
     /**
      * @brief Iterates over each pair of particles.
      */
-    void for_each_particle_pairs_mut(std::function<void(Particle &, Particle &)> callback)
+    void for_each_particle_pairs_mut(std::function<void(Particle &, const Particle &)> callback)
     {
         particle_container->for_each_particle_pairs_mut(callback);
     }
@@ -130,7 +136,7 @@ public:
     outline void apply_force()
     {
         for_each_particle_pairs_mut(
-            [this](Particle &p1, Particle &p2)
+            [this](Particle &p1, const Particle &p2)
             {
                 this->force->apply(p1, p2);
             });
@@ -167,7 +173,8 @@ public:
 
     // TODO PLOT PARTICLES
 
-    std::string algorithm_name() const {
+    std::string algorithm_name() const
+    {
         return particle_container->algorithm_name();
     }
 };
