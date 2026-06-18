@@ -1,5 +1,7 @@
 //! TODO document
 
+pub mod parallel;
+
 use crate::{Particle, ParticleContainer};
 
 /// The [DirectSum] simulation method is the most intuitive way to process

@@ -4,6 +4,7 @@ pub use super::args::SimulationArgs;
 pub use super::cells::LinkedCells;
 pub use super::container::ParticleContainer;
 pub use super::sum::DirectSum;
+pub use super::sum::parallel::DirectSumParallel;
 pub use crate::Simulation;
 use crate::{Force, Particle};
 use serde::{Deserialize, Serialize, de::Visitor};
@@ -255,6 +256,7 @@ impl<'de> Visitor<'de> for BoxSimVisitor {
         match value.to_ascii_lowercase().as_str() {
             "direct-sum" | "ds" => Ok(Box::new(Simulation::<DirectSum>::default())),
             "linked-cells" | "lc" => Ok(Box::new(Simulation::<LinkedCells<DirectSum>>::default())),
+            "direct-sum-parallel" => Ok(Box::new(Simulation::<DirectSumParallel>::default())),
             _ => Err(E::custom(format!("Unknown simulation type: {value}"))),
         }
     }
