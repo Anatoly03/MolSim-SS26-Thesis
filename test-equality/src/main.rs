@@ -20,51 +20,49 @@ fn main() {
     // test::run("halleys-comet", 25000);
     cpp::bench("halleys-comet", 0.0014, 25000000);
     rust::bench("halleys-comet", 0.0014, 25000000);
-    println!("{}", "-".repeat(50));
 
     // this benchmark does nothing useful
     cpp::run("two-colliding-particles", 0.0014, 100);
     rust::run("two-colliding-particles", 0.0014, 100);
     test::run("two-colliding-particles", 100);
-    println!("{}", "-".repeat(50));
 
     // this benchmark measures I/O performance
     cpp::run("two-bodies-collision-0001", 0.0007, 1);
     rust::run("two-bodies-collision-0001", 0.0007, 1);
     test::run("two-bodies-collision-0001", 1);
-    println!("{}", "-".repeat(50));
 
     // this benchmark additionally measures the accumulation of floating-point errors
     // over many steps
     cpp::bench("two-bodies-collision-0001", 0.0007, 20);
     rust::bench("two-bodies-collision-0001", 0.0007, 20);
-    // test::run("two-bodies-collision-0001", 20);
-    println!("{}", "-".repeat(50));
 
     // this benchmark additionally measures the accumulation of floating-point errors
     // over many steps
     cpp::bench("two-bodies-collision-0001", 0.0007, 50);
     rust::bench("two-bodies-collision-0001", 0.0007, 50);
-    // test::run("two-bodies-collision-0001", 50);
-    println!("{}", "-".repeat(50));
 
     // this benchmark measures I/O performance
     cpp::run("two-bodies-collision-0001-linked-cells", 0.0007, 1);
     rust::run("two-bodies-collision-0001-linked-cells", 0.0007, 1);
     test::run("two-bodies-collision-0001-linked-cells", 1);
-    println!("{}", "-".repeat(50));
 
     // this benchmark additionally measures the accumulation of floating-point errors
     // over many steps
     cpp::bench("two-bodies-collision-0001-linked-cells", 0.0007, 20);
     rust::bench("two-bodies-collision-0001-linked-cells", 0.0007, 20);
-    // test::run("two-bodies-collision-0001", 20);
-    println!("{}", "-".repeat(50));
 
     // this benchmark additionally measures the accumulation of floating-point errors
     // over many steps
     cpp::bench("two-bodies-collision-0001-linked-cells", 0.0007, 50);
     rust::bench("two-bodies-collision-0001-linked-cells", 0.0007, 50);
-    // test::run("two-bodies-collision-0001", 50);
-    println!("{}", "-".repeat(50));
+
+    // this benchmark measures I/O performance
+    cpp::run("two-bodies-collision-0001-parallel", 0.0007, 1);
+    // rust::run("two-bodies-collision-0001-parallel", 0.0007, 1);
+
+    cpp::bench("two-bodies-collision-0001-parallel", 0.0007, 20);
+    // rust::bench("two-bodies-collision-0001-parallel", 0.0007, 20);
+
+    cpp::bench("two-bodies-collision-0001-parallel", 0.0007, 50);
+    // rust::bench("two-bodies-collision-0001-parallel", 0.0007, 50);
 }

@@ -127,6 +127,9 @@ pub fn main() {
             }
         };
 
+    #[cfg(debug_assertions)]
+    let start_time = std::time::Instant::now();
+
     let mut current_time = simulation.args().time_start.unwrap_or(0.0);
     // Prefer CLI values when present, otherwise fall back to the input file,
     // and finally to the hard-coded defaults.
@@ -158,5 +161,11 @@ pub fn main() {
 
         current_time += delta_time;
         frame += 1;
+    }
+
+    #[cfg(debug_assertions)]
+    {
+        let end_time = std::time::Instant::now();
+        eprintln!("Simulation time: {:?}", end_time - start_time);
     }
 }

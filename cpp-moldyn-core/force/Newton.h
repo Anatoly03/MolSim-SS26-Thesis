@@ -9,6 +9,7 @@
 #include "Force.h"
 #include "Newton.h"
 #include "Particle.h"
+#include "Macro.h"
 
 /**
  * @brief The Force representing a Newton (or Coloumb-like) force, which implements
@@ -31,7 +32,7 @@ public:
     // @brief Calculates the Newtons' potential between two particles. The formula
     // is given by `U = -G * M / r` where `G = -1` is the gravitational constant and
     // `M` the product of particle masses.
-    double potential(const Particle &particle, const Particle &other) const override
+    outline double potential(const Particle &particle, const Particle &other) const override
     {
         if (auto distance = particle.distance(other))
         {

@@ -9,6 +9,7 @@
 #include <optional>
 #include <iostream>
 #include <type_traits>
+#include "Macro.h"
 
 /**
  * @brief A struct representing a three-dimensional [mathematical vector](https://en.wikipedia.org/wiki/Vector_%28mathematics_and_physics%29).
@@ -96,7 +97,7 @@ public:
     /**
      * @brief Retrieve the length squared of the vector in the second norm.
      */
-    inline constexpr double length2() const { return dot(*this); }
+    inline outline constexpr double length2() const { return dot(*this); }
 
     // operator overloads
     // allows to override symbols like the plus and minus and use it with vectors

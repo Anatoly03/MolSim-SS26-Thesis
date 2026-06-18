@@ -12,6 +12,7 @@
 #include "force/LennardJones.h"
 #include "container/ParticleContainer.h"
 #include "container/DirectSum.h"
+#include "Macro.h"
 
 /**
  * @brief A struct representing a simulation, which contains the particles and
@@ -30,10 +31,16 @@ public:
      */
     std::unique_ptr<Force> force;
 
+    // /**
+    //  * @brief Default constructor.
+    //  */
+    // Simulation() : particle_container(std::make_unique<DirectSum>()), force(std::make_unique<LennardJones>()) {};
+
     /**
-     * @brief Default constructor.
+     * @brief Constructor from a particle container.
      */
-    Simulation() : particle_container(std::make_unique<DirectSum>()), force(std::make_unique<LennardJones>()) {};
+    Simulation(std::unique_ptr<ParticleContainer> particle_container)
+        : particle_container(std::move(particle_container)), force(std::make_unique<LennardJones>()) {}
 
     /**
      * @brief Iterates over each particle.
@@ -82,7 +89,7 @@ public:
     /**
      * @brief Iterates over each pair of particles.
      */
-    void for_each_particle_pairs_mut(std::function<void(Particle &, Particle &)> callback)
+    void for_each_particle_pairs_mut(std::function<void(Particle &, const Particle &)> callback)
     {
         particle_container->for_each_particle_pairs_mut(callback);
     }
@@ -106,7 +113,7 @@ public:
     /**
      * Updates the position of every particle.
      */
-    void update_position(const double delta_time)
+    outline void update_position(const double delta_time)
     {
         for_each_particles_mut(
             [delta_time](Particle &particle)
@@ -116,7 +123,7 @@ public:
     /**
      * Delays the force.
      */
-    void delay_force()
+    outline void delay_force()
     {
         for_each_particles_mut(
             [](Particle &particle)
@@ -126,10 +133,10 @@ public:
     /**
      * Applies the force to every particle.
      */
-    void apply_force()
+    outline void apply_force()
     {
         for_each_particle_pairs_mut(
-            [this](Particle &p1, Particle &p2)
+            [this](Particle &p1, const Particle &p2)
             {
                 this->force->apply(p1, p2);
             });
@@ -138,7 +145,7 @@ public:
     /**
      * Updates the velocity of every particle.
      */
-    void update_velocity(const double delta_time)
+    outline void update_velocity(const double delta_time)
     {
         for_each_particles_mut(
             [delta_time](Particle &particle)
@@ -150,7 +157,7 @@ public:
     /**
      * TODO document (see rust)
      */
-    void step(const double delta_t)
+    outline void step(const double delta_t)
     {
         update_position(delta_t);
         // self.container.on_after_position_update();
@@ -166,7 +173,8 @@ public:
 
     // TODO PLOT PARTICLES
 
-    std::string algorithm_name() const {
+    std::string algorithm_name() const
+    {
         return particle_container->algorithm_name();
     }
 };

@@ -5,12 +5,13 @@
 #include "Force.h"
 #include "Particle.h"
 #include "Vec3.h"
+#include "Macro.h"
 
 /**
  * @brief Calculates the force between two particles equivalent to the
  * negative fraction of potential and distance.
  */
-Vec3<double> Force::force(const Particle &particle, const Particle &other) const
+outline Vec3<double> Force::force(const Particle &particle, const Particle &other) const
 {
     auto potenergy = potential(particle, other);
     auto diff = other.position_difference(particle);
@@ -31,14 +32,25 @@ Vec3<double> Force::force(const Particle &particle, const Particle &other) const
  * the third law of motion. For a computed force `F` on a particle,
  * the force `-F` is applied to the other particle.
  */
-void Force::apply(Particle &particle, Particle &other) const
+outline void Force::apply(Particle &particle, const Particle &other) const
+{
+    auto f = force(particle, other);
+    particle.apply_force(f);
+}
+
+/**
+ * @brief Applies the calculated force to a particle pair, invoking
+ * the third law of motion. For a computed force `F` on a particle,
+ * the force `-F` is applied to the other particle.
+ */
+outline void Force::apply_symmetric(Particle &particle, Particle &other) const
 {
     auto f = force(particle, other);
     particle.apply_force(f);
     other.apply_force(-f);
 }
 
-double Force::potential(const Particle &particle, const Particle &other) const
+outline double Force::potential(const Particle &particle, const Particle &other) const
 {
     // Default potential: no interaction. Concrete force implementations
     // (e.g., Newton) should override this.

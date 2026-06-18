@@ -15,6 +15,7 @@
 
 #include "container/DirectSum.h"
 #include "container/LinkedCells.h"
+#include "container/DirectSumParallel.h"
 #include "container/ParticleContainer.h"
 #include "force/Newton.h"
 #include "force/LennardJones.h"
@@ -138,10 +139,17 @@ namespace YAML
             if (node.IsScalar())
             {
                 std::string system_name = node.as<std::string>();
+                std::cout << "Deserializing ParticleContainer with algorithm: " << system_name << std::endl;
 
                 if (system_name == "direct-sum")
                 {
                     rhs = std::make_unique<DirectSum>();
+                    return true;
+                }
+
+                if (system_name == "direct-sum-parallel")
+                {
+                    rhs = std::make_unique<DirectSumParallel>();
                     return true;
                 }
 
