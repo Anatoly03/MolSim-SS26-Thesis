@@ -1,5 +1,18 @@
-use crate::Log;
+use crate::{Log, runner::Runner};
 use std::process::{Command, Stdio};
+
+// pub struct CppRunner;
+
+// impl Runner for CppRunner {
+//     const COMPILE_COMMANDS: &'static [Command] = &[
+//             []
+//         Command::new("cmake")
+//             .args([".", "-B", "target/cpp", "-DCMAKE_BUILD_TYPE=Release"])
+//             ,
+//         Command::new("make")
+//             .args(["-C", "target/cpp", "-j4", "--no-print-directory"])
+//     ];
+// }
 
 /// Builds the C++ code using CMake and Make. Runs the following two commands.
 ///
@@ -34,7 +47,7 @@ pub fn build() {
 }
 
 /// Runs C++
-fn internal(name: &str, delta: f64, frames: usize, write_output: bool, program_runs: usize) {
+fn internal(name: &str, delta: f64, frames: usize, write_output: bool, program_runs: usize) -> f64 {
     let frame_period = if write_output { "1" } else { "0" };
     let args = [
         &format!("input/{name}.yaml"),
@@ -88,17 +101,25 @@ fn internal(name: &str, delta: f64, frames: usize, write_output: bool, program_r
             "Bench",
             &format!("{} +/- {} ms", avg as f64 / 1e6, threshold as f64 / 1e6),
         );
+
+        return avg as f64 / 1e6;
     }
+
+    if let Some(&duration) = run_durations.first() {
+        return duration as f64 / 1e6;
+    }
+
+    return 0.0;
 }
 
 /// Runs C++
-pub fn run(name: &str, delta: f64, frames: usize) {
+pub fn run(name: &str, delta: f64, frames: usize) -> f64 {
     Log::header(format!("{name} (cpp, {frames} steps)"));
-    internal(name, delta, frames, true, 1);
+    internal(name, delta, frames, true, 1)
 }
 
 /// Runs C++
-pub fn bench(name: &str, delta: f64, frames: usize) {
+pub fn bench(name: &str, delta: f64, frames: usize) -> f64 {
     Log::header(format!("{name} (cpp, {frames} steps)"));
-    internal(name, delta, frames, false, 5);
+    internal(name, delta, frames, false, 5)
 }

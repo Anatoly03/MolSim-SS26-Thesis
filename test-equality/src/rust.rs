@@ -11,7 +11,7 @@ pub fn build() {
         .expect("Failed to execute cargo");
 }
 
-pub fn internal(name: &str, delta: f64, frames: usize, write_output: bool, program_runs: usize) {
+pub fn internal(name: &str, delta: f64, frames: usize, write_output: bool, program_runs: usize) -> f64 {
     let frame_period = if write_output { "1" } else { "0" };
     let args = [
         &format!("input/{name}.yaml"),
@@ -64,17 +64,25 @@ pub fn internal(name: &str, delta: f64, frames: usize, write_output: bool, progr
             "Bench",
             &format!("{} +/- {} ms", avg as f64 / 1e6, threshold as f64 / 1e6),
         );
+
+        return avg as f64 / 1e6;
     }
+
+    if let Some(&duration) = run_durations.first() {
+        return duration as f64 / 1e6;
+    }
+
+    return 0.0;
 }
 
 /// Runs C++
-pub fn run(name: &str, delta: f64, frames: usize) {
+pub fn run(name: &str, delta: f64, frames: usize) -> f64 {
     Log::header(format!("{name} (rust, {frames} steps)"));
-    internal(name, delta, frames, true, 1);
+    internal(name, delta, frames, true, 1)
 }
 
 /// Runs C++
-pub fn bench(name: &str, delta: f64, frames: usize) {
+pub fn bench(name: &str, delta: f64, frames: usize) -> f64 {
     Log::header(format!("{name} (rust, {frames} steps)"));
-    internal(name, delta, frames, false, 5);
+    internal(name, delta, frames, false, 5)
 }

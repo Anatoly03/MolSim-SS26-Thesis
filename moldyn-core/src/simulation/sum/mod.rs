@@ -38,35 +38,44 @@ impl ParticleContainer for DirectSum {
         // for i in 0..count {
         //     // https://doc.rust-lang.org/std/vec/struct.Vec.html#method.split_at_mut
         //     let (left, right) = self.particles.split_at_mut(i + 1);
-            
+
         //     // newtons third law: skip same pairs
         //     for _ in (i + 1)..count {
         //         // conceptually:
 
-        for i in 0..count {
-            // newtons third law: skip same pairs
-            for j in (i + 1)..count {
-                // https://doc.rust-lang.org/std/vec/struct.Vec.html#method.split_at_mut
+        // for i in 0..count {
+        //     // newtons third law: skip same pairs
+        //     for j in (i + 1)..count {
+        //         // https://doc.rust-lang.org/std/vec/struct.Vec.html#method.split_at_mut
 
-                // unsafe {
-                //     let particles_pointer = self.particles.as_mut_tr();
+        //         // unsafe {
+        //         //     let particles_pointer = self.particles.as_mut_tr();
 
-                //     let left = particles_pointer.add(i);
-                //     let right = particles_pointer.add(j);
+        //         //     let left = particles_pointer.add(i);
+        //         //     let right = particles_pointer.add(j);
 
-                //     f(&mut *left, &mut *right);
-                // }
+        //         //     f(&mut *left, &mut *right);
+        //         // }
 
-                let (left, right) = self.particles.split_at_mut(j);
-                // conceptually:
-                //
-                // [p1,  p2,  p3,  p4,  p5]
-                //        i         j
-                // [p1,  p2,  p3],[p4,  p5]
-                //       ^^        ^^ avoid borrow issue with split_at_mut
+        //         let (left, right) = self.particles.split_at_mut(j);
+        //         // conceptually:
+        //         //
+        //         // [p1,  p2,  p3,  p4,  p5]
+        //         //        i         j
+        //         // [p1,  p2,  p3],[p4,  p5]
+        //         //       ^^        ^^ avoid borrow issue with split_at_mut
 
-                f(&mut left[i], &mut right[0]);
+        //         f(&mut left[i], &mut right[0]);
+        //     }
+        // }
+
+        let mut particles = self.particles.as_mut_slice();
+
+        while let Some((first, rest)) = particles.split_first_mut() {
+            for second in rest.iter_mut() {
+                f(first, second);
             }
+            particles = rest;
         }
     }
 
