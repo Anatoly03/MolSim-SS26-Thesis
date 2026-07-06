@@ -29,17 +29,20 @@ impl ParticleContainer for DirectSumParallel {
     }
 
     fn for_each_particles(&self, f: &(dyn Fn(&Particle) + Send + Sync)) {
-        self.particles.par_iter().for_each(|m| {
-            let guard = m.lock().unwrap();
-            f(&*guard);
-        });
+        self.particles.iter().for_each(|p| f(&p.lock().unwrap()));
+        // self.particles.par_iter().for_each(|m| {
+        //     let guard = m.lock().unwrap();
+        //     f(&*guard);
+        // });
     }
 
     fn for_each_particles_mut(&mut self, f: &(dyn Fn(&mut Particle) + Send + Sync)) {
-        self.particles.par_iter_mut().for_each(|m| {
-            let mut guard = m.lock().unwrap();
-            f(&mut *guard);
-        });
+        // keep synchronized
+        self.particles.iter_mut().for_each(|p| f(&mut p.lock().unwrap()));
+        // self.particles.par_iter_mut().for_each(|m| {
+        //     let mut guard = m.lock().unwrap();
+        //     f(&mut *guard);
+        // });
     }
 
     fn for_each_particle_pairs_mut(&mut self, f: &(dyn Fn(&mut Particle, &mut Particle) + Send + Sync)) {
