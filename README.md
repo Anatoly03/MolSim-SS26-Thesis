@@ -43,7 +43,7 @@ make -C target/cpp -j4 --no-print-directory
 
 ## Runninng Equality Tests [![Rust and C++ Equality Tests](https://github.com/Anatoly03/MolSim-SS26-Thesis/actions/workflows/equality.yml/badge.svg)](https://github.com/Anatoly03/MolSim-SS26-Thesis/actions/workflows/equality.yml)
 
-```
+```sh
 cargo run -p test-equality
 ```
 

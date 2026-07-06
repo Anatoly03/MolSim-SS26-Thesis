@@ -48,11 +48,19 @@ where
     }
 
     fn particles_mut(&mut self) -> Box<dyn Iterator<Item = &mut Particle> + '_> {
-        Box::new(
-            self.cells
-                .values_mut()
-                .flat_map(|cell| cell.particles_mut()),
-        )
+        Box::new(self.cells.values_mut().flat_map(|cell| cell.particles_mut()))
+    }
+
+    fn for_each_particles(&self, f: &(dyn Fn(&Particle) + Send + Sync)) {
+        self.cells
+            .values()
+            .for_each(|cell| cell.for_each_particles(f));
+    }
+
+    fn for_each_particles_mut(&mut self, f: &(dyn Fn(&mut Particle) + Send + Sync)) {
+        self.cells
+            .values_mut()
+            .for_each(|cell| cell.for_each_particles_mut(f));
     }
 
     fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle)) {
@@ -98,10 +106,7 @@ where
     }
 
     fn particle_count(&self) -> usize {
-        self.cells
-            .values()
-            .flat_map(|cell| cell.particles())
-            .count()
+        self.cells.values().map(|cell| cell.particle_count()).sum()
     }
 
     fn add_particle(&mut self, p: Particle) {

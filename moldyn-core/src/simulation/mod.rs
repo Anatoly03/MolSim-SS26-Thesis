@@ -73,13 +73,13 @@ impl<Container: ParticleContainer> Simulation<Container> {
     /// });
     /// ```
     #[inline]
-    fn for_each_particles(&self, f: &mut dyn FnMut(&Particle)) {
+    fn for_each_particles(&self, f: &(dyn Fn(&Particle) + Send + Sync)) {
         self.container.for_each_particles(f);
     }
 
     /// Invokes a lambda callback for each particle (mutable) in the simulation.
     #[inline]
-    fn for_each_particles_mut(&mut self, f: &mut dyn FnMut(&mut Particle)) {
+    fn for_each_particles_mut(&mut self, f: &(dyn Fn(&mut Particle) + Send + Sync)) {
         self.container.for_each_particles_mut(f);
     }
 

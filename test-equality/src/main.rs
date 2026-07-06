@@ -58,11 +58,11 @@ fn main() {
 
     // this benchmark measures I/O performance
     cpp::run("two-bodies-collision-0001-parallel", 0.0007, 1);
-    // rust::run("two-bodies-collision-0001-parallel", 0.0007, 1);
+    rust::run("two-bodies-collision-0001-parallel", 0.0007, 1);
 
     cpp::bench("two-bodies-collision-0001-parallel", 0.0007, 20);
-    // rust::bench("two-bodies-collision-0001-parallel", 0.0007, 20);
+    rust::bench("two-bodies-collision-0001-parallel", 0.0007, 20);
 
     cpp::bench("two-bodies-collision-0001-parallel", 0.0007, 50);
-    // rust::bench("two-bodies-collision-0001-parallel", 0.0007, 50);
+    rust::bench("two-bodies-collision-0001-parallel", 0.0007, 50);
 }

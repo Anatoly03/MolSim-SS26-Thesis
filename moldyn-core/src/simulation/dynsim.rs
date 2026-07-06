@@ -60,10 +60,10 @@ pub trait SimulationTrait {
     ///     println!("Particle at position: {:?}", p.get_position());
     /// });
     /// ```
-    fn for_each_particles(&self, f: &mut dyn FnMut(&Particle));
+    fn for_each_particles(&self, f: &(dyn Fn(&Particle) + Send + Sync));
 
     /// Invokes a lambda callback for each particle (mutable) in the simulation.
-    fn for_each_particles_mut(&mut self, f: &mut dyn FnMut(&mut Particle));
+    fn for_each_particles_mut(&mut self, f: &(dyn Fn(&mut Particle) + Send + Sync));
 
     /// The core method of the trait. Different implementations of [Simulation] vary
     /// in performance as this is the heaviest part of the simulation. Invokes a lambda
@@ -151,12 +151,12 @@ where
     }
 
     #[inline]
-    fn for_each_particles(&self, f: &mut dyn FnMut(&Particle)) {
+    fn for_each_particles(&self, f: &(dyn Fn(&Particle) + Send + Sync)) {
         Simulation::for_each_particles(self, f)
     }
 
     #[inline]
-    fn for_each_particles_mut(&mut self, f: &mut dyn FnMut(&mut Particle)) {
+    fn for_each_particles_mut(&mut self, f: &(dyn Fn(&mut Particle) + Send + Sync)) {
         Simulation::for_each_particles_mut(self, f)
     }
 

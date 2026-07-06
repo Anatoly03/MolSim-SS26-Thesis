@@ -29,6 +29,14 @@ impl ParticleContainer for DirectSum {
         Box::new(self.particles.iter_mut())
     }
 
+    fn for_each_particles(&self, f: &(dyn Fn(&Particle) + Send + Sync)) {
+        self.particles.iter().for_each(f);
+    }
+    
+    fn for_each_particles_mut(&mut self, f: &(dyn Fn(&mut Particle) + Send + Sync)) {
+        self.particles.iter_mut().for_each(f);
+    }
+
     // index-based approach because two mutable iterators were problematic
     fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle)) {
         let count = self.particle_count();

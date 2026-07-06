@@ -27,6 +27,14 @@ impl ParticleContainer for DirectSumParallel {
         Box::new(self.particles.iter_mut())
     }
 
+    fn for_each_particles(&self, f: &(dyn Fn(&Particle) + Send + Sync)) {
+        self.particles.par_iter().for_each(f);
+    }
+
+    fn for_each_particles_mut(&mut self, f: &(dyn Fn(&mut Particle) + Send + Sync)) {
+        self.particles.par_iter_mut().for_each(f);
+    }
+
     // index-based approach because two mutable iterators were problematic
     fn for_each_particle_pairs_mut(&mut self, _f: &mut dyn FnMut(&mut Particle, &mut Particle)) {
         todo!("rust parallel direct sum not implemented");
