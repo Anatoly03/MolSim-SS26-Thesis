@@ -2,10 +2,10 @@
 //! the [Force] trait according to the Lennard-Jones potential.
 
 use crate::{Force, Particle};
-use meval::Expr;
+use meval::{Context, Expr};
 
 /// A type alias for a callback function that takes two particles and returns an output of type `Output`.
-pub type ParticlePairCallback<Output> = Box<dyn Fn(&Particle, &Particle) -> Output>;
+pub type ParticlePairCallback<Output> = Box<dyn Fn(&Particle, &Particle) -> Output + Send + Sync>;
 
 pub struct CustomForce {
     func: ParticlePairCallback<f64>,
@@ -42,20 +42,22 @@ impl TryFrom<Expr> for CustomForce {
     type Error = meval::Error;
 
     fn try_from(value: Expr) -> Result<Self, Self::Error> {
-        let func = value.bind2("r", "M")?;
-
         let wrap = move |p1: &Particle, p2: &Particle| {
             let distance = Particle::distance(p1, p2);
             let mul_mass = Particle::mass_product(p1, p2);
 
+            let mut context = Context::new();
+            context.var("r", distance).var("M", mul_mass);
+
             if distance == 0.0 {
                 0.0
             } else {
-                -func(distance, mul_mass)
+                -value.eval_with_context(&context).unwrap_or(0.0)
             }
         };
 
-        Ok(CustomForce::new(Box::new(wrap)))
+        let boxed = Box::new(wrap);
+        Ok(CustomForce::new(boxed))
     }
 }
 

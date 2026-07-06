@@ -19,7 +19,7 @@ use serde::{Deserialize, Serialize, de::Visitor};
 /// normalized force vector.
 ///
 /// The method [Force::system_name] is used for serialization of the force system.
-pub trait Force {
+pub trait Force: Send + Sync {
     /// # Returns
     ///
     /// Name of the force system, which is used for serialization and

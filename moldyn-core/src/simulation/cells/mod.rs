@@ -63,7 +63,7 @@ where
             .for_each(|cell| cell.for_each_particles_mut(f));
     }
 
-    fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle)) {
+    fn for_each_particle_pairs_mut(&mut self, f: &(dyn Fn(&mut Particle, &mut Particle) + Send + Sync)) {
         let coords: Vec<Vec3<i32>> = self.cells.keys().cloned().collect();
 
         // Visit each neighboring cell pair only once: only the positive half-space offsets.

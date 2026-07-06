@@ -2,6 +2,7 @@
 
 use crate::{Particle, ParticleContainer};
 use rayon::prelude::*;
+use std::sync::Mutex;
 
 /// The [DirectSumParallel] simulation method is the most intuitive way to process
 /// a molecular dynamics simulation. It bases the computation on the
@@ -11,7 +12,7 @@ use rayon::prelude::*;
 /// is avoiding computing the same pair of particles twice.
 #[derive(Default)]
 pub struct DirectSumParallel {
-    particles: Vec<Particle>,
+    particles: Vec<Mutex<Particle>>,
 }
 
 impl ParticleContainer for DirectSumParallel {
@@ -20,24 +21,38 @@ impl ParticleContainer for DirectSumParallel {
     }
 
     fn particles(&self) -> Box<dyn Iterator<Item = &Particle> + '_> {
-        Box::new(self.particles.iter())
+        todo!()
     }
 
     fn particles_mut(&mut self) -> Box<dyn Iterator<Item = &mut Particle> + '_> {
-        Box::new(self.particles.iter_mut())
+        todo!()
     }
 
     fn for_each_particles(&self, f: &(dyn Fn(&Particle) + Send + Sync)) {
-        self.particles.par_iter().for_each(f);
+        self.particles.par_iter().for_each(|m| {
+            let guard = m.lock().unwrap();
+            f(&*guard);
+        });
     }
 
     fn for_each_particles_mut(&mut self, f: &(dyn Fn(&mut Particle) + Send + Sync)) {
-        self.particles.par_iter_mut().for_each(f);
+        self.particles.par_iter_mut().for_each(|m| {
+            let mut guard = m.lock().unwrap();
+            f(&mut *guard);
+        });
     }
 
-    // index-based approach because two mutable iterators were problematic
-    fn for_each_particle_pairs_mut(&mut self, _f: &mut dyn FnMut(&mut Particle, &mut Particle)) {
-        todo!("rust parallel direct sum not implemented");
+    fn for_each_particle_pairs_mut(&mut self, f: &(dyn Fn(&mut Particle, &mut Particle) + Send + Sync)) {
+        let count = self.particle_count();
+
+        // in c++ we parallelized outer loop too
+        (0..count).into_par_iter().for_each(|i| {
+            for j in (i + 1)..count {
+                let left = &mut self.particles[i].lock().unwrap();
+                let right = &mut self.particles[j].lock().unwrap();
+                f(&mut *left, &mut *right);
+            }
+        });
     }
 
     fn particle_count(&self) -> usize {
@@ -45,10 +60,10 @@ impl ParticleContainer for DirectSumParallel {
     }
 
     fn add_particle(&mut self, particle: Particle) {
-        self.particles.push(particle);
+        self.particles.push(Mutex::new(particle));
     }
 
     fn add_particles(&mut self, particles: Vec<Particle>) {
-        self.particles.extend(particles);
+        self.particles.extend(particles.into_iter().map(Mutex::new));
     }
 }

@@ -91,7 +91,7 @@ impl<Container: ParticleContainer> Simulation<Container> {
     /// - If you receive a pair `(a, b)` it is guaranteed that you will not receive `(b, a)`.
     /// - There is no guarantee you will receive all pairs.
     #[inline]
-    fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle)) {
+    fn for_each_particle_pairs_mut(&mut self, f: &(dyn Fn(&mut Particle, &mut Particle) + Send + Sync)) {
         self.container.for_each_particle_pairs_mut(f);
     }
 
@@ -152,8 +152,8 @@ impl<Container: ParticleContainer> Simulation<Container> {
         // mod.rs(52, 14): immutable borrow later used by call
         let force: Arc<dyn Force> = self.get_force();
 
-        self.for_each_particle_pairs_mut(&mut |p1, p2| {
-            force.apply_force(p1, p2);
+        self.for_each_particle_pairs_mut(&|p1, p2| {
+            (&force).apply_force(p1, p2);
         });
     }
 

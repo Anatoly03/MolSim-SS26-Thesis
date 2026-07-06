@@ -38,7 +38,7 @@ impl ParticleContainer for DirectSum {
     }
 
     // index-based approach because two mutable iterators were problematic
-    fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle)) {
+    fn for_each_particle_pairs_mut(&mut self, f: &(dyn Fn(&mut Particle, &mut Particle) + Send + Sync)) {
         let count = self.particle_count();
 
         // when i had moved split_at_mut above, code performed ~150 ms slower
