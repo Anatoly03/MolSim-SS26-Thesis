@@ -268,6 +268,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "52ff2c0fe9bc6cb6b14a0592c2ff4fa9ceb83eea9db979b0487cd054946a2b8f"
 
 [[package]]
+name = "lscpu"
+version = "1.0.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "82fe7f148da17f5e4bf2bd9abfbc0f8f5c417c95b14b261ab766fe9fa54dce1d"
+dependencies = [
+ "paste",
+]
+
+[[package]]
 name = "lz4_flex"
 version = "0.7.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -404,6 +413,12 @@ name = "once_cell_polyfill"
 version = "1.70.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "384b8ab6d37215f3c5301a95a4accb5d64aa607f1fcb26a11b5303878451b4fe"
+
+[[package]]
+name = "paste"
+version = "1.0.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 
 [[package]]
 name = "pkg-config"
@@ -579,6 +594,7 @@ name = "test-equality"
 version = "0.1.0"
 dependencies = [
  "ansi_term",
+ "lscpu",
 ]
 
 [[package]]

@@ -6,3 +6,4 @@ edition = "2024"
 
 [dependencies]
 ansi_term = "0.12"
+lscpu = "1.0.9"

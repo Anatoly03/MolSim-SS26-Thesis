@@ -7,12 +7,32 @@ mod rust;
 mod test;
 
 pub use log::Log;
+use lscpu::Cpu;
 
 fn main() {
     cpp::build();
     rust::build();
     std::fs::create_dir_all("output/rs").expect("");
     std::fs::create_dir_all("output/cpp").expect("");
+
+    Log::header(format!("lscpu"));
+    let cpu = Cpu::new();
+    Log::Info.log("Architecture\t", &cpu.architecture);
+    Log::Info.log("CPU op modes\t", &cpu.cpu_op_modes);
+    Log::Info.log("Address sizes\t", &cpu.address_sizes);
+    Log::Info.log("Byte order\t", &cpu.byte_order);
+    Log::Info.log("CPU count\t", &cpu.cpu_count.to_string());
+    Log::Info.log("On-line CPU\t", &cpu.on_line_cpu.to_string());
+    Log::Info.log("Vendor ID\t", &cpu.vendor_id);
+    Log::Info.log("Model name\t", &cpu.model_name);
+    Log::Info.log("CPU family\t", &cpu.cpu_family.to_string());
+    Log::Info.log("CPU model\t", &cpu.cpu_model.to_string());
+    Log::Info.log("Is hybrid\t", &cpu.is_hybrid);
+    Log::Info.log("Threads per core", &cpu.threads_per_core.to_string());
+    Log::Info.log("Cores per socket", &cpu.cores_per_socket.to_string());
+    Log::Info.log("Sockets\t", &cpu.sockets.to_string());
+    Log::Info.log("Stepping\t", &cpu.stepping.to_string());
+    Log::Info.log("Boost enabled\t", &cpu.boost_enabled);
 
     // this benchmark verifies halleys comet correctness over 25 thousand steps
     // cpp::run("halleys-comet", 0.0014, 25000);
