@@ -1,5 +1,5 @@
 /**
- * @file DirectSum.h
+ * @file DirectSumParallel.h
  */
 
 #pragma once
@@ -13,7 +13,7 @@
  * @brief [Interface](https://www.tutorialspoint.com/cplusplus/cpp_interfaces.htm)
  * representing a force system.
  */
-class DirectSum : public ParticleContainer
+class DirectSumParallel : public ParticleContainer
 {
 private:
     std::vector<Particle> particles_vec;
@@ -22,20 +22,20 @@ public:
     /**
      * @brief Default constructor.
      */
-    DirectSum() : particles_vec() {};
+    DirectSumParallel() : particles_vec() {};
 
     /**
-     * @brief Returns the identifier `direct_sum` for this algorithm.
+     * @brief Returns the identifier `direct-sum-parallel` for this algorithm.
      */
     virtual std::string algorithm_name() const override
     {
-        return "direct-sum";
+        return "direct-sum-parallel";
     }
 
     // /**
     //  * @brief Constructor from a vector of particles.
     //  */
-    // DirectSum(const std::vector<Particle> particles) : particles_vec(particles) {}
+    // DirectSumParallel(const std::vector<Particle> particles) : particles_vec(particles) {}
 
     void for_each_particles(std::function<void(const Particle &)> callback) const override
     {
@@ -55,10 +55,12 @@ public:
 
     void for_each_particle_pairs(std::function<void(const Particle &, const Particle &)> callback) const override
     {
+#pragma omp parallel for
         for (size_t i = 0; i < particles_vec.size(); ++i)
         {
-            for (size_t j = i + 1; j < particles_vec.size(); ++j)
+            for (size_t j = 0; j < particles_vec.size(); ++j)
             {
+                if (i == j) continue; // skip self-interaction
                 const auto& p1 = particles_vec[i];
                 const auto& p2 = particles_vec[j];
                 callback(p1, p2);
@@ -68,14 +70,15 @@ public:
 
     void for_each_particle_pairs_mut(std::function<void(Particle &, const Particle &)> callback) override
     {
+#pragma omp parallel for
         for (size_t i = 0; i < particles_vec.size(); ++i)
         {
-            for (size_t j = i + 1; j < particles_vec.size(); ++j)
+            for (size_t j = 0; j < particles_vec.size(); ++j)
             {
+                if (i == j) continue; // skip self-interaction
                 auto& p1 = particles_vec[i];
-                auto& p2 = particles_vec[j];
+                const auto& p2 = particles_vec[j];
                 callback(p1, p2);
-                callback(p2, p1);
             }
         }
     }

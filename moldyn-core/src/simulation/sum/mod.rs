@@ -1,5 +1,7 @@
 //! TODO document
 
+pub mod parallel;
+
 use crate::{Particle, ParticleContainer};
 
 /// The [DirectSum] simulation method is the most intuitive way to process
@@ -27,8 +29,16 @@ impl ParticleContainer for DirectSum {
         Box::new(self.particles.iter_mut())
     }
 
+    fn for_each_particles(&self, f: &(dyn Fn(&Particle) + Send + Sync)) {
+        self.particles.iter().for_each(f);
+    }
+    
+    fn for_each_particles_mut(&mut self, f: &(dyn Fn(&mut Particle) + Send + Sync)) {
+        self.particles.iter_mut().for_each(f);
+    }
+
     // index-based approach because two mutable iterators were problematic
-    fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle)) {
+    fn for_each_particle_pairs_mut(&mut self, f: &(dyn Fn(&mut Particle, &mut Particle) + Send + Sync)) {
         let count = self.particle_count();
 
         // when i had moved split_at_mut above, code performed ~150 ms slower

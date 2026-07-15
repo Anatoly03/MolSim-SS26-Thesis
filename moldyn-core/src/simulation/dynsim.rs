@@ -4,6 +4,7 @@ pub use super::args::SimulationArgs;
 pub use super::cells::LinkedCells;
 pub use super::container::ParticleContainer;
 pub use super::sum::DirectSum;
+pub use super::sum::parallel::DirectSumParallel;
 pub use crate::Simulation;
 use crate::{Force, Particle};
 use serde::{Deserialize, Serialize, de::Visitor};
@@ -59,10 +60,10 @@ pub trait SimulationTrait {
     ///     println!("Particle at position: {:?}", p.get_position());
     /// });
     /// ```
-    fn for_each_particles(&self, f: &mut dyn FnMut(&Particle));
+    fn for_each_particles(&self, f: &(dyn Fn(&Particle) + Send + Sync));
 
     /// Invokes a lambda callback for each particle (mutable) in the simulation.
-    fn for_each_particles_mut(&mut self, f: &mut dyn FnMut(&mut Particle));
+    fn for_each_particles_mut(&mut self, f: &(dyn Fn(&mut Particle) + Send + Sync));
 
     /// The core method of the trait. Different implementations of [Simulation] vary
     /// in performance as this is the heaviest part of the simulation. Invokes a lambda
@@ -71,7 +72,7 @@ pub trait SimulationTrait {
     /// - An iterator over distinct pairs of particles, accounting for symmetry.
     /// - If you receive a pair `(a, b)` it is guaranteed that you will not receive `(b, a)`.
     /// - There is no guarantee you will receive all pairs.
-    fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle));
+    fn for_each_particle_pairs_mut(&mut self, f: &(dyn Fn(&mut Particle, &mut Particle) + Send + Sync));
 
     /// The number of particles in the simulation.
     fn particle_count(&self) -> usize;
@@ -109,7 +110,7 @@ pub trait SimulationTrait {
         // mod.rs(52, 14): immutable borrow later used by call
         let force: Arc<dyn Force> = self.get_force();
 
-        self.for_each_particle_pairs_mut(&mut |p1, p2| {
+        self.for_each_particle_pairs_mut(&|p1, p2| {
             force.apply_force(p1, p2);
         });
     }
@@ -150,17 +151,17 @@ where
     }
 
     #[inline]
-    fn for_each_particles(&self, f: &mut dyn FnMut(&Particle)) {
+    fn for_each_particles(&self, f: &(dyn Fn(&Particle) + Send + Sync)) {
         Simulation::for_each_particles(self, f)
     }
 
     #[inline]
-    fn for_each_particles_mut(&mut self, f: &mut dyn FnMut(&mut Particle)) {
+    fn for_each_particles_mut(&mut self, f: &(dyn Fn(&mut Particle) + Send + Sync)) {
         Simulation::for_each_particles_mut(self, f)
     }
 
     #[inline]
-    fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle)) {
+    fn for_each_particle_pairs_mut(&mut self, f: &(dyn Fn(&mut Particle, &mut Particle) + Send + Sync)) {
         Simulation::for_each_particle_pairs_mut(self, f)
     }
 
@@ -255,6 +256,7 @@ impl<'de> Visitor<'de> for BoxSimVisitor {
         match value.to_ascii_lowercase().as_str() {
             "direct-sum" | "ds" => Ok(Box::new(Simulation::<DirectSum>::default())),
             "linked-cells" | "lc" => Ok(Box::new(Simulation::<LinkedCells<DirectSum>>::default())),
+            "direct-sum-parallel" => Ok(Box::new(Simulation::<DirectSumParallel>::default())),
             _ => Err(E::custom(format!("Unknown simulation type: {value}"))),
         }
     }

@@ -10,7 +10,6 @@
 
 #include "Args.h"
 #include <filesystem>
-#include "container/DirectSum.h"
 #include "YAMLReader.h"
 #include "YAMLWriter.h"
 
@@ -49,6 +48,13 @@ int main(int argc, char *argv[])
     auto simulation = reader.consume();
     auto writer = Writer::create(output_file_path, simulation);
 
+    // std::cout << "Simulation Algorithm: " << simulation.particle_container->algorithm_name() << std::endl;
+    // std::cout << "Force System: " << simulation.force->system_name() << std::endl;
+
+    // current clock monotonic time
+    // https://en.cppreference.com/cpp/chrono/steady_clock
+    auto current_monotonic_time = std::chrono::steady_clock::now();
+
     double current_time = start_time;
     int frame = 0;
 
@@ -65,6 +71,10 @@ int main(int argc, char *argv[])
         current_time += delta_time_v;
         frame++;
     }
+
+    auto end_time = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - current_monotonic_time);
+    std::cout << "Simulation completed in " << duration.count() << " ms" << std::endl;
 
     return 0;
 }

@@ -49,18 +49,10 @@ pub trait ParticleContainer {
     ///     println!("Particle at position: {:?}", p.get_position());
     /// });
     /// ```
-    fn for_each_particles(&self, f: &mut dyn FnMut(&Particle)) {
-        for part in self.particles() {
-            f(part);
-        }
-    }
+    fn for_each_particles(&self, f: &(dyn Fn(&Particle) + Send + Sync));
 
     /// Invokes a lambda callback for each particle (mutable) in the simulation.
-    fn for_each_particles_mut(&mut self, f: &mut dyn FnMut(&mut Particle)) {
-        for part in self.particles_mut() {
-            f(part);
-        }
-    }
+    fn for_each_particles_mut(&mut self, f: &(dyn Fn(&mut Particle) + Send + Sync));
 
     /// The core method of the trait. Different implementations of [Simulation] vary
     /// in performance as this is the heaviest part of the simulation. Invokes a lambda
@@ -69,7 +61,7 @@ pub trait ParticleContainer {
     /// - An iterator over distinct pairs of particles, accounting for symmetry.
     /// - If you receive a pair `(a, b)` it is guaranteed that you will not receive `(b, a)`.
     /// - There is no guarantee you will receive all pairs.
-    fn for_each_particle_pairs_mut(&mut self, f: &mut dyn FnMut(&mut Particle, &mut Particle));
+    fn for_each_particle_pairs_mut(&mut self, f: &(dyn Fn(&mut Particle, &mut Particle) + Send + Sync));
 
     /// The number of particles in the simulation.
     fn particle_count(&self) -> usize;

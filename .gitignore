@@ -4,3 +4,7 @@ doc
 # for testing
 output
 local
+
+# for benchmarking
+perf.data
+perf.data.old

@@ -149,7 +149,7 @@ public:
         }
     }
 
-    void for_each_particle_pairs_mut(std::function<void(Particle &, Particle &)> callback) override
+    void for_each_particle_pairs_mut(std::function<void(Particle &, const Particle &)> callback) override
     {
         std::vector<Vec3<int>> coords;
         coords.reserve(particle_containers_chunk.size());
@@ -159,6 +159,7 @@ public:
             coords.push_back(chunk.first);
         }
 
+        // code from old molsim repository, Vec3 iteration has been unpacked to loops dx, dy, dz
         // Visit each neighboring cell pair only once using positive half-space offsets.
         for (const auto &cell_coords : coords)
         {
@@ -202,6 +203,7 @@ public:
                             for (Particle *p2p : rhs_mut)
                             {
                                 callback(*p1p, *p2p);
+                                callback(*p2p, *p1p);
                             }
                         }
                     }
@@ -221,6 +223,7 @@ public:
                 for (size_t j = i + 1; j < cell_particles_mut.size(); ++j)
                 {
                     callback(*cell_particles_mut[i], *cell_particles_mut[j]);
+                    callback(*cell_particles_mut[j], *cell_particles_mut[i]);
                 }
             }
         }
