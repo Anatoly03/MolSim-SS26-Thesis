@@ -1,8 +1,9 @@
 //! TODO document
 
+use std::ops::Index;
+
 use crate::{Particle, ParticleContainer};
 use rayon::prelude::*;
-use std::sync::Mutex;
 
 /// The [DirectSumParallel] simulation method is the most intuitive way to process
 /// a molecular dynamics simulation. It bases the computation on the
@@ -12,7 +13,20 @@ use std::sync::Mutex;
 /// is avoiding computing the same pair of particles twice.
 #[derive(Default)]
 pub struct DirectSumParallel {
-    particles: Vec<Mutex<Particle>>,
+    particles: Vec<Particle>,
+}
+
+// https://stackoverflow.com/questions/50258359/can-a-struct-containing-a-raw-pointer-implement-send-and-be-ffi-safe
+pub struct PointerWrapper<T>(*mut T);
+unsafe impl<T> Sync for PointerWrapper<T> {}
+unsafe impl<T> Send for PointerWrapper<T> {}
+
+impl<T> Index<usize> for PointerWrapper<T> {
+    type Output = T;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        unsafe { &mut *self.0.add(index) }
+    }
 }
 
 impl ParticleContainer for DirectSumParallel {
@@ -21,15 +35,15 @@ impl ParticleContainer for DirectSumParallel {
     }
 
     fn particles(&self) -> Box<dyn Iterator<Item = &Particle> + '_> {
-        todo!()
+        Box::new(self.particles.iter())
     }
 
     fn particles_mut(&mut self) -> Box<dyn Iterator<Item = &mut Particle> + '_> {
-        todo!()
+        Box::new(self.particles.iter_mut())
     }
 
     fn for_each_particles(&self, f: &(dyn Fn(&Particle) + Send + Sync)) {
-        self.particles.iter().for_each(|p| f(&p.lock().unwrap()));
+        self.particles.iter().for_each(|p| f(p));
         // self.particles.par_iter().for_each(|m| {
         //     let guard = m.lock().unwrap();
         //     f(&*guard);
@@ -38,22 +52,33 @@ impl ParticleContainer for DirectSumParallel {
 
     fn for_each_particles_mut(&mut self, f: &(dyn Fn(&mut Particle) + Send + Sync)) {
         // keep synchronized
-        self.particles.iter_mut().for_each(|p| f(&mut p.lock().unwrap()));
+        self.particles.iter_mut().for_each(|p| f(p));
         // self.particles.par_iter_mut().for_each(|m| {
         //     let mut guard = m.lock().unwrap();
         //     f(&mut *guard);
         // });
     }
 
-    fn for_each_particle_pairs_mut(&mut self, f: &(dyn Fn(&mut Particle, &mut Particle) + Send + Sync)) {
+    fn for_each_particle_pairs_mut(
+        &mut self,
+        f: &(dyn Fn(&mut Particle, &Particle) + Send + Sync),
+    ) {
         let count = self.particle_count();
+        let particles = PointerWrapper(self.particles.as_mut_ptr());
 
         // in c++ we parallelized outer loop too
         (0..count).into_par_iter().for_each(|i| {
-            for j in (i + 1)..count {
-                let left = &mut self.particles[i].lock().unwrap();
-                let right = &mut self.particles[j].lock().unwrap();
-                f(&mut *left, &mut *right);
+            let mut left = particles[i];
+
+            for j in 0..count {
+                if i == j {
+                    continue;
+                }
+
+                let mut right = particles[j];
+
+                f(&mut left, &right);
+                f(&mut right, &left);
             }
         });
     }
@@ -63,10 +88,10 @@ impl ParticleContainer for DirectSumParallel {
     }
 
     fn add_particle(&mut self, particle: Particle) {
-        self.particles.push(Mutex::new(particle));
+        self.particles.push(particle);
     }
 
     fn add_particles(&mut self, particles: Vec<Particle>) {
-        self.particles.extend(particles.into_iter().map(Mutex::new));
+        self.particles.extend(particles);
     }
 }
