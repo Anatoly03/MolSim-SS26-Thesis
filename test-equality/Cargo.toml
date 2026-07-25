@@ -4,6 +4,10 @@ version = "0.1.0"
 publish = false
 edition = "2024"
 
+[features]
+default = []
+full = []
+
 [dependencies]
 ansi_term = "0.12"
 lscpu = "1.0.9"

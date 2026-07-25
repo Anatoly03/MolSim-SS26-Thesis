@@ -9,6 +9,18 @@ mod test;
 pub use log::Log;
 use lscpu::Cpu;
 
+/// Amount of times (repetitions) to run a program for benching. It has been set
+/// to `5` previously for Github CI and is set to `20` on the `full` feature for
+/// better averaged data.
+#[cfg(not(feature = "full"))]
+pub const REPETITIONS: usize = 5;
+
+/// Amount of times (repetitions) to run a program for benching. It has been set
+/// to `5` previously for Github CI and is set to `20` on the `full` feature for
+/// better averaged data.
+#[cfg(feature = "full")]
+pub const REPETITIONS: usize = 20;
+
 fn main() {
     cpp::build();
     rust::build();

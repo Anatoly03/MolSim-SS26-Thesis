@@ -100,5 +100,5 @@ pub fn run(name: &str, delta: f64, frames: usize) {
 /// Runs C++
 pub fn bench(name: &str, delta: f64, frames: usize) {
     Log::header(format!("{name} (cpp, {frames} steps)"));
-    internal(name, delta, frames, false, 5);
+    internal(name, delta, frames, false, crate::REPETITIONS);
 }
