@@ -15,6 +15,8 @@
 
 \include{settings}
 \usepackage{lipsum} % for filling pages with stuff
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning}
 
 % -------------------------------------------------------------------------------
 % --------------------------------- Thesis Info ---------------------------------
@@ -166,8 +168,9 @@ Munich, \date \hspace{5cm} \author
 % labels can be put almost anywhere and can be referencef from anywhere.
 \label{sec:intro}
 
-In 2025 the StackOverflow`s developer survey has ranked Rust as the most admired programming language, holding the title consecutively for nine years\cite{stackoverflow-technology-admired-and-desired}.
+% https://survey.stackoverflow.co/2020#most-loved-dreaded-and-wanted
 
+% https://survey.stackoverflow.co/
 % https://survey.stackoverflow.co/2025/technology#admired-and-desired
 % https://survey.stackoverflow.co/2024/technology#admired-and-desired
 % https://survey.stackoverflow.co/2023#section-admired-and-desired-programming-scripting-and-markup-languages
@@ -178,12 +181,14 @@ In 2025 the StackOverflow`s developer survey has ranked Rust as the most admired
 % https://survey.stackoverflow.co/2018#most-loved-dreaded-and-wanted
 % https://survey.stackoverflow.co/2016#technology
 \vspace{1.5em}
+\begin{figure}[h!]
 \begin{tikzpicture}
     \begin{axis}[
-        width=\textwidth,  
+        width=0.7\textwidth,  
         height=0.3\textheight,
         xlabel={Year},
-        ylabel={Percentage},
+        % ylabel={Percentage},
+        ylabel={Percentage Admired},
         xtick={2010, 2015, 2020, 2025},
         scaled x ticks=false,  
         scaled y ticks=false,
@@ -193,7 +198,9 @@ In 2025 the StackOverflow`s developer survey has ranked Rust as the most admired
         ymax=105,
         xmin=2014,
         xmax=2026,
-        legend style={at={(0.02,0.45)},anchor=north west},
+        x tick label style={/pgf/number format/.cd, 1000 sep={}},
+        % legend style={at={(0.02,0.45)},anchor=north west},
+        legend style={at={(0.07,0.35)},anchor=north west},
     ]
 
     \addplot[
@@ -214,31 +221,126 @@ In 2025 the StackOverflow`s developer survey has ranked Rust as the most admired
             (2015, 73.8)(2016, 79.1)(2017, 73.1)(2018, 78.9)(2019, 83.5)(2020, 86.1)(2021, 86.9)(2022, 86.7)(2023, 84.7)(2024, 82.2)(2025, 72.4)
         };
 
-    \addplot[
-        color=cyan,
-        mark=square,
-        line width=1pt,
-        ]
-        coordinates {
-            (2023, 16.4)(2024, 18.3)(2025, 16.7)
-        };
+    % \addplot[
+    %     color=cyan,
+    %     mark=square,
+    %     line width=1pt,
+    %     ]
+    %     coordinates {
+    %         (2023, 16.4)(2024, 18.3)(2025, 16.7)
+    %     };
 
-    \addplot[
-        color=orange,
-        mark=triangle,
-        line width=1pt,
-        ]
-        coordinates {
-            (2023, 30.6)(2024, 28.7)(2025, 29.9)
-        };
+    % \addplot[
+    %     color=orange,
+    %     mark=triangle,
+    %     line width=1pt,
+    %     ]
+    %     coordinates {
+    %         (2023, 30.6)(2024, 28.7)(2025, 29.9)
+    %     };
 
-    \legend{C++ (Admired), Rust (Admired), C++ (Desired), Rust (Desired)}
+    \legend{C++, Rust}
+    % \legend{C++ (Admired), Rust (Admired), C++ (Desired), Rust (Desired)}
     \end{axis}
 \end{tikzpicture}
+The Rust proxy-service, which had limited memory allocated, then became the source of the unhandled error when the feature file size grew three times larger than expected.
+\label{fig:stackoverflow-most-admired}
+\end{figure}
+
+This paper takes the goal of diving deeper into a more direct and technical comparison between Rust and C++ by writing a molecular dynamics simulation program in both programming languages and analyze the differences in usability and benchmark performance.
+
+\chapter{Rust}
+\section{The Rust Ecosystem}
+
+Before diving into the the syntax and the defining elements of the Rust Programming Language, this section will give a brief overview over the tooling and console applications provided by Cargo, the Rust Package Manager.
+
+Since Cargo can install dependencies it was also designed to be extensible, meaning that most operations you will need to maintain a Rust project are located behind a Cargo subcommand.
+
+\begin{description}
+    \item[cargo run] Equivalent to \texttt{make run}, Cargo will invoke the Rust compiler on the codebase and execute the resulting binary.
+    \item[cargo build] Equivalent to \texttt{make}, Cargo will invoke the Rust compiler on the codebase and compile a binary but not execute it.
+    \item[cargo test] Equivalent to \texttt{ctest} or GoogleTest, Cargo has an integrated testing tool which will compile the codebase and run all functions annotated with \texttt{\#[test]} as an individual, isolated test case.
+    \item[cargo doc] Equivalent to \texttt{Doxygen} or other documentation libraries, Cargo provides an in-built way of generating documentation for the codebase.
+    \item[cargo fmt] Equivalent to \texttt{clang-format}, Cargo provides an in-built way to format the entire codebase.
+    \item[cargo clippy] Equivalent to \texttt{clang-tidy}, Cargo provides an in-built way to lint and statically analyze the codebase. This command is also often used in CI/CD to ensure the codebase quality.
+\end{description}
+
+The first difference observation in terms of usability is that the C++ infrastructure is fragmented, whereas for Rust it is centralized via its package manager. This smoothes down the learning curve of Rust tools, as new users only have to get comfortable with one tool, which incorporates 
+
+It's noteworthy to mention that there's no equivalent to GDB in the Rust ecosystem because the type system and safety checks of Rust guaranteees that a segmentation fault caused crash is at no point possible in `Safe Rust'. What exactly this means we will explore in the next subsection.
+
+\section{The Rust Programming Language}
+
+Rust has two `modes' in which code can be written. The more commonly used one is called `Safe Rust' which can be statically analysed and is guaranteed not to cause segmentation faults and core dumps, and the more powerful one is called `Unsafe Rust'.
+
+`Unsafe Rust' are scopes and functionalities marked with the keyword \texttt{unsafe} which allow for example mutating static variables, dereferencing pointers and invoking other unsafe functionalities\cite{rust-book-unsafe-rust}. We will not dive deeper into Unsafe Rust than just mention it as it is mostly off-topic to this thesis.
+
+We will now look at the syntax of `Safe Rust'.
+
+\subsection{Syntax}
+
+Syntax
+
+\subsection{Structs and Traits}
+
+Structs and Traits
+
+\subsection{Ownership Model}
+
+\subsection{Error Handling}
+
+Option, Result and Panic
+
+\subsection{Macros}
+
+rust macros vs c++ templates
+
+\section{Common Crates}
+
+Below are two creditworthy libraries which are utilized in the project and severely improve the programming workflow. They utilize procedural macros to generate code from a struct.
+
+\subsection{Clap}
+
+clap
+
+\subsection{Serde}
+
+serde
+
+\chapter{The Molecular Dynamics Codebase}
+
+\part{Benchmarking Analysis and Conclusion}
+
+\chapter{Implementations}
+
+\section{Direct Sum}
+
+Todo!
+
+\section{Direct Sum Parallel}
+
+Todo!
+
+\section{Linked Cells}
+
+Todo!
+
+\chapter{Conclusion}
 
 
+% template
 
-\section{Tips}
+\part{Template Stub (Remove)}
+
+\chapter{Tips}
+\subsection{How to Describe}
+% optional: set the spacing between columns
+\setlength{\columnsep}{30 pt}
+When listing several points you have three basic options:
+\begin{multicols}{3}
+    \begin{itemize}
+        \item itemize
+        \item enumerate
 \subsection{How to Describe}
 % optional: set the spacing between columns
 \setlength{\columnsep}{30 pt}
