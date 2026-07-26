@@ -163,8 +163,80 @@ Munich, \date \hspace{5cm} \author
 \mainmatter
 \part{Introduction and Background}
 \chapter{Introduction}
-\label{sec:intro}       % labels can be put almost anywhere and can be referencef from anywhere.
-Write some useful intro. Here are tips along the way:
+% labels can be put almost anywhere and can be referencef from anywhere.
+\label{sec:intro}
+
+In 2025 the StackOverflow`s developer survey has ranked Rust as the most admired programming language, holding the title consecutively for nine years\cite{stackoverflow-technology-admired-and-desired}.
+
+% https://survey.stackoverflow.co/2025/technology#admired-and-desired
+% https://survey.stackoverflow.co/2024/technology#admired-and-desired
+% https://survey.stackoverflow.co/2023#section-admired-and-desired-programming-scripting-and-markup-languages
+% https://survey.stackoverflow.co/2022#technology-most-loved-dreaded-and-wanted
+% https://survey.stackoverflow.co/2021#technology-most-loved-dreaded-and-wanted
+% https://survey.stackoverflow.co/2020#most-loved-dreaded-and-wanted
+% https://survey.stackoverflow.co/2019#most-loved-dreaded-and-wanted
+% https://survey.stackoverflow.co/2018#most-loved-dreaded-and-wanted
+% https://survey.stackoverflow.co/2016#technology
+\vspace{1.5em}
+\begin{tikzpicture}
+    \begin{axis}[
+        width=\textwidth,  
+        height=0.3\textheight,
+        xlabel={Year},
+        ylabel={Percentage},
+        xtick={2010, 2015, 2020, 2025},
+        scaled x ticks=false,  
+        scaled y ticks=false,
+        ymajorgrids=true, 
+        grid style=dashed,
+        ymin=-5,
+        ymax=105,
+        xmin=2014,
+        xmax=2026,
+        legend style={at={(0.02,0.45)},anchor=north west},
+    ]
+
+    \addplot[
+        color=blue,
+        mark=square,
+        line width=1pt,
+        ]
+        coordinates {
+            (2015, 75.6)(2017, 52.0)(2018, 46.7)(2019, 52.0)(2020, 43.4)(2021, 49.2)(2022, 48.4)(2023, 49.8)(2024, 53.1)(2025, 46.6)
+        };
+
+    \addplot[
+        color=red,
+        mark=triangle,
+        line width=1pt,
+        ]
+        coordinates {
+            (2015, 73.8)(2016, 79.1)(2017, 73.1)(2018, 78.9)(2019, 83.5)(2020, 86.1)(2021, 86.9)(2022, 86.7)(2023, 84.7)(2024, 82.2)(2025, 72.4)
+        };
+
+    \addplot[
+        color=cyan,
+        mark=square,
+        line width=1pt,
+        ]
+        coordinates {
+            (2023, 16.4)(2024, 18.3)(2025, 16.7)
+        };
+
+    \addplot[
+        color=orange,
+        mark=triangle,
+        line width=1pt,
+        ]
+        coordinates {
+            (2023, 30.6)(2024, 28.7)(2025, 29.9)
+        };
+
+    \legend{C++ (Admired), Rust (Admired), C++ (Desired), Rust (Desired)}
+    \end{axis}
+\end{tikzpicture}
+
+
 
 \section{Tips}
 \subsection{How to Describe}
