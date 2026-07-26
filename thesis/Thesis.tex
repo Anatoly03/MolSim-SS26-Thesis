@@ -118,7 +118,7 @@ Munich, \date \hspace{5cm} \author
 \end{center}
 \vspace{1cm}
 
-\lipsum[1]
+
 
 \cleardoublepage
 
@@ -168,7 +168,7 @@ Munich, \date \hspace{5cm} \author
 % labels can be put almost anywhere and can be referencef from anywhere.
 \label{sec:intro}
 
-% https://survey.stackoverflow.co/2020#most-loved-dreaded-and-wanted
+In 2025 the StackOverflow's developer survey has ranked Rust as the most admired programming language, holding the title consecutively for nine years\cite{stackoverflow-technology-admired-and-desired}.
 
 % https://survey.stackoverflow.co/
 % https://survey.stackoverflow.co/2025/technology#admired-and-desired
@@ -243,9 +243,17 @@ Munich, \date \hspace{5cm} \author
     % \legend{C++ (Admired), Rust (Admired), C++ (Desired), Rust (Desired)}
     \end{axis}
 \end{tikzpicture}
-The Rust proxy-service, which had limited memory allocated, then became the source of the unhandled error when the feature file size grew three times larger than expected.
+\caption{Rust and C++ in StackOverflows' survey on most admired programming languages}
 \label{fig:stackoverflow-most-admired}
 \end{figure}
+
+The same year on 18th November, Cloudflare ``began experiencing significant failures to deliver core network traffic''\cite{cloudflare-outage}, with Rust being featured as part of the error in the blogpost, creating a lot of publicity for the language and online discussions.
+
+The error was discovered to be with their Bot Management System. This software routes traffic and to do so it reads a `feature file' to stay in sync with an updated list of cyber attacks.
+A change to Cloudflares' database permissions caused the `feature file' to be written with duplicated rows.
+The Rust proxy-service, which had limited memory allocated, then became the source of the unhandled error when the feature file size grew three times larger than expected.
+
+Already in 2020, Discord had published several blogposts explaining why they are rewritting software components in Rust\cite{discord-moves-to-rust}.
 
 This paper takes the goal of diving deeper into a more direct and technical comparison between Rust and C++ by writing a molecular dynamics simulation program in both programming languages and analyze the differences in usability and benchmark performance.
 
@@ -307,40 +315,45 @@ clap
 
 serde
 
-\chapter{The Molecular Dynamics Codebase}
+\chapter{Molecular Dynamics}
 
-\part{Benchmarking Analysis and Conclusion}
+\section{Implementation}
 
-\chapter{Implementations}
+talk about project infrastructure
 
-\section{Direct Sum}
+\section{Benchmark CI}
+
+talk about automatic equality tester and benchmark CI script 
+
+\part{Evaluation}
+
+\chapter{Benchmarking}
+
+\section{Direct Sum (Sequential)}
 
 Todo!
 
-\section{Direct Sum Parallel}
+\section{Linked Cells (Sequential)}
 
-Todo!
+Todo! 
 
-\section{Linked Cells}
+\section{Direct Sum (Parallel)}
 
-Todo!
+Todo! x = thread, y = runtime (absolute [strong scaling] or relative [strong scaling speedup])
 
 \chapter{Conclusion}
 
+conclude that rust is more usable, performs better
+
+\chapter{Discussion}
+
+discuss why you should not switch to rust (rewrite tech debt, team skills and language learning logistics)
 
 % template
 
 \part{Template Stub (Remove)}
 
 \chapter{Tips}
-\subsection{How to Describe}
-% optional: set the spacing between columns
-\setlength{\columnsep}{30 pt}
-When listing several points you have three basic options:
-\begin{multicols}{3}
-    \begin{itemize}
-        \item itemize
-        \item enumerate
 \subsection{How to Describe}
 % optional: set the spacing between columns
 \setlength{\columnsep}{30 pt}
