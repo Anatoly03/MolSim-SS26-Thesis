@@ -17,6 +17,7 @@
 \usepackage{lipsum} % for filling pages with stuff
 \usepackage{tikz}
 \usetikzlibrary{automata,positioning}
+\usepackage[dvipsnames]{xcolor}
 
 % -------------------------------------------------------------------------------
 % --------------------------------- Thesis Info ---------------------------------
@@ -213,7 +214,7 @@ In 2025 the StackOverflow's developer survey has ranked Rust as the most admired
         };
 
     \addplot[
-        color=red,
+        color=Dandelion,
         mark=triangle,
         line width=1pt,
         ]
@@ -299,6 +300,14 @@ Structs and Traits
 
 Option, Result and Panic
 
+\chapter{What Rust does Better}
+
+% \section{Language}
+
+\subsection{Compiler Error Messages}
+
+mention how rusts' compiler error messages differ from C++
+
 \subsection{Macros}
 
 rust macros vs c++ templates
@@ -315,19 +324,37 @@ clap
 
 serde
 
-\chapter{Molecular Dynamics}
-
-\section{Implementation}
+\chapter{Methods}
 
 talk about project infrastructure
 
-\section{Benchmark CI}
+\section{Molecular Dynamics Implementation}
+
+\subsection{Program Frame}
+
+talk about core implementation: core, io, cli
+
+\subsection{Core Library}
+
+talk about core implementation: core, io, cli
+
+\subsection{I/O Library}
+
+talk about core implementation: core, io, cli
+
+\section{Benchmarking CI}
 
 talk about automatic equality tester and benchmark CI script 
+
+\section{External Tools}
+
+talk about perf
 
 \part{Evaluation}
 
 \chapter{Benchmarking}
+
+All following benchmarks are executed on a 64-bit 12th Gen Intel(R) Core(TM) i7-12700K with 3 sockets, 21 cores per socket and 0 threads per core.
 
 \section{Direct Sum (Sequential)}
 
