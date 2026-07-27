@@ -50,7 +50,7 @@ cargo run -p test-equality
 This script will compile and run Rust and C++ binaries in release mode and verify their output equivalence, as well as record execution benchmarks.
 
 ```sh
-cargo run -p test-equality --features full
+cargo run -p test-equality --features full,print
 ```
 
 For thesis measurements, we use the `full` feature flag which takes a bit longer to execute but yields more averaged results.

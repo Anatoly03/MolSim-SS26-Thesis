@@ -1,4 +1,4 @@
-use crate::Log;
+use crate::Logger;
 use std::process::{Command, Stdio};
 
 /// Builds the C++ code using CMake and Make. Runs the following two commands.
@@ -7,8 +7,8 @@ use std::process::{Command, Stdio};
 /// cmake . -B target/cpp
 /// make -C target/cpp -j4 --no-print-directory
 /// ```
-pub fn build() {
-    Log::Success.log("Compiling", "target-cpp");
+pub fn build(log: &mut Logger) {
+    log.success("Compiling", "target-cpp");
 
     let cmake_status = Command::new("cmake")
         .args([".", "-B", "target/cpp", "-DCMAKE_BUILD_TYPE=Release"])
@@ -17,7 +17,7 @@ pub fn build() {
         .expect("Failed to execute cmake");
 
     if !cmake_status.success() {
-        Log::Failure.log("Error", "`cmake` configuration failed");
+        log.failure("Error", "`cmake` configuration failed");
         std::process::exit(1);
     }
 
@@ -28,13 +28,13 @@ pub fn build() {
         .expect("Failed to execute make");
 
     if !make_status.success() {
-        Log::Failure.log("Error", "`make` compilation failed");
+        log.failure("Error", "`make` compilation failed");
         std::process::exit(1);
     }
 }
 
 /// Runs C++
-fn internal(name: &str, delta: f64, frames: usize, write_output: bool, program_runs: usize) {
+fn internal(log: &mut Logger, name: &str, delta: f64, frames: usize, write_output: bool, program_runs: usize) {
     let frame_period = if write_output { "1" } else { "0" };
     let args = [
         &format!("input/{name}.yaml"),
@@ -49,7 +49,7 @@ fn internal(name: &str, delta: f64, frames: usize, write_output: bool, program_r
     ];
 
     let cmd = format!("`./target/cpp/MolSim {}`", args.join(" "));
-    Log::Success.log("Running", &cmd);
+    log.success("Running", &cmd);
 
     let mut run_durations = vec![];
     for run_index in 0..program_runs {
@@ -64,14 +64,14 @@ fn internal(name: &str, delta: f64, frames: usize, write_output: bool, program_r
 
         // log elapsed time
         let elapsed_nano = current_time.elapsed().as_nanos();
-        Log::Info.log(
+        log.info(
             "Bench",
             &format!("{} ms [run {}]", elapsed_nano as f64 / 1e6, run_index + 1),
         );
         run_durations.push(elapsed_nano);
 
         if !cpp_molsim_status.success() {
-            Log::Failure.log("Error", "failed to run `target/cpp/MolSim`");
+            log.failure("Error", "failed to run `target/cpp/MolSim`");
             std::process::exit(1);
         }
     }
@@ -84,7 +84,7 @@ fn internal(name: &str, delta: f64, frames: usize, write_output: bool, program_r
         let threshold = (max - min) / 2;
 
         // rust prints benchmarks like this: 32,118.43 ns/iter (+/- 565.76)
-        Log::Info.log(
+        log.info(
             "Bench",
             &format!("{} +/- {} ms", avg as f64 / 1e6, threshold as f64 / 1e6),
         );
@@ -92,13 +92,13 @@ fn internal(name: &str, delta: f64, frames: usize, write_output: bool, program_r
 }
 
 /// Runs C++
-pub fn run(name: &str, delta: f64, frames: usize) {
-    Log::header(format!("{name} (cpp, {frames} steps)"));
-    internal(name, delta, frames, true, 1);
+pub fn run(log: &mut Logger, name: &str, delta: f64, frames: usize) {
+    log.header(format!("{name} (cpp, {frames} steps)"));
+    internal(log, name, delta, frames, true, 1);
 }
 
 /// Runs C++
-pub fn bench(name: &str, delta: f64, frames: usize) {
-    Log::header(format!("{name} (cpp, {frames} steps)"));
-    internal(name, delta, frames, false, crate::REPETITIONS);
+pub fn bench(log: &mut Logger, name: &str, delta: f64, frames: usize) {
+    log.header(format!("{name} (cpp, {frames} steps)"));
+    internal(log, name, delta, frames, false, crate::REPETITIONS);
 }

@@ -1,9 +1,9 @@
-use crate::Log;
+use crate::{Logger};
 use std::process::{Command, Stdio};
 
 /// Builds Rust
-pub fn build() {
-    Log::Success.log("Compiling", "target-rs");
+pub fn build(log: &mut Logger) {
+    log.success("Compiling", "target-rs");
 
     let _cargo_status = Command::new("cargo")
         .args(["build", "--release"])
@@ -11,7 +11,7 @@ pub fn build() {
         .expect("Failed to execute cargo");
 }
 
-pub fn internal(name: &str, delta: f64, frames: usize, write_output: bool, program_runs: usize) {
+pub fn internal(log: &mut Logger, name: &str, delta: f64, frames: usize, write_output: bool, program_runs: usize) {
     let frame_period = if write_output { "1" } else { "0" };
     let args = [
         &format!("input/{name}.yaml"),
@@ -26,7 +26,7 @@ pub fn internal(name: &str, delta: f64, frames: usize, write_output: bool, progr
     ];
 
     let cmd = format!("`./target/release/moldyn-cli {}`", args.join(" "));
-    Log::Success.log("Running", &cmd);
+    log.success("Running", &cmd);
 
     let mut run_durations = vec![];
     for run_index in 0..program_runs {
@@ -41,14 +41,14 @@ pub fn internal(name: &str, delta: f64, frames: usize, write_output: bool, progr
 
         // log elapsed time
         let elapsed_nano = current_time.elapsed().as_nanos();
-        Log::Info.log(
+        log.info(
             "Bench",
             &format!("{} ms [run {}]", elapsed_nano as f64 / 1e6, run_index + 1),
         );
         run_durations.push(elapsed_nano);
 
         if !rs_moldyn_status.success() {
-            Log::Failure.log("Error", "failed to run `target/release/moldyn-cli`");
+            log.failure("Error", "failed to run `target/release/moldyn-cli`");
         }
     }
 
@@ -60,7 +60,7 @@ pub fn internal(name: &str, delta: f64, frames: usize, write_output: bool, progr
         let threshold = (max - min) / 2;
 
         // rust prints benchmarks like this: 32,118.43 ns/iter (+/- 565.76)
-        Log::Info.log(
+        log.info(
             "Bench",
             &format!("{} +/- {} ms", avg as f64 / 1e6, threshold as f64 / 1e6),
         );
@@ -68,13 +68,13 @@ pub fn internal(name: &str, delta: f64, frames: usize, write_output: bool, progr
 }
 
 /// Runs C++
-pub fn run(name: &str, delta: f64, frames: usize) {
-    Log::header(format!("{name} (rust, {frames} steps)"));
-    internal(name, delta, frames, true, 1);
+pub fn run(log: &mut Logger, name: &str, delta: f64, frames: usize) {
+    log.header(format!("{name} (rust, {frames} steps)"));
+    internal(log, name, delta, frames, true, 1);
 }
 
 /// Runs C++
-pub fn bench(name: &str, delta: f64, frames: usize) {
-    Log::header(format!("{name} (rust, {frames} steps)"));
-    internal(name, delta, frames, false, crate::REPETITIONS);
+pub fn bench(log: &mut Logger, name: &str, delta: f64, frames: usize) {
+    log.header(format!("{name} (rust, {frames} steps)"));
+    internal(log, name, delta, frames, false, crate::REPETITIONS);
 }

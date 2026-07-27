@@ -1,8 +1,8 @@
-use crate::Log;
+use crate::Logger;
 
 /// Compares `.xyz` files in `output/rs` and `output/cpp` for content equality
-pub fn run(name: &str, frames: usize) {
-    Log::Success.log("Testing", &format!("`{name}`"));
+pub fn run(log: &mut Logger, name: &str, frames: usize) {
+    log.success("Testing", &format!("`{name}`"));
 
     let prefix = format!("{name}_");
     const SUFFIX: &str = ".xyz";
@@ -34,7 +34,7 @@ pub fn run(name: &str, frames: usize) {
                     let s = format!(
                         "assertion failed: equal particle count: `{rs_header}` vs `{cpp_header}`"
                     );
-                    Log::Failure.log("Error", &s);
+                    log.failure("Error", &s);
                     std::process::exit(1);
                 }
             }
@@ -79,7 +79,7 @@ pub fn run(name: &str, frames: usize) {
                 if (rs - cpp).abs() < tolerance * tolerance_relax_factor {
                     tolerance *= tolerance_relax_factor;
                     let msg = format!("at step {i}, tolerance = {tolerance:.2e}");
-                    Log::Warn.log("Retolerate", &msg);
+                    log.warn("Retolerate", &msg);
                     continue;
                 }
 
@@ -89,9 +89,9 @@ pub fn run(name: &str, frames: usize) {
                     rs_path,
                     line + 3
                 );
-                Log::Failure.log("Fail", &s);
-                Log::Info.log("Cpp", &rs_line);
-                Log::Info.log("Rust", &cpp_line);
+                log.failure("Fail", &s);
+                log.info("Cpp", &rs_line);
+                log.info("Rust", &cpp_line);
                 return;
             }
         }
@@ -101,5 +101,5 @@ pub fn run(name: &str, frames: usize) {
     }
 
     let display = format!("{frames} steps, final error: {tolerance:.2e}");
-    Log::Success.log("Pass", &display);
+    log.success("Pass", &display);
 }

@@ -6,9 +6,11 @@ edition = "2024"
 
 [features]
 default = []
+print = ["chrono"]
 full = []
 extended = ["full"]
 
 [dependencies]
+chrono = { version = "0.4", optional = true }
 ansi_term = "0.12"
 lscpu = "1.0.9"
