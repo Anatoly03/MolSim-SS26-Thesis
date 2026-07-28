@@ -69,6 +69,7 @@ pub fn LOG_FILE_NAME() -> Option<String> {
 
     // there is a bug where "1th and 2th" are generated. the fix is to not run this program
     // on any day of the month which ends with 1 or 2.
+
     Some(now.format("%dth %B, %H:%M.txt").to_string())
 }
 
@@ -85,17 +86,30 @@ pub fn LOG_FILE() -> Option<File> {
     }
 }
 
+/// Sets the number of threads for the parallel implementations, which is the environment
+/// variable `RAYON_NUM_THREADS` for Rust and `OMP_NUM_THREADS` for C++.
+pub fn set_thread_count(log: &mut Logger, count: usize) {
+    log.info("Set Threads", &count.to_string());
+    
+    unsafe {
+        std::env::set_var("RAYON_NUM_THREADS", count.to_string());
+        std::env::set_var("OMP_NUM_THREADS", count.to_string());
+    }
+}
+
 fn main() {
     let log_file = LOG_FILE();
     let mut log: Logger = log_file.into();
-
-    println!("{:?}", LOG_FILE_NAME());
 
     cpp::build(&mut log);
     rust::build(&mut log);
     std::fs::create_dir_all("output/rs").expect("");
     std::fs::create_dir_all("output/cpp").expect("");
 
+    #[allow(non_snake_case)]
+    let THREAD_COUNT = num_cpus::get();
+
+    // lscpu
     let cpu = Cpu::new();
     log.header(format!("lscpu"));
     log.info("Architecture\t", &cpu.architecture);
@@ -114,6 +128,10 @@ fn main() {
     log.info("Sockets\t", &cpu.sockets.to_string());
     log.info("Stepping\t", &cpu.stepping.to_string());
     log.info("Boost enabled\t", &cpu.boost_enabled);
+
+    // even more metrics
+    log.header(format!("extended cpu metrics"));
+    log.info("Thread Count", &THREAD_COUNT.to_string());
 
     #[cfg(feature = "extended")]
     {
@@ -135,6 +153,7 @@ fn main() {
     rust::run(&mut log, "two-bodies-collision-0001", 0.0007, 1);
     test::run(&mut log, "two-bodies-collision-0001", 1);
 
+    // This benchmark measures DirectSum (Sequential).
     for frames in TIME_STEPS() {
         cpp::bench(&mut log, "two-bodies-collision-0001", 0.0007, frames);
         rust::bench(&mut log, "two-bodies-collision-0001", 0.0007, frames);
@@ -145,6 +164,7 @@ fn main() {
     rust::run(&mut log, "two-bodies-collision-0001-linked-cells", 0.0007, 1);
     test::run(&mut log, "two-bodies-collision-0001-linked-cells", 1);
 
+    // This benchmark measures LinkedCells (Sequential).
     for frames in TIME_STEPS() {
         cpp::bench(&mut log, "two-bodies-collision-0001-linked-cells", 0.0007, frames);
         rust::bench(&mut log, "two-bodies-collision-0001-linked-cells", 0.0007, frames);
@@ -154,8 +174,13 @@ fn main() {
     cpp::run(&mut log, "two-bodies-collision-0001-parallel", 0.0007, 1);
     rust::run(&mut log, "two-bodies-collision-0001-parallel", 0.0007, 1);
 
-    for frames in TIME_STEPS() {
-        cpp::bench(&mut log, "two-bodies-collision-0001-parallel", 0.0007, frames);
-        rust::bench(&mut log, "two-bodies-collision-0001-parallel", 0.0007, frames);
+    // This benchmark measures DirectSum (Parallel).
+    for thread_count in 1 .. THREAD_COUNT {
+        set_thread_count(&mut log, thread_count);
+
+        for frames in TIME_STEPS() {
+            cpp::bench(&mut log, "two-bodies-collision-0001-parallel", 0.0007, frames);
+            rust::bench(&mut log, "two-bodies-collision-0001-parallel", 0.0007, frames);
+        }
     }
 }

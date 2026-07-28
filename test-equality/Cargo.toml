@@ -11,6 +11,7 @@ full = []
 extended = ["full"]
 
 [dependencies]
-chrono = { version = "0.4", optional = true }
 ansi_term = "0.12"
+chrono = { version = "0.4", optional = true }
 lscpu = "1.0.9"
+num_cpus = "1.0"
