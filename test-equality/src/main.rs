@@ -29,7 +29,7 @@ pub const REPETITIONS: usize = 20;
 /// steps every 10 units.
 #[cfg(not(feature = "full"))]
 #[allow(non_snake_case)]
-pub fn TIME_STEPS(_limit: usize) -> Vec<usize> {
+pub fn TIME_STEPS(_limit: usize, _step: usize) -> Vec<usize> {
     return vec![1, 20, 50];
 }
 
@@ -39,7 +39,7 @@ pub fn TIME_STEPS(_limit: usize) -> Vec<usize> {
 /// cells.
 #[cfg(feature = "full")]
 #[allow(non_snake_case)]
-pub fn TIME_STEPS(limit: usize) -> Vec<usize> {
+pub fn TIME_STEPS(limit: usize, step: usize) -> Vec<usize> {
     use std::ops::Range;
 
     Range {
@@ -47,7 +47,7 @@ pub fn TIME_STEPS(limit: usize) -> Vec<usize> {
         end: limit + 1, // +1 so the limit is inclusive
     }
     .into_iter()
-    .filter(|i| i % 10 == 0)
+    .filter(|i| i % step == 0)
     .collect::<Vec<usize>>()
 }
 
@@ -167,7 +167,7 @@ fn main() {
         test::run(&mut log, "two-bodies-collision-0001", 1);
     
         // This benchmark measures DirectSum (Sequential).
-        for frames in TIME_STEPS(500) {
+        for frames in TIME_STEPS(500, 10) {
             cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum]"), "two-bodies-collision-0001", 0.0007, frames);
             rust::bench(&mut log, &format!("two-bodies-collision [direct-sum]"), "two-bodies-collision-0001", 0.0007, frames);
         }
@@ -181,7 +181,7 @@ fn main() {
         test::run(&mut log, "two-bodies-collision-0001-linked-cells", 1);
     
         // This benchmark measures LinkedCells (Sequential).
-        for frames in TIME_STEPS(500) {
+        for frames in TIME_STEPS(500, 10) {
             cpp::bench(&mut log, &format!("two-bodies-collision [linked-cells]"), "two-bodies-collision-0001-linked-cells", 0.0007, frames);
             rust::bench(&mut log, &format!("two-bodies-collision [linked-cells]"), "two-bodies-collision-0001-linked-cells", 0.0007, frames);
         }
@@ -198,7 +198,7 @@ fn main() {
             set_thread_count(&mut log, thread_count);
     
             #[cfg(feature = "extended")]
-            for frames in TIME_STEPS(500) {
+            for frames in TIME_STEPS(500, 25) {
                 cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
                 rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
             }
