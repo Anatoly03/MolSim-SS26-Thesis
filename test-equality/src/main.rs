@@ -197,7 +197,7 @@ fn main() {
         for thread_count in (1 .. (THREAD_COUNT + 1)).rev() {
             set_thread_count(&mut log, thread_count);
     
-            for frames in TIME_STEPS(1000) {
+            for frames in TIME_STEPS(500) {
                 cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
                 rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
             }

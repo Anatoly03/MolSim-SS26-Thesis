@@ -61,7 +61,7 @@ pub fn internal(log: &mut Logger, name: &str, delta: f64, frames: usize, write_o
 
         // rust prints benchmarks like this: 32,118.43 ns/iter (+/- 565.76)
         log.info(
-            "Bench",
+            "Average",
             &format!("{} +/- {} ms", avg as f64 / 1e6, threshold as f64 / 1e6),
         );
     }
