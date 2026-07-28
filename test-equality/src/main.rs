@@ -187,14 +187,14 @@ fn main() {
         }
     }
 
-    #[cfg(feature = "direct-sum")]
+    #[cfg(feature = "direct-sum-parallel")]
     {
         // this benchmark measures I/O performance
         cpp::run(&mut log, "two-bodies-collision-0001-parallel [IO]", "two-bodies-collision-0001-parallel", 0.0007, 1);
         rust::run(&mut log, "two-bodies-collision-0001-parallel [IO]", "two-bodies-collision-0001-parallel", 0.0007, 1);
     
         // This benchmark measures DirectSum (Parallel).
-        for thread_count in 1 .. THREAD_COUNT {
+        for thread_count in (1 .. (THREAD_COUNT + 1)).rev() {
             set_thread_count(&mut log, thread_count);
     
             for frames in TIME_STEPS(1000) {
