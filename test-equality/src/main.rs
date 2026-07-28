@@ -181,7 +181,7 @@ fn main() {
         test::run(&mut log, "two-bodies-collision-0001-linked-cells", 1);
     
         // This benchmark measures LinkedCells (Sequential).
-        for frames in TIME_STEPS(2000) {
+        for frames in TIME_STEPS(500) {
             cpp::bench(&mut log, &format!("two-bodies-collision [linked-cells]"), "two-bodies-collision-0001-linked-cells", 0.0007, frames);
             rust::bench(&mut log, &format!("two-bodies-collision [linked-cells]"), "two-bodies-collision-0001-linked-cells", 0.0007, frames);
         }
@@ -197,9 +197,23 @@ fn main() {
         for thread_count in (1 .. (THREAD_COUNT + 1)).rev() {
             set_thread_count(&mut log, thread_count);
     
+            #[cfg(feature = "extended")]
             for frames in TIME_STEPS(500) {
                 cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
                 rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
+            }
+
+            #[cfg(not(feature = "extended"))]
+            {
+                // if not feature "extended", compute different thread counts for 200 ticks and 500
+
+                // // 200
+                // cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, 200);
+                // rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, 200);
+
+                // 500
+                cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, 500);
+                rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, 500);
             }
         }
     }
