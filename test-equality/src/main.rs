@@ -6,7 +6,7 @@ mod log;
 mod rust;
 mod test;
 
-use std::{format, fs::File, io::Write};
+use std::{format, fs::File, process::Command};
 
 pub use log::Logger;
 use lscpu::Cpu;
@@ -44,7 +44,7 @@ pub fn TIME_STEPS() -> Vec<usize> {
 
     Range {
         start: 10,
-        end: 500,
+        end: 501,
     }
     .into_iter()
     .filter(|i| i % 10 == 0)
@@ -101,6 +101,17 @@ fn main() {
     let log_file = LOG_FILE();
     let mut log: Logger = log_file.into();
 
+    // Print commit id and runner command.
+    let header_line = {
+        let git_hash = option_env!("GIT_COMMIT_HASH")
+            .map(|commit| format!("on commit {commit}"))
+            .unwrap_or("".into());
+        let features = env!("ENABLED_FEATURES");
+
+        format!("{git_hash}:\nFeatures: {features}\n\n")
+    };
+    log.file_only(header_line);
+
     cpp::build(&mut log);
     rust::build(&mut log);
     std::fs::create_dir_all("output/rs").expect("");
@@ -133,7 +144,7 @@ fn main() {
     log.header(format!("extended cpu metrics"));
     log.info("Thread Count", &THREAD_COUNT.to_string());
 
-    #[cfg(feature = "extended")]
+    #[cfg(all(feature = "extended"))]
     {
         // this benchmark verifies halleys comet correctness over 25 thousand steps
         // cpp::run("halleys-comet", 0.0014, 25000);
@@ -148,39 +159,48 @@ fn main() {
         test::run(&mut log, "two-colliding-particles", "two-colliding-particles", 100);
     }
 
-    // this benchmark measures I/O performance
-    cpp::run(&mut log, "two-bodies-collision-0001 [IO]", "two-bodies-collision-0001", 0.0007, 1);
-    rust::run(&mut log, "two-bodies-collision-0001 [IO]", "two-bodies-collision-0001", 0.0007, 1);
-    test::run(&mut log, "two-bodies-collision-0001", 1);
-
-    // This benchmark measures DirectSum (Sequential).
-    for frames in TIME_STEPS() {
-        cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum]"), "two-bodies-collision-0001", 0.0007, frames);
-        rust::bench(&mut log, &format!("two-bodies-collision [direct-sum]"), "two-bodies-collision-0001", 0.0007, frames);
-    }
-
-    // this benchmark measures I/O performance
-    cpp::run(&mut log, "two-bodies-collision-0001-linked-cells [IO]", "two-bodies-collision-0001-linked-cells", 0.0007, 1);
-    rust::run(&mut log, "two-bodies-collision-0001-linked-cells [IO]", "two-bodies-collision-0001-linked-cells", 0.0007, 1);
-    test::run(&mut log, "two-bodies-collision-0001-linked-cells", 1);
-
-    // This benchmark measures LinkedCells (Sequential).
-    for frames in TIME_STEPS() {
-        cpp::bench(&mut log, &format!("two-bodies-collision [linked-cells]"), "two-bodies-collision-0001-linked-cells", 0.0007, frames);
-        rust::bench(&mut log, &format!("two-bodies-collision [linked-cells]"), "two-bodies-collision-0001-linked-cells", 0.0007, frames);
-    }
-
-    // this benchmark measures I/O performance
-    cpp::run(&mut log, "two-bodies-collision-0001-parallel [IO]", "two-bodies-collision-0001-parallel", 0.0007, 1);
-    rust::run(&mut log, "two-bodies-collision-0001-parallel [IO]", "two-bodies-collision-0001-parallel", 0.0007, 1);
-
-    // This benchmark measures DirectSum (Parallel).
-    for thread_count in 1 .. THREAD_COUNT {
-        set_thread_count(&mut log, thread_count);
-
+    #[cfg(feature = "direct-sum")]
+    {
+        // this benchmark measures I/O performance
+        cpp::run(&mut log, "two-bodies-collision-0001 [IO]", "two-bodies-collision-0001", 0.0007, 1);
+        rust::run(&mut log, "two-bodies-collision-0001 [IO]", "two-bodies-collision-0001", 0.0007, 1);
+        test::run(&mut log, "two-bodies-collision-0001", 1);
+    
+        // This benchmark measures DirectSum (Sequential).
         for frames in TIME_STEPS() {
-            cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
-            rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
+            cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum]"), "two-bodies-collision-0001", 0.0007, frames);
+            rust::bench(&mut log, &format!("two-bodies-collision [direct-sum]"), "two-bodies-collision-0001", 0.0007, frames);
+        }
+    }
+
+    #[cfg(feature = "linked-cells")]
+    {
+        // this benchmark measures I/O performance
+        cpp::run(&mut log, "two-bodies-collision-0001-linked-cells [IO]", "two-bodies-collision-0001-linked-cells", 0.0007, 1);
+        rust::run(&mut log, "two-bodies-collision-0001-linked-cells [IO]", "two-bodies-collision-0001-linked-cells", 0.0007, 1);
+        test::run(&mut log, "two-bodies-collision-0001-linked-cells", 1);
+    
+        // This benchmark measures LinkedCells (Sequential).
+        for frames in TIME_STEPS() {
+            cpp::bench(&mut log, &format!("two-bodies-collision [linked-cells]"), "two-bodies-collision-0001-linked-cells", 0.0007, frames);
+            rust::bench(&mut log, &format!("two-bodies-collision [linked-cells]"), "two-bodies-collision-0001-linked-cells", 0.0007, frames);
+        }
+    }
+
+    #[cfg(feature = "direct-sum")]
+    {
+        // this benchmark measures I/O performance
+        cpp::run(&mut log, "two-bodies-collision-0001-parallel [IO]", "two-bodies-collision-0001-parallel", 0.0007, 1);
+        rust::run(&mut log, "two-bodies-collision-0001-parallel [IO]", "two-bodies-collision-0001-parallel", 0.0007, 1);
+    
+        // This benchmark measures DirectSum (Parallel).
+        for thread_count in 1 .. THREAD_COUNT {
+            set_thread_count(&mut log, thread_count);
+    
+            for frames in TIME_STEPS() {
+                cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
+                rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
+            }
         }
     }
 }

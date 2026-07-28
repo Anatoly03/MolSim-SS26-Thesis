@@ -5,10 +5,15 @@ publish = false
 edition = "2024"
 
 [features]
-default = []
+default = ["direct-sum", "linked-cells", "direct-sum-parallel"]
 print = ["chrono"]
 full = []
 extended = ["full"]
+
+# algorithms
+direct-sum = []
+linked-cells = []
+direct-sum-parallel = []
 
 [dependencies]
 ansi_term = "0.12"

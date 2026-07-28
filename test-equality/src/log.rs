@@ -72,4 +72,11 @@ impl Logger {
             let _ = f.write(&value.into_bytes());
         }
     }
+
+    /// Log only to the file and not the console.
+    pub fn file_only<T: AsRef<str>>(&mut self, text: T) {
+        if let Some(f) = &mut self.file {
+            let _ = f.write(&text.as_ref().to_owned().into_bytes());
+        }
+    }
 }
