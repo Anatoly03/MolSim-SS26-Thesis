@@ -92,13 +92,13 @@ fn internal(log: &mut Logger, name: &str, delta: f64, frames: usize, write_outpu
 }
 
 /// Runs C++
-pub fn run(log: &mut Logger, name: &str, delta: f64, frames: usize) {
+pub fn run(log: &mut Logger, name: &str, file_name: &str, delta: f64, frames: usize) {
     log.header(format!("{name} (cpp, {frames} steps)"));
-    internal(log, name, delta, frames, true, 1);
+    internal(log, file_name, delta, frames, true, 1);
 }
 
 /// Runs C++
-pub fn bench(log: &mut Logger, name: &str, delta: f64, frames: usize) {
+pub fn bench(log: &mut Logger, name: &str, file_name: &str, delta: f64, frames: usize) {
     log.header(format!("{name} (cpp, {frames} steps)"));
-    internal(log, name, delta, frames, false, crate::REPETITIONS);
+    internal(log, file_name, delta, frames, false, crate::REPETITIONS);
 }

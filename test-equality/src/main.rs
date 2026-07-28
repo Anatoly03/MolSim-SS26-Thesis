@@ -89,7 +89,7 @@ pub fn LOG_FILE() -> Option<File> {
 /// Sets the number of threads for the parallel implementations, which is the environment
 /// variable `RAYON_NUM_THREADS` for Rust and `OMP_NUM_THREADS` for C++.
 pub fn set_thread_count(log: &mut Logger, count: usize) {
-    log.info("Set Threads", &count.to_string());
+    log.info("Threads :=", &count.to_string());
     
     unsafe {
         std::env::set_var("RAYON_NUM_THREADS", count.to_string());
@@ -139,48 +139,48 @@ fn main() {
         // cpp::run("halleys-comet", 0.0014, 25000);
         // rust::run("halleys-comet", 0.0014, 25000);
         // test::run("halleys-comet", 25000);
-        cpp::bench(&mut log, "halleys-comet", 0.0014, 25000000);
-        rust::bench(&mut log, "halleys-comet", 0.0014, 25000000);
+        cpp::bench(&mut log, "halleys-comet", "halleys-comet", 0.0014, 25000000);
+        rust::bench(&mut log, "halleys-comet", "halleys-comet", 0.0014, 25000000);
 
         // this benchmark does nothing useful
-        cpp::run(&mut log, "two-colliding-particles", 0.0014, 100);
-        rust::run(&mut log, "two-colliding-particles", 0.0014, 100);
-        test::run(&mut log, "two-colliding-particles", 100);
+        cpp::run(&mut log, "two-colliding-particles", "two-colliding-particles", 0.0014, 100);
+        rust::run(&mut log, "two-colliding-particles", "two-colliding-particles", 0.0014, 100);
+        test::run(&mut log, "two-colliding-particles", "two-colliding-particles", 100);
     }
 
     // this benchmark measures I/O performance
-    cpp::run(&mut log, "two-bodies-collision-0001", 0.0007, 1);
-    rust::run(&mut log, "two-bodies-collision-0001", 0.0007, 1);
+    cpp::run(&mut log, "two-bodies-collision-0001 [IO]", "two-bodies-collision-0001", 0.0007, 1);
+    rust::run(&mut log, "two-bodies-collision-0001 [IO]", "two-bodies-collision-0001", 0.0007, 1);
     test::run(&mut log, "two-bodies-collision-0001", 1);
 
     // This benchmark measures DirectSum (Sequential).
     for frames in TIME_STEPS() {
-        cpp::bench(&mut log, "two-bodies-collision-0001", 0.0007, frames);
-        rust::bench(&mut log, "two-bodies-collision-0001", 0.0007, frames);
+        cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum]"), "two-bodies-collision-0001", 0.0007, frames);
+        rust::bench(&mut log, &format!("two-bodies-collision [direct-sum]"), "two-bodies-collision-0001", 0.0007, frames);
     }
 
     // this benchmark measures I/O performance
-    cpp::run(&mut log, "two-bodies-collision-0001-linked-cells", 0.0007, 1);
-    rust::run(&mut log, "two-bodies-collision-0001-linked-cells", 0.0007, 1);
+    cpp::run(&mut log, "two-bodies-collision-0001-linked-cells [IO]", "two-bodies-collision-0001-linked-cells", 0.0007, 1);
+    rust::run(&mut log, "two-bodies-collision-0001-linked-cells [IO]", "two-bodies-collision-0001-linked-cells", 0.0007, 1);
     test::run(&mut log, "two-bodies-collision-0001-linked-cells", 1);
 
     // This benchmark measures LinkedCells (Sequential).
     for frames in TIME_STEPS() {
-        cpp::bench(&mut log, "two-bodies-collision-0001-linked-cells", 0.0007, frames);
-        rust::bench(&mut log, "two-bodies-collision-0001-linked-cells", 0.0007, frames);
+        cpp::bench(&mut log, &format!("two-bodies-collision [linked-cells]"), "two-bodies-collision-0001-linked-cells", 0.0007, frames);
+        rust::bench(&mut log, &format!("two-bodies-collision [linked-cells]"), "two-bodies-collision-0001-linked-cells", 0.0007, frames);
     }
 
     // this benchmark measures I/O performance
-    cpp::run(&mut log, "two-bodies-collision-0001-parallel", 0.0007, 1);
-    rust::run(&mut log, "two-bodies-collision-0001-parallel", 0.0007, 1);
+    cpp::run(&mut log, "two-bodies-collision-0001-parallel [IO]", "two-bodies-collision-0001-parallel", 0.0007, 1);
+    rust::run(&mut log, "two-bodies-collision-0001-parallel [IO]", "two-bodies-collision-0001-parallel", 0.0007, 1);
 
     // This benchmark measures DirectSum (Parallel).
     for thread_count in 1 .. THREAD_COUNT {
         set_thread_count(&mut log, thread_count);
 
         for frames in TIME_STEPS() {
-            cpp::bench(&mut log, "two-bodies-collision-0001-parallel", 0.0007, frames);
-            rust::bench(&mut log, "two-bodies-collision-0001-parallel", 0.0007, frames);
+            cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
+            rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
         }
     }
 }

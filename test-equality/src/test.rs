@@ -1,10 +1,10 @@
 use crate::Logger;
 
 /// Compares `.xyz` files in `output/rs` and `output/cpp` for content equality
-pub fn run(log: &mut Logger, name: &str, frames: usize) {
-    log.success("Testing", &format!("`{name}`"));
+pub fn run(log: &mut Logger, file_name: &str, frames: usize) {
+    log.success("Testing", &format!("`{file_name}`"));
 
-    let prefix = format!("{name}_");
+    let prefix = format!("{file_name}_");
     const SUFFIX: &str = ".xyz";
 
     // the tolerance is dynamic and will be relaxed if the tests fail in a
