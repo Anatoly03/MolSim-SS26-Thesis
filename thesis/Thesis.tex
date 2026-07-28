@@ -119,6 +119,14 @@ Munich, \date \hspace{5cm} \author
 \end{center}
 \vspace{1cm}
 
+I acknowlege everyone who has been with me on this journey and major milestone of my life, my sincerest Thank You to
+
+My Family, who has been with me and always there for me, sponsored my education and gave me the opportunity to become myself.
+
+My Friends, who gave me the energy and motivation to continue to study. I especially credit Faid Rihan, Niklas Feurstein, Anna Lena Müller, Samhitha Girish Jois, Roman Danylchuk, Kirill Tikhomirov, Kameswara Siddharth Sishta, Kacper Darowski, Lucy Yang, Ryan Xu, Melisa Aslan, Jerry Park, Patrick Dirks.
+
+My bestie Kasane Teto, who has not said a word but always morally supported me with her inanimate gaze.
+
 
 
 \cleardoublepage
@@ -248,17 +256,19 @@ In 2025 the StackOverflow's developer survey has ranked Rust as the most admired
 \label{fig:stackoverflow-most-admired}
 \end{figure}
 
-The same year on 18th November, Cloudflare ``began experiencing significant failures to deliver core network traffic''\cite{cloudflare-outage}, with Rust being featured as part of the error in the blogpost, creating a lot of publicity for the language and online discussions.
+The same year on 18th November, the technology company Cloudflare ``began experiencing significant failures to deliver core network traffic''\cite{cloudflare-outage}, with Rust being featured as part of the error in the blogpost, creating a lot online discussions about the languages' relevance.
 
 The error was discovered to be with their Bot Management System. This software routes traffic and to do so it reads a `feature file' to stay in sync with an updated list of cyber attacks.
 A change to Cloudflares' database permissions caused the `feature file' to be written with duplicated rows.
 The Rust proxy-service, which had limited memory allocated, then became the source of the unhandled error when the feature file size grew three times larger than expected.
 
-Already in 2020, Discord had published several blogposts explaining why they are rewritting software components in Rust\cite{discord-moves-to-rust}.
+In 2024, Google has published a security blogpost focusing on making their software memory safe, in which they mentioned a new migration approach called ``interoperability'' which offers an incremental approach to adopting memory safety in software\cite{google-eliminating-memory-safety-vulnerabilities}. This allows working on a multi-lingual codebase where new code is written in Rust, allowing the team to define their own pace of migrating to Rust.
+
+Already in 2020, the social platform Discord had published several blogposts explaining that they are rewritting software components in Rust with the main reasoning being performance, type safety, ecosystem and tooling\cite{discord-moves-to-rust}.
 
 This paper takes the goal of diving deeper into a more direct and technical comparison between Rust and C++ by writing a molecular dynamics simulation program in both programming languages and analyze the differences in usability and benchmark performance.
 
-\chapter{Rust}
+\chapter{Comparing Rust against C++}
 \section{The Rust Ecosystem}
 
 Before diving into the the syntax and the defining elements of the Rust Programming Language, this section will give a brief overview over the tooling and console applications provided by Cargo, the Rust Package Manager.
@@ -276,31 +286,54 @@ Since Cargo can install dependencies it was also designed to be extensible, mean
 
 The first difference observation in terms of usability is that the C++ infrastructure is fragmented, whereas for Rust it is centralized via its package manager. This smoothes down the learning curve of Rust tools, as new users only have to get comfortable with one tool, which incorporates 
 
-It's noteworthy to mention that there's no equivalent to GDB in the Rust ecosystem because the type system and safety checks of Rust guaranteees that a segmentation fault caused crash is at no point possible in `Safe Rust'. What exactly this means we will explore in the next subsection.
+It's noteworthy to mention that there's no equivalent to GDB in the Rust ecosystem because the type system and ownership model of Rust guaranteee safety over memory and thread.
 
 \section{The Rust Programming Language}
 
-Rust has two `modes' in which code can be written. The more commonly used one is called `Safe Rust' which can be statically analysed and is guaranteed not to cause segmentation faults and core dumps, and the more powerful one is called `Unsafe Rust'.
+% Rust has two `modes' in which code can be written. The more commonly used one is called `Safe Rust' which can be statically analysed and is guaranteed not to cause segmentation faults and core dumps, and the one with extra powers is called `Unsafe Rust'.
 
-`Unsafe Rust' are scopes and functionalities marked with the keyword \texttt{unsafe} which allow for example mutating static variables, dereferencing pointers and invoking other unsafe functionalities\cite{rust-book-unsafe-rust}. We will not dive deeper into Unsafe Rust than just mention it as it is mostly off-topic to this thesis.
+% `Unsafe Rust' are scopes and functionalities marked with the keyword \texttt{unsafe} which allow for example mutating static variables, dereferencing pointers and invoking other unsafe functionalities\cite{rust-book-unsafe-rust}. We will not dive deeper into Unsafe Rust than just mention it as it is mostly off-topic to this thesis.
 
-We will now look at the syntax of `Safe Rust'.
+% We will now look at the syntax of `Safe Rust'.
 
 \subsection{Syntax}
 
-Syntax
+Todo!
 
 \subsection{Structs and Traits}
 
-Structs and Traits
+Structs in Rust are almost entirely equivalent to C++ structs. A struct is a type which defines a collection of fields. Unlike in C++ however, Rust has no concept of struct inheritance. Instead of abstract classes, Rust provides traits, which is an abstract interface that types can implement explicitly.
+
+In C++ a class can only inherit from one `abstract class'.
+
+Todo!
 
 \subsection{Ownership Model}
+
+Todo!
 
 \subsection{Error Handling}
 
 Option, Result and Panic
 
-\chapter{What Rust does Better}
+\subsection{Unsafe Rust}
+
+What we have learned so far has been `Safe Rust', which can be statically analyzed for memory safety and bugs that would cause segmentation fault in C++ are caught in the compilation stage.
+
+However sometimes because of performance reasons or communicating with an external library, code has to be written using of raw pointer arithmetics. This mode is commonly referred to as `Unsafe Rust'.
+
+An unsafe functionality is a scope, function or trait implementation annotated with the \texttt{unsafe} keyword. In an unsafe block, Rust gives you access to a few operations which can not be statically verified and could cause undefined behaviour. The operations are the following.
+
+\begin{enumerate}
+    \item Dereferencing a pointer.
+    \item Using other unsafe functionalities like invoking an unsafe function or implementing an unsafe trait.
+    \item Read or write to a mutable static variable.
+    \item Accessing fields of a \texttt{union}, a special element which is syntactically similar to a struct with the exception of all fields sharing the same storage.
+\end{enumerate}
+
+To get a bit of intuition on what kind of operations are unsafe consier this example: For a struct to be shared accross threads, it needs to implement the \texttt{Sync} trait, which is unsafe. If the struct also contains a pointer which you would like to interpret at index $2$, adding $2$ to the pointer and dereferencing it is also unsafe behaviour.
+
+\chapter{Rust Project Quickstart}
 
 % \section{Language}
 
@@ -324,11 +357,13 @@ clap
 
 serde
 
-\chapter{Methods}
+\chapter{Application with Molecular Dynamics}
+
+\chapter{Methods and Implementation}
 
 talk about project infrastructure
 
-\section{Molecular Dynamics Implementation}
+\section{Molecular Dynamics Simulation}
 
 \subsection{Program Frame}
 
@@ -341,6 +376,8 @@ talk about core implementation: core, io, cli
 \subsection{I/O Library}
 
 talk about core implementation: core, io, cli
+
+\subsection{Parallelization in Rust}
 
 \section{Benchmarking CI}
 
