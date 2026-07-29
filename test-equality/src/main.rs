@@ -88,6 +88,11 @@ pub fn LOG_FILE() -> Option<File> {
 
 /// Sets the number of threads for the parallel implementations, which is the environment
 /// variable `RAYON_NUM_THREADS` for Rust and `OMP_NUM_THREADS` for C++.
+/// 
+/// # Links
+/// 
+/// - https://www.openmp.org/spec-html/5.0/openmpse50.html#x289-20540006.2
+/// - https://github.com/rayon-rs/rayon/blob/main/FAQ.md
 pub fn set_thread_count(log: &mut Logger, count: usize) {
     log.info("Threads :=", &count.to_string());
     
@@ -117,6 +122,7 @@ fn main() {
     std::fs::create_dir_all("output/rs").expect("");
     std::fs::create_dir_all("output/cpp").expect("");
 
+    // https://stackoverflow.com/questions/22155130/determine-number-of-cores-using-rust
     #[allow(non_snake_case)]
     let THREAD_COUNT = num_cpus::get();
 

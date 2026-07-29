@@ -337,19 +337,17 @@ An unsafe functionality is a scope, function or trait implementation annotated w
 
 To get a bit of intuition on what kind of operations are unsafe consier this example: For a struct to be shared accross threads, it needs to implement the \texttt{Sync} trait, which is unsafe. If the struct also contains a pointer which you would like to interpret at index $2$, adding $2$ to the pointer and dereferencing it is also unsafe behaviour.
 
-\chapter{Rust Project Quickstart}
-
-% \section{Language}
-
-\subsection{Compiler Error Messages}
-
-mention how rusts' compiler error messages differ from C++
-
 \subsection{Macros}
 
 rust macros vs c++ templates
 
-\section{Common Crates}
+\section{Compiler Error Messages}
+
+mention how rusts' compiler error messages differ from C++
+
+% \chapter{Rust Project Quickstart}
+
+\section{Major Dependencies in Rust}
 
 Below are two creditworthy libraries which are utilized in the project and severely improve the programming workflow. They utilize procedural macros to generate code from a struct.
 
@@ -358,6 +356,10 @@ Below are two creditworthy libraries which are utilized in the project and sever
 clap
 
 \subsection{Serde}
+
+serde
+
+\subsection{Rayon}
 
 serde
 
@@ -564,9 +566,13 @@ All following benchmarks are executed on a 64-bit 12th Gen Intel(R) Core(TM) i7-
 \label{fig:benchmark-sequential}
 \end{figure}
 
-For the DirectSum implementation, when measuring sequential performance against simulation steps with other configuration data fixed, we observe linear runtime $\mathcal{O}(n)$. This is because, despite having to compute all particle pairs, the amount of particles and hence the workload per simulation step is constant.
+For the DirectSum implementation, when measuring sequential performance against simulation steps $S$ and other configuration data fixed, we observe linear runtime $\mathcal{O}(S)$. This is because, despite having to compute all particle pairs, the amount of particles $N$ and hence the workload per simulation step is constant in this graph.
 
-We can derive the following claim in regards to the performance difference: Rust DirectSum completes in $86.62\%$ of the time taken by the C++ DirectSum implementation, with a speedup of $15.45\%$.
+To ensure the credibility of the computed average, the fluctuations between minimal and maximal run duration have also been recorded.
+% The biggest relative outlier occured with Rust at 210 steps with a fluctuation of $20.9\%$.
+The biggest absolute outlier occured with Rust with the measurement at 310 steps with a fluctuation of $435.6$ms or $7.4\%$. Fluctuations can be perceived in the graph as small `bumps'. At 500 steps, the recorded fluctuation in measured performance for both Rust and C++ are below $0.4\%$.
+
+We can therefore derive the following claim in regards to the sequential performance ratio: Rust DirectSum completes in $86.6\%$ of the time taken by the C++ DirectSum implementation, with a speedup of $15.5\%$.
 
 \section{Parallel}
 

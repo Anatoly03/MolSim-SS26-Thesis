@@ -1,7 +1,5 @@
 //! TODO document
 
-use std::ops::Index;
-
 use crate::{Particle, ParticleContainer};
 use rayon::prelude::*;
 
@@ -21,11 +19,9 @@ pub struct PointerWrapper<T>(*mut T);
 unsafe impl<T> Sync for PointerWrapper<T> {}
 unsafe impl<T> Send for PointerWrapper<T> {}
 
-impl<T> Index<usize> for PointerWrapper<T> {
-    type Output = T;
-
-    fn index(&self, index: usize) -> &Self::Output {
-        unsafe { &mut *self.0.add(index) }
+impl<T> PointerWrapper<T> {
+    unsafe fn at(&self, rhs: usize) -> *mut T {
+        unsafe { self.0.add(rhs) }
     }
 }
 
@@ -67,18 +63,16 @@ impl ParticleContainer for DirectSumParallel {
         let particles = PointerWrapper(self.particles.as_mut_ptr());
 
         // in c++ we parallelized outer loop too
-        (0..count).into_par_iter().for_each(|i| {
-            let mut left = particles[i];
+        (0..count).into_par_iter().for_each(|i| unsafe {
+            let mut left = &mut *particles.at(i);
 
             for j in 0..count {
                 if i == j {
                     continue;
                 }
 
-                let mut right = particles[j];
-
+                let right = &*particles.at(j);
                 f(&mut left, &right);
-                f(&mut right, &left);
             }
         });
     }
