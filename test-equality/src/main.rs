@@ -210,6 +210,7 @@ fn main() {
         rust::run(&mut log, "two-bodies-collision-0001-parallel [IO]", "two-bodies-collision-0001-parallel", 0.0007, 1);
     
         // This benchmark measures DirectSum (Parallel).
+        #[cfg(any(feature = "full", feature = "extended"))]
         for thread_count in (1 .. (THREAD_COUNT + 1)).rev() {
             set_thread_count(&mut log, thread_count);
     
@@ -230,6 +231,17 @@ fn main() {
                 // 500
                 cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, 500);
                 rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, 500);
+            }
+        }
+
+        #[cfg(not(any(feature = "full", feature = "extended")))]
+        {
+            set_thread_count(&mut log, THREAD_COUNT);
+
+            // This benchmark measures DirectSum (Sequential).
+            for frames in TIME_STEPS(500, 10) {
+                cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={THREAD_COUNT}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
+                rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={THREAD_COUNT}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
             }
         }
     }
