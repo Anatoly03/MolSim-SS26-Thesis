@@ -73,8 +73,8 @@ impl ParticleContainer for DirectSum {
                 // [p1,  p2,  p3],[p4,  p5]
                 //       ^^        ^^ avoid borrow issue with split_at_mut
 
-                f(&mut left[0], &right[0]);
-                f(&mut right[0], &left[0]);
+                f(&mut left[i], &right[0]);
+                f(&mut right[0], &left[i]);
             }
         }
     }
