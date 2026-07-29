@@ -1,0 +1,417 @@
+┌─────────┐
+│  lscpu  │
+└─────────┘
+Architecture     x86_64
+CPU op modes     32-bit, 64-bit
+Address sizes    46 bits physical, 48 bits virtual
+ Byte order      Little Endian
+  CPU count      128
+On-line CPU      1
+  Vendor ID      GenuineIntel
+ Model name      12th Gen Intel(R) Core(TM) i7-12700K
+ CPU family      6
+  CPU model      151
+  Is hybrid      hybrid
+Threads per core 0
+Cores per socket 21
+    Sockets      3
+   Stepping      2
+Boost enabled    enabled
+┌───────────────────────────────────────┐
+│  halleys-comet (cpp, 25000000 steps)  │
+└───────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/halleys-comet.yaml -t 35000 -d 0.0014 -s 0 -o output/cpp/halleys-comet.xyz`
+       Bench 2143.421637 ms [run 1]
+       Bench 2153.008408 ms [run 2]
+       Bench 2164.175034 ms [run 3]
+       Bench 2133.750738 ms [run 4]
+       Bench 2132.209332 ms [run 5]
+       Bench 2146.545742 ms [run 6]
+       Bench 2143.100732 ms [run 7]
+       Bench 2138.061221 ms [run 8]
+       Bench 2144.923319 ms [run 9]
+       Bench 2146.148817 ms [run 10]
+       Bench 2152.600036 ms [run 11]
+       Bench 2174.06571 ms [run 12]
+       Bench 2162.727211 ms [run 13]
+       Bench 2150.45785 ms [run 14]
+       Bench 2129.857418 ms [run 15]
+       Bench 2145.091275 ms [run 16]
+       Bench 2126.84572 ms [run 17]
+       Bench 2142.919446 ms [run 18]
+       Bench 2144.882068 ms [run 19]
+       Bench 2161.261207 ms [run 20]
+       Bench 2146.80264605 +/- 23.609995 ms
+┌────────────────────────────────────────┐
+│  halleys-comet (rust, 25000000 steps)  │
+└────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/halleys-comet.yaml -t 35000 -d 0.0014 -s 0 -o output/rs/halleys-comet.xyz`
+       Bench 1609.008578 ms [run 1]
+       Bench 1618.040119 ms [run 2]
+       Bench 1605.015245 ms [run 3]
+       Bench 1609.908554 ms [run 4]
+       Bench 1617.359722 ms [run 5]
+       Bench 1622.86617 ms [run 6]
+       Bench 1620.120637 ms [run 7]
+       Bench 1619.193147 ms [run 8]
+       Bench 1632.903871 ms [run 9]
+       Bench 1631.903347 ms [run 10]
+       Bench 1609.756452 ms [run 11]
+       Bench 1612.844932 ms [run 12]
+       Bench 1656.807396 ms [run 13]
+       Bench 1617.815093 ms [run 14]
+       Bench 1621.407966 ms [run 15]
+       Bench 1616.623245 ms [run 16]
+       Bench 1611.904991 ms [run 17]
+       Bench 1618.196196 ms [run 18]
+       Bench 1612.10999 ms [run 19]
+       Bench 1618.788228 ms [run 20]
+       Bench 1619.12869395 +/- 25.896075 ms
+┌────────────────────────────────────────────┐
+│  two-colliding-particles (cpp, 100 steps)  │
+└────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-colliding-particles.yaml -t 0.13999999999999999 -d 0.0014 -s 1 -o output/cpp/two-colliding-particles.xyz`
+       Bench 4.645006 ms [run 1]
+┌─────────────────────────────────────────────┐
+│  two-colliding-particles (rust, 100 steps)  │
+└─────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-colliding-particles.yaml -t 0.13999999999999999 -d 0.0014 -s 1 -o output/rs/two-colliding-particles.xyz`
+       Bench 3.358462 ms [run 1]
+     Testing `two-colliding-particles`
+        Pass 100 steps, final error: 1.00e-6
+┌────────────────────────────────────────────┐
+│  two-bodies-collision-0001 (cpp, 1 steps)  │
+└────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001.yaml -t 0.0007 -d 0.0007 -s 1 -o output/cpp/two-bodies-collision-0001.xyz`
+       Bench 79.711925 ms [run 1]
+┌─────────────────────────────────────────────┐
+│  two-bodies-collision-0001 (rust, 1 steps)  │
+└─────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001.yaml -t 0.0007 -d 0.0007 -s 1 -o output/rs/two-bodies-collision-0001.xyz`
+       Bench 33.8128 ms [run 1]
+     Testing `two-bodies-collision-0001`
+        Pass 1 steps, final error: 1.00e-6
+┌─────────────────────────────────────────────┐
+│  two-bodies-collision-0001 (cpp, 20 steps)  │
+└─────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001.yaml -t 0.014 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001.xyz`
+       Bench 534.163819 ms [run 1]
+       Bench 534.103952 ms [run 2]
+       Bench 537.657693 ms [run 3]
+       Bench 539.086057 ms [run 4]
+       Bench 532.534904 ms [run 5]
+       Bench 537.718286 ms [run 6]
+       Bench 534.002062 ms [run 7]
+       Bench 531.033102 ms [run 8]
+       Bench 534.560061 ms [run 9]
+       Bench 532.158857 ms [run 10]
+       Bench 535.295296 ms [run 11]
+       Bench 533.756913 ms [run 12]
+       Bench 534.454297 ms [run 13]
+       Bench 533.526101 ms [run 14]
+       Bench 533.22271 ms [run 15]
+       Bench 544.853365 ms [run 16]
+       Bench 534.576203 ms [run 17]
+       Bench 537.046361 ms [run 18]
+       Bench 524.325334 ms [run 19]
+       Bench 548.053373 ms [run 20]
+       Bench 535.3064373 +/- 11.864019 ms
+┌──────────────────────────────────────────────┐
+│  two-bodies-collision-0001 (rust, 20 steps)  │
+└──────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001.yaml -t 0.014 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001.xyz`
+       Bench 454.338991 ms [run 1]
+       Bench 439.011743 ms [run 2]
+       Bench 453.960616 ms [run 3]
+       Bench 457.252918 ms [run 4]
+       Bench 453.609804 ms [run 5]
+       Bench 446.748524 ms [run 6]
+       Bench 441.915876 ms [run 7]
+       Bench 456.18655 ms [run 8]
+       Bench 458.724665 ms [run 9]
+       Bench 458.941404 ms [run 10]
+       Bench 452.226296 ms [run 11]
+       Bench 434.084395 ms [run 12]
+       Bench 449.707316 ms [run 13]
+       Bench 452.265366 ms [run 14]
+       Bench 458.284804 ms [run 15]
+       Bench 452.406327 ms [run 16]
+       Bench 438.794955 ms [run 17]
+       Bench 458.095008 ms [run 18]
+       Bench 456.338486 ms [run 19]
+       Bench 432.879186 ms [run 20]
+       Bench 450.2886615 +/- 13.031109 ms
+┌─────────────────────────────────────────────┐
+│  two-bodies-collision-0001 (cpp, 50 steps)  │
+└─────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001.yaml -t 0.034999999999999996 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001.xyz`
+       Bench 1224.904136 ms [run 1]
+       Bench 1230.139253 ms [run 2]
+       Bench 1226.320606 ms [run 3]
+       Bench 1226.193458 ms [run 4]
+       Bench 1224.702962 ms [run 5]
+       Bench 1228.53281 ms [run 6]
+       Bench 1219.576543 ms [run 7]
+       Bench 1214.305482 ms [run 8]
+       Bench 1212.519147 ms [run 9]
+       Bench 1214.663314 ms [run 10]
+       Bench 1223.888101 ms [run 11]
+       Bench 1222.136713 ms [run 12]
+       Bench 1227.096191 ms [run 13]
+       Bench 1261.871409 ms [run 14]
+       Bench 1225.994146 ms [run 15]
+       Bench 1228.280491 ms [run 16]
+       Bench 1223.732117 ms [run 17]
+       Bench 1229.229871 ms [run 18]
+       Bench 1225.33072 ms [run 19]
+       Bench 1224.28776 ms [run 20]
+       Bench 1225.6852615 +/- 24.676131 ms
+┌──────────────────────────────────────────────┐
+│  two-bodies-collision-0001 (rust, 50 steps)  │
+└──────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001.yaml -t 0.034999999999999996 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001.xyz`
+       Bench 1090.918471 ms [run 1]
+       Bench 1087.092079 ms [run 2]
+       Bench 1058.790051 ms [run 3]
+       Bench 1087.343262 ms [run 4]
+       Bench 1092.137081 ms [run 5]
+       Bench 1095.201019 ms [run 6]
+       Bench 1095.677447 ms [run 7]
+       Bench 1095.866245 ms [run 8]
+       Bench 1092.688419 ms [run 9]
+       Bench 1075.510313 ms [run 10]
+       Bench 1097.36943 ms [run 11]
+       Bench 1091.125068 ms [run 12]
+       Bench 1085.529212 ms [run 13]
+       Bench 1088.802628 ms [run 14]
+       Bench 1083.578496 ms [run 15]
+       Bench 1096.159936 ms [run 16]
+       Bench 1053.128399 ms [run 17]
+       Bench 1099.809467 ms [run 18]
+       Bench 1095.045201 ms [run 19]
+       Bench 1093.527975 ms [run 20]
+       Bench 1087.7650099500001 +/- 23.340534 ms
+┌─────────────────────────────────────────────────────────┐
+│  two-bodies-collision-0001-linked-cells (cpp, 1 steps)  │
+└─────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-linked-cells.yaml -t 0.0007 -d 0.0007 -s 1 -o output/cpp/two-bodies-collision-0001-linked-cells.xyz`
+       Bench 55.310924 ms [run 1]
+┌──────────────────────────────────────────────────────────┐
+│  two-bodies-collision-0001-linked-cells (rust, 1 steps)  │
+└──────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-linked-cells.yaml -t 0.0007 -d 0.0007 -s 1 -o output/rs/two-bodies-collision-0001-linked-cells.xyz`
+       Bench 11.96074 ms [run 1]
+     Testing `two-bodies-collision-0001-linked-cells`
+        Fail assertion failed: `80.61500000000001` != `20.001781` (tolerance: 1.00e-6, error: 6.06e1) in output/rs/two-bodies-collision-0001-linked-cells_0001.xyz:3:
+         Cpp 80.61500000000001 40.204955963866546 0
+        Rust 20.001781 20.001781 0.000000
+┌──────────────────────────────────────────────────────────┐
+│  two-bodies-collision-0001-linked-cells (cpp, 20 steps)  │
+└──────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-linked-cells.yaml -t 0.014 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-linked-cells.xyz`
+       Bench 101.554983 ms [run 1]
+       Bench 97.417692 ms [run 2]
+       Bench 96.860311 ms [run 3]
+       Bench 96.508518 ms [run 4]
+       Bench 96.389083 ms [run 5]
+       Bench 95.80155 ms [run 6]
+       Bench 96.016186 ms [run 7]
+       Bench 96.018455 ms [run 8]
+       Bench 96.368112 ms [run 9]
+       Bench 103.027599 ms [run 10]
+       Bench 106.394965 ms [run 11]
+       Bench 103.049302 ms [run 12]
+       Bench 96.64861 ms [run 13]
+       Bench 96.891581 ms [run 14]
+       Bench 96.628467 ms [run 15]
+       Bench 96.917239 ms [run 16]
+       Bench 98.172283 ms [run 17]
+       Bench 98.074669 ms [run 18]
+       Bench 100.947167 ms [run 19]
+       Bench 97.321223 ms [run 20]
+       Bench 98.35039975 +/- 5.296707 ms
+┌───────────────────────────────────────────────────────────┐
+│  two-bodies-collision-0001-linked-cells (rust, 20 steps)  │
+└───────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-linked-cells.yaml -t 0.014 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-linked-cells.xyz`
+       Bench 43.946801 ms [run 1]
+       Bench 44.889645 ms [run 2]
+       Bench 44.159367 ms [run 3]
+       Bench 43.931125 ms [run 4]
+       Bench 44.132369 ms [run 5]
+       Bench 44.037081 ms [run 6]
+       Bench 44.005667 ms [run 7]
+       Bench 44.114678 ms [run 8]
+       Bench 43.896826 ms [run 9]
+       Bench 43.824559 ms [run 10]
+       Bench 44.20314 ms [run 11]
+       Bench 43.806843 ms [run 12]
+       Bench 43.897943 ms [run 13]
+       Bench 44.149995 ms [run 14]
+       Bench 43.886652 ms [run 15]
+       Bench 43.948442 ms [run 16]
+       Bench 44.07164 ms [run 17]
+       Bench 44.013758 ms [run 18]
+       Bench 44.003845 ms [run 19]
+       Bench 44.093284 ms [run 20]
+       Bench 44.050683 +/- 0.541401 ms
+┌──────────────────────────────────────────────────────────┐
+│  two-bodies-collision-0001-linked-cells (cpp, 50 steps)  │
+└──────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-linked-cells.yaml -t 0.034999999999999996 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-linked-cells.xyz`
+       Bench 160.351045 ms [run 1]
+       Bench 165.661772 ms [run 2]
+       Bench 161.778908 ms [run 3]
+       Bench 163.065181 ms [run 4]
+       Bench 161.974703 ms [run 5]
+       Bench 160.821426 ms [run 6]
+       Bench 161.523899 ms [run 7]
+       Bench 160.820852 ms [run 8]
+       Bench 164.708631 ms [run 9]
+       Bench 160.462275 ms [run 10]
+       Bench 160.176788 ms [run 11]
+       Bench 164.995796 ms [run 12]
+       Bench 160.273475 ms [run 13]
+       Bench 159.312381 ms [run 14]
+       Bench 159.758595 ms [run 15]
+       Bench 159.702627 ms [run 16]
+       Bench 161.497827 ms [run 17]
+       Bench 159.751669 ms [run 18]
+       Bench 160.270557 ms [run 19]
+       Bench 160.918528 ms [run 20]
+       Bench 161.39134675 +/- 3.174695 ms
+┌───────────────────────────────────────────────────────────┐
+│  two-bodies-collision-0001-linked-cells (rust, 50 steps)  │
+└───────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-linked-cells.yaml -t 0.034999999999999996 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-linked-cells.xyz`
+       Bench 92.431023 ms [run 1]
+       Bench 92.605994 ms [run 2]
+       Bench 92.162812 ms [run 3]
+       Bench 94.342868 ms [run 4]
+       Bench 92.875236 ms [run 5]
+       Bench 93.237024 ms [run 6]
+       Bench 92.513039 ms [run 7]
+       Bench 96.174587 ms [run 8]
+       Bench 92.817279 ms [run 9]
+       Bench 93.159546 ms [run 10]
+       Bench 93.159379 ms [run 11]
+       Bench 93.1441 ms [run 12]
+       Bench 92.519527 ms [run 13]
+       Bench 99.935669 ms [run 14]
+       Bench 94.968685 ms [run 15]
+       Bench 93.544882 ms [run 16]
+       Bench 92.809514 ms [run 17]
+       Bench 92.588509 ms [run 18]
+       Bench 95.420374 ms [run 19]
+       Bench 92.568515 ms [run 20]
+       Bench 93.64892809999999 +/- 3.886428 ms
+┌─────────────────────────────────────────────────────┐
+│  two-bodies-collision-0001-parallel (cpp, 1 steps)  │
+└─────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.0007 -d 0.0007 -s 1 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 56.452507 ms [run 1]
+┌──────────────────────────────────────────────────────┐
+│  two-bodies-collision-0001-parallel (rust, 1 steps)  │
+└──────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.0007 -d 0.0007 -s 1 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 21.745114 ms [run 1]
+┌──────────────────────────────────────────────────────┐
+│  two-bodies-collision-0001-parallel (cpp, 20 steps)  │
+└──────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.014 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 138.047662 ms [run 1]
+       Bench 115.906592 ms [run 2]
+       Bench 117.489495 ms [run 3]
+       Bench 114.436515 ms [run 4]
+       Bench 115.479246 ms [run 5]
+       Bench 114.329742 ms [run 6]
+       Bench 136.345366 ms [run 7]
+       Bench 117.202396 ms [run 8]
+       Bench 117.81048 ms [run 9]
+       Bench 130.177215 ms [run 10]
+       Bench 123.807301 ms [run 11]
+       Bench 125.748057 ms [run 12]
+       Bench 117.697544 ms [run 13]
+       Bench 120.824885 ms [run 14]
+       Bench 147.878932 ms [run 15]
+       Bench 155.986884 ms [run 16]
+       Bench 118.536363 ms [run 17]
+       Bench 130.978807 ms [run 18]
+       Bench 153.087479 ms [run 19]
+       Bench 142.98183 ms [run 20]
+       Bench 127.73763955 +/- 20.828571 ms
+┌───────────────────────────────────────────────────────┐
+│  two-bodies-collision-0001-parallel (rust, 20 steps)  │
+└───────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.014 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 109.563175 ms [run 1]
+       Bench 101.110457 ms [run 2]
+       Bench 104.582483 ms [run 3]
+       Bench 101.366582 ms [run 4]
+       Bench 101.264436 ms [run 5]
+       Bench 99.559702 ms [run 6]
+       Bench 103.685204 ms [run 7]
+       Bench 100.139347 ms [run 8]
+       Bench 100.439962 ms [run 9]
+       Bench 99.945721 ms [run 10]
+       Bench 99.724487 ms [run 11]
+       Bench 100.003942 ms [run 12]
+       Bench 101.71168 ms [run 13]
+       Bench 97.771104 ms [run 14]
+       Bench 98.376764 ms [run 15]
+       Bench 98.830746 ms [run 16]
+       Bench 99.124838 ms [run 17]
+       Bench 99.932225 ms [run 18]
+       Bench 99.109458 ms [run 19]
+       Bench 98.628297 ms [run 20]
+       Bench 100.7435305 +/- 5.896035 ms
+┌──────────────────────────────────────────────────────┐
+│  two-bodies-collision-0001-parallel (cpp, 50 steps)  │
+└──────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.034999999999999996 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 203.75734 ms [run 1]
+       Bench 201.513901 ms [run 2]
+       Bench 205.306363 ms [run 3]
+       Bench 206.574139 ms [run 4]
+       Bench 205.541889 ms [run 5]
+       Bench 213.295559 ms [run 6]
+       Bench 209.918518 ms [run 7]
+       Bench 216.694333 ms [run 8]
+       Bench 202.958042 ms [run 9]
+       Bench 239.621478 ms [run 10]
+       Bench 221.833753 ms [run 11]
+       Bench 217.866446 ms [run 12]
+       Bench 208.003989 ms [run 13]
+       Bench 206.757785 ms [run 14]
+       Bench 217.147492 ms [run 15]
+       Bench 206.636507 ms [run 16]
+       Bench 267.16507 ms [run 17]
+       Bench 207.255158 ms [run 18]
+       Bench 213.930804 ms [run 19]
+       Bench 209.085288 ms [run 20]
+       Bench 214.0431927 +/- 32.825584 ms
+┌───────────────────────────────────────────────────────┐
+│  two-bodies-collision-0001-parallel (rust, 50 steps)  │
+└───────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.034999999999999996 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 225.586787 ms [run 1]
+       Bench 221.874402 ms [run 2]
+       Bench 226.12947 ms [run 3]
+       Bench 220.594139 ms [run 4]
+       Bench 224.992361 ms [run 5]
+       Bench 228.285243 ms [run 6]
+       Bench 224.163113 ms [run 7]
+       Bench 223.060254 ms [run 8]
+       Bench 223.475596 ms [run 9]
+       Bench 222.047645 ms [run 10]
+       Bench 223.800314 ms [run 11]
+       Bench 230.076178 ms [run 12]
+       Bench 224.063499 ms [run 13]
+       Bench 224.265866 ms [run 14]
+       Bench 230.644424 ms [run 15]
+       Bench 223.398501 ms [run 16]
+       Bench 223.656966 ms [run 17]
+       Bench 223.639215 ms [run 18]
+       Bench 223.011264 ms [run 19]
+       Bench 223.940147 ms [run 20]
+       Bench 224.5352692 +/- 5.025142 ms

@@ -1,0 +1,785 @@
+%!TeX spellcheck=en_US
+\documentclass[11pt,
+               a4paper,
+               bibtotoc,
+               idxtotoc,
+               headsepline,
+               footsepline,
+               footexclude,
+               BCOR12mm,
+               DIV13,
+               openany,   % using this removes blank pages around part / chapter starts.
+%               oneside    % include this if you have to print only one page per sheet of paper.
+               ]
+               {scrbook}
+
+\include{settings}
+\usepackage{lipsum} % for filling pages with stuff
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning}
+\usepackage[dvipsnames]{xcolor}
+
+% -------------------------------------------------------------------------------
+% --------------------------------- Thesis Info ---------------------------------
+% -------------------------------------------------------------------------------
+
+% set title, authors and stuff for the cover
+% docytype needs xspace because it is used within text.
+\def\doctype{Bachelor's Thesis\xspace}
+%\def\doctype{Master's Thesis\xspace}
+%\def\doctype{Guided Research\xspace}
+%\def\doctype{Interdisciplinary Project\xspace}
+\def\studyProgram{TUM School of CIT}
+\def\title{Comparing Molecular Dynamics Simulations with Rust and C++}
+% don't try translate every technical term if it would sound off
+\def\titleGer{Unterschiede der Molekulardynamik Simulationen bei Rust und C++}
+\def\author{Anatoly Weinstein}
+% Prof
+\def\supervisor{Univ.-Prof. Dr. Hans-Joachim Bungartz}
+% PhD Candidate
+\def\advisor{Markus Mühlhäußer, M. Sc.}
+\def\date{24th August 2026}
+
+\begin{document}
+\frontmatter
+% -------------------------------------------------------------------------------
+% ---------------------------------- COVERPAGE ----------------------------------
+% -------------------------------------------------------------------------------
+
+% correct BCOR - undo at the end !!!
+\def\bcorcor{0.15cm}
+\addtolength{\hoffset}{\bcorcor}
+\thispagestyle{empty}
+\vspace{4cm}
+\begin{center}
+    \includegraphics[width=4cm]{templateStuff/tumlogo.pdf}\\[5mm]
+    \huge SCHOOL OF COMPUTATION, INFORMATION AND TECHNOLOGY\\[5mm]
+    \large DER TECHNISCHEN UNIVERSITÄT MÜNCHEN\\[24mm]
+
+    {\Large \doctype in \studyProgram}\\[20mm]
+    {\huge\bf \title\par}
+    \vspace{15mm}
+    {\LARGE  \author}
+\end{center}
+
+\cleardoubleemptypage
+
+% -------------------------------------------------------------------------------
+% ---------------------------------- TITLEPAGE ----------------------------------
+% -------------------------------------------------------------------------------
+
+\def\bcorcor{0.15cm}
+\addtolength{\hoffset}{\bcorcor}
+\thispagestyle{empty}
+\vspace{10mm}
+\begin{center}
+    \includegraphics[width=4cm]{templateStuff/tumlogo.pdf}\\[5mm]
+	\huge SCHOOL OF COMPUTATION, INFORMATION AND TECHNOLOGY\\[5mm]
+	\large DER TECHNISCHEN UNIVERSITÄT MÜNCHEN\\[24mm]
+	{\Large \doctype in \studyProgram}\\[20mm]
+	{\LARGE\bf \title}\\[10mm]
+	{\LARGE\bf \titleGer}\\[10mm]
+	\begin{tabular}{ll}
+		\Large Author:      	& \Large \author \\[2mm]
+		\Large Supervisor:  	& \Large \supervisor\\[2mm]
+		\Large Advisor:			& \Large \advisor\\[2mm]
+		\Large Date:       		& \Large \date
+	\end{tabular}
+\end{center}
+
+% undo BCOR correction
+\addtolength{\hoffset}{\bcorcor}
+\newpage
+
+% -------------------------------------------------------------------------------
+% ---------------------------------- DISCLAIMER ---------------------------------
+% -------------------------------------------------------------------------------
+
+\cleardoubleemptypage
+
+\thispagestyle{empty}
+\vspace*{0.7\textheight}
+\noindent
+I confirm that this \MakeLowercase{\doctype} is my own work and I have documented all sources and material used.\\
+
+\vspace{15mm}
+\noindent
+Munich, \date \hspace{5cm} \author
+\cleardoubleemptypage
+
+% -------------------------------------------------------------------------------
+% ------------------------------- ACKNOWLEDGEMENTS ------------------------------
+% -------------------------------------------------------------------------------
+
+\phantomsection
+\addcontentsline{toc}{chapter}{Acknowledgements}
+\vspace*{2cm}
+\begin{center}
+    {\Large \bf Acknowledgements}
+\end{center}
+\vspace{1cm}
+
+I acknowlege everyone who has been with me on this journey and major milestone of my life, my sincerest Thank You to
+
+My Family, who has been always with me, sponsored my education and gave me the opportunity to become who I am today.
+
+My Friends, who were always there for me, who gave me the energy and motivation to continue to study. I especially credit Faid Rihan, Niklas Feurstein, Anna Lena Müller, Samhitha Girish Jois, Roman Danylchuk, Kirill Tikhomirov, Kameswara Siddharth Sishta, Kacper Darowski, Lucy Yang, Joana Arguirova, Junguo (Ryan) Xu, Melisa Aslan, Jongtae (Jerry) Park, Patrick Dirks.
+
+My advisor, Markus Mühlhäußer, who is an amazing teacher and a great mentor. Without him I would not be able to organize my thesis into smaller scopes and probably would have moved most of the workload into the deadline week.
+
+My bestie Kasane Teto, who has not said a word but always morally supported me with her inanimate gaze.
+
+
+
+\cleardoublepage
+
+% -------------------------------------------------------------------------------
+% ---------------------------------- ABSTRACT -----------------------------------
+% -------------------------------------------------------------------------------
+
+\phantomsection
+\addcontentsline{toc}{chapter}{Abstract}
+\vspace*{2cm}
+\begin{center}
+    {\Large \bf Abstract}
+\end{center}
+\vspace{1cm}
+
+\lipsum[2]
+
+\cleardoublepage
+
+\phantomsection
+\addcontentsline{toc}{chapter}{Zusammenfassung}
+\vspace*{2cm}
+\begin{center}
+    {\Large \bf Zusammenfassung}
+\end{center}
+\vspace{1cm}
+
+\lipsum[2]
+
+\cleardoublepage
+
+% -------------------------------------------------------------------------------
+% ------------------------------ TABLE OF CONTENTS ------------------------------
+% -------------------------------------------------------------------------------
+
+\tableofcontents
+\thispagestyle{empty}
+\cleardoubleemptypage
+
+% -------------------------------------------------------------------------------
+% --------------------------------- MAIN MATTER ---------------------------------
+% -------------------------------------------------------------------------------
+
+\mainmatter
+\part{Introduction and Background}
+\chapter{Introduction}
+% labels can be put almost anywhere and can be referencef from anywhere.
+\label{sec:intro}
+
+In 2025 the StackOverflow's developer survey has ranked Rust as the most admired programming language, holding the title consecutively for nine years\cite{stackoverflow-technology-admired-and-desired}.
+
+% https://survey.stackoverflow.co/
+% https://survey.stackoverflow.co/2025/technology#admired-and-desired
+% https://survey.stackoverflow.co/2024/technology#admired-and-desired
+% https://survey.stackoverflow.co/2023#section-admired-and-desired-programming-scripting-and-markup-languages
+% https://survey.stackoverflow.co/2022#technology-most-loved-dreaded-and-wanted
+% https://survey.stackoverflow.co/2021#technology-most-loved-dreaded-and-wanted
+% https://survey.stackoverflow.co/2020#most-loved-dreaded-and-wanted
+% https://survey.stackoverflow.co/2019#most-loved-dreaded-and-wanted
+% https://survey.stackoverflow.co/2018#most-loved-dreaded-and-wanted
+% https://survey.stackoverflow.co/2016#technology
+\vspace{1.5em}
+\begin{figure}[h!]
+\begin{tikzpicture}
+    \begin{axis}[
+        width=0.7\textwidth,  
+        height=0.3\textheight,
+        xlabel={Year},
+        % ylabel={Percentage},
+        ylabel={Percentage Admired},
+        xtick={2010, 2015, 2020, 2025},
+        scaled x ticks=false,  
+        scaled y ticks=false,
+        ymajorgrids=true, 
+        grid style=dashed,
+        ymin=-5,
+        ymax=105,
+        xmin=2014,
+        xmax=2026,
+        x tick label style={/pgf/number format/.cd, 1000 sep={}},
+        % legend style={at={(0.02,0.45)},anchor=north west},
+        legend style={at={(0.07,0.35)},anchor=north west},
+    ]
+
+    \addplot[
+        color=blue,
+        mark=square,
+        line width=1pt,
+        ]
+        coordinates {
+            (2015, 75.6)(2017, 52.0)(2018, 46.7)(2019, 52.0)(2020, 43.4)(2021, 49.2)(2022, 48.4)(2023, 49.8)(2024, 53.1)(2025, 46.6)
+        };
+
+    \addplot[
+        color=Bittersweet,
+        mark=triangle,
+        line width=1pt,
+        ]
+        coordinates {
+            (2015, 73.8)(2016, 79.1)(2017, 73.1)(2018, 78.9)(2019, 83.5)(2020, 86.1)(2021, 86.9)(2022, 86.7)(2023, 84.7)(2024, 82.2)(2025, 72.4)
+        };
+
+    % \addplot[
+    %     color=cyan,
+    %     mark=square,
+    %     line width=1pt,
+    %     ]
+    %     coordinates {
+    %         (2023, 16.4)(2024, 18.3)(2025, 16.7)
+    %     };
+
+    % \addplot[
+    %     color=Dandelion,
+    %     mark=triangle,
+    %     line width=1pt,
+    %     ]
+    %     coordinates {
+    %         (2023, 30.6)(2024, 28.7)(2025, 29.9)
+    %     };
+
+    \legend{C++, Rust}
+    % \legend{C++ (Admired), Rust (Admired), C++ (Desired), Rust (Desired)}
+    \end{axis}
+\end{tikzpicture}
+\caption{Rust and C++ in StackOverflows' survey on most admired programming languages}
+\label{fig:stackoverflow-most-admired}
+\end{figure}
+
+In 2020, the social platform Discord had already published several blogposts explaining that they are rewritting software components in Rust\cite{discord-moves-to-rust}. Their main reasoning behind this decision was mostly about reaching high performance demands, but also about Rusts' type system which contrary to functional programming languages allowed mutation.
+
+Specifically the blogpost mentions issuesses with the garbage collector of the Go Programming Language, which was rescanning the entire LRU cache for memory which can be freed, causing to latency spikes every 2 minutes.
+
+% The same year on 18th November, the technology company Cloudflare ``began experiencing significant failures to deliver core network traffic''\cite{cloudflare-outage}, with Rust being featured as part of the error in the blogpost, creating a lot online discussions about the languages' relevance.
+
+% The error was discovered to be with their Bot Management System. This software routes traffic and to do so it reads a `feature file' to stay in sync with an updated list of cyber attacks.
+% A change to Cloudflares' database permissions caused the `feature file' to be written with duplicated rows.
+% The Rust proxy-service, which had limited memory allocated, then became the source of the unhandled error when the feature file size grew three times larger than expected.
+
+In 2024, Google has published a security blogpost with the topic on making their software memory safe, in which they mentioned a new migration approach called ``interoperability'' which offers an incremental approach to adopting memory safety in software\cite{google-eliminating-memory-safety-vulnerabilities}. This allows working on a multi-lingual codebase where new code is written in Rust, allowing the team to define their own pace of migrating to Rust.
+
+This paper takes the goal of diving deeper into a more direct and technical comparison between Rust and C++ by writing a molecular dynamics simulation program in both programming languages and analyze the differences in usability and benchmark performance.
+
+\chapter{Comparing Rust against C++}
+\section{The Rust Ecosystem}
+
+Before diving into the the syntax and the defining elements of the Rust Programming Language, this section will give a brief overview over the tooling and console applications provided by Cargo, the Rust Package Manager.
+
+Since Cargo can install dependencies it was also designed to be extensible, meaning that most operations you will need to maintain a Rust project are located behind a Cargo subcommand.
+
+\begin{description}
+    \item[cargo run] Equivalent to \texttt{make run}, Cargo will invoke the Rust compiler on the codebase and execute the resulting binary.
+    \item[cargo build] Equivalent to \texttt{make}, Cargo will invoke the Rust compiler on the codebase and compile a binary but not execute it.
+    \item[cargo test] Equivalent to \texttt{ctest} or GoogleTest, Cargo has an integrated testing tool which will compile the codebase and run all functions annotated with \texttt{\#[test]} as an individual, isolated test case.
+    \item[cargo doc] Equivalent to \texttt{Doxygen} or other documentation libraries, Cargo provides an in-built way of generating documentation for the codebase.
+    \item[cargo fmt] Equivalent to \texttt{clang-format}, Cargo provides an in-built way to format the entire codebase.
+    \item[cargo clippy] Equivalent to \texttt{clang-tidy}, Cargo provides an in-built way to lint and statically analyze the codebase. This command is also often used in CI/CD to ensure the codebase quality.
+\end{description}
+
+The first difference observation in terms of usability is that the C++ infrastructure is fragmented, whereas for Rust it is centralized via its package manager. This smoothes down the learning curve of Rust tools, as new users only have to get comfortable with one tool, which incorporates 
+
+It's noteworthy to mention that there's no equivalent to GDB in the Rust ecosystem because the type system and ownership model of Rust guaranteee safety over memory and thread.
+
+\section{The Rust Programming Language}
+
+% Rust has two `modes' in which code can be written. The more commonly used one is called `Safe Rust' which can be statically analysed and is guaranteed not to cause segmentation faults and core dumps, and the one with extra powers is called `Unsafe Rust'.
+
+% `Unsafe Rust' are scopes and functionalities marked with the keyword \texttt{unsafe} which allow for example mutating static variables, dereferencing pointers and invoking other unsafe functionalities\cite{rust-book-unsafe-rust}. We will not dive deeper into Unsafe Rust than just mention it as it is mostly off-topic to this thesis.
+
+% We will now look at the syntax of `Safe Rust'.
+
+\subsection{Syntax}
+
+Todo!
+
+\subsection{Structs and Traits}
+
+Structs in Rust are almost entirely equivalent to C++ structs. A struct is a type which defines a collection of fields. Unlike in C++ however, Rust has no concept of struct inheritance. Instead of abstract classes, Rust provides traits, which is an abstract interface that types can implement explicitly.
+
+In C++ a class can only inherit from one `abstract class'.
+
+Todo!
+
+\subsection{Ownership Model}
+
+Todo!
+
+\subsection{Error Handling}
+
+Option, Result and Panic
+
+\subsection{Unsafe Rust}
+
+What we have learned so far has been `Safe Rust', which can be statically analyzed for memory safety and bugs that would cause segmentation fault in C++ are caught in the compilation stage.
+
+However sometimes because of performance reasons or communicating with an external library, code has to be written using of raw pointer arithmetics. This mode is commonly referred to as `Unsafe Rust'.
+
+An unsafe functionality is a scope, function or trait implementation annotated with the \texttt{unsafe} keyword. In an unsafe block, Rust gives you access to a few operations which can not be statically verified and could cause undefined behaviour. The operations are the following.
+
+\begin{enumerate}
+    \item Dereferencing a pointer.
+    \item Using other unsafe functionalities like invoking an unsafe function or implementing an unsafe trait.
+    \item Read or write to a mutable static variable.
+    \item Accessing fields of a \texttt{union}, a special element which is syntactically similar to a struct with the exception of all fields sharing the same storage.
+\end{enumerate}
+
+To get a bit of intuition on what kind of operations are unsafe consier this example: For a struct to be shared accross threads, it needs to implement the \texttt{Sync} trait, which is unsafe. If the struct also contains a pointer which you would like to interpret at index $2$, adding $2$ to the pointer and dereferencing it is also unsafe behaviour.
+
+\subsection{Macros}
+
+rust macros vs c++ templates
+
+\section{Compiler Error Messages}
+
+mention how rusts' compiler error messages differ from C++
+
+% \chapter{Rust Project Quickstart}
+
+\section{Major Dependencies in Rust}
+
+Below are two creditworthy libraries which are utilized in the project and severely improve the programming workflow. They utilize procedural macros to generate code from a struct.
+
+\subsection{Clap}
+
+clap
+
+\subsection{Serde}
+
+serde
+
+\subsection{Rayon}
+
+serde
+
+\chapter{Application with Molecular Dynamics}
+
+\chapter{Methods and Implementation}
+
+talk about project infrastructure
+
+\section{Molecular Dynamics Simulation}
+
+\subsection{Program Frame}
+
+talk about core implementation: core, io, cli
+
+\subsection{Core Library}
+
+talk about core implementation: core, io, cli
+
+\subsection{I/O Library}
+
+talk about core implementation: core, io, cli
+
+\subsection{Parallelization in Rust}
+
+\section{Benchmarking CI}
+
+talk about automatic equality tester and benchmark CI script 
+
+\section{External Tools}
+
+talk about perf
+
+\part{Evaluation}
+
+\chapter{Benchmarking}
+
+All following benchmarks are executed on a 64-bit 12th Gen Intel(R) Core(TM) i7-12700K with 3 sockets, 21 cores per socket and 0 threads per core.
+
+\section{Sequential}
+
+\vspace{1.5em}
+\begin{figure}[h!]
+\begin{tikzpicture}
+    \begin{axis}[
+        width=0.7\textwidth,  
+        height=0.3\textheight,
+        xlabel={Simulation Steps},
+        ylabel={Average Time (ms)},
+        xtick={0, 100, 200, 300, 400, 500},
+        ytick={0, 2000, 4000, 6000, 8000, 10000},
+        scaled x ticks=false,  
+        scaled y ticks=false,
+        ymajorgrids=true, 
+        grid style=dashed,
+        % ymin=-10,
+        % xmin=-5,
+        x tick label style={/pgf/number format/.cd, 1000 sep={}},
+        legend style={at={(0.02,0.98)},anchor=north west},
+    ]
+
+    \addplot[
+        color=blue,
+        mark=square,
+        mark repeat={10},
+        mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (10, 273.8165997)
+            (20, 516.9802851000001)
+            (30, 740.55466115)
+            (40, 937.56702935)
+            (50, 1155.55535655)
+            (60, 1370.89085105)
+            (70, 1590.08775205)
+            (80, 1804.2172272999999)
+            (90, 2025.46045965)
+            (100, 2216.8778125)
+            (110, 2431.91059725)
+            (120, 2647.86904725)
+            (130, 2874.7884709)
+            (140, 3081.6999533499998)
+            (150, 3299.1595616)
+            (160, 3517.76840055)
+            (170, 3740.72414485)
+            (180, 3987.1059080500004)
+            (190, 4178.9094133)
+            (200, 4394.18286335)
+            (210, 4615.9988649)
+            (220, 4830.2009383)
+            (230, 5033.0900034)
+            (240, 5259.07758855)
+            (250, 5475.493254)
+            (260, 5696.6816693)
+            (270, 5900.11267575)
+            (280, 6128.872172)
+            (290, 6351.41395755)
+            (300, 6575.61442405)
+            (310, 6782.6294163)
+            (320, 6997.100106100001)
+            (330, 7214.3388998)
+            (340, 7420.6009662)
+            (350, 7642.31302525)
+            (360, 7876.449799149999)
+            (370, 8077.65604555)
+            (380, 8293.26344745)
+            (390, 8508.0315137)
+            (400, 8734.0040768)
+            (410, 8950.470459350001)
+            (420, 9174.05059475)
+            (430, 9384.57252745)
+            (440, 9638.45208945)
+            (450, 9848.6973095)
+            (460, 10044.4907458)
+            (470, 10293.8542321)
+            (480, 10476.38084845)
+            (490, 10701.7011691)
+            (500, 10917.5842851)
+        };
+
+    \addplot[
+        color=Bittersweet,
+        mark=triangle,
+        mark repeat={10},
+        mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (10, 206.09075190000001)
+            (20, 420.86882985)
+            (30, 609.5883635499999)
+            (40, 784.47083405)
+            (50, 972.9397255499999)
+            (60, 1160.30990525)
+            (70, 1350.95556955)
+            (80, 1539.5883787)
+            (90, 1729.51311195)
+            (100, 1901.3169879000002)
+            (110, 2087.1569292)
+            (120, 2278.9023803)
+            (130, 2468.1327925)
+            (140, 2652.2499233000003)
+            (150, 2840.19161545)
+            (160, 3024.94122365)
+            (170, 3213.6127385)
+            (180, 3406.8531513000003)
+            (190, 3597.93581975)
+            (200, 3786.7982349)
+            (210, 4033.17009595)
+            (220, 4191.15093275)
+            (230, 4338.96322725)
+            (240, 4536.2946618000005)
+            (250, 4720.02117385)
+            (260, 4911.74336795)
+            (270, 5100.7897686999995)
+            (280, 5281.31964145)
+            (290, 5475.7793846)
+            (300, 5669.91193965)
+            (310, 5901.7394782)
+            (320, 6039.34020995)
+            (330, 6228.61913715)
+            (340, 6407.84774325)
+            (350, 6613.3648029)
+            (360, 6791.39326845)
+            (370, 6978.2380791000005)
+            (380, 7175.9149278)
+            (390, 7354.5108424499995)
+            (400, 7551.263935399999)
+            (410, 7733.4011731499995)
+            (420, 7924.4063864)
+            (430, 8122.7348954)
+            (440, 8329.46436305)
+            (450, 8498.965259300001)
+            (460, 8693.306484)
+            (470, 8885.7254749)
+            (480, 9067.0104245)
+            (490, 9255.374591950002)
+            (500, 9456.65880155)
+        };
+
+    % \addplot[
+    %     color=cyan,
+    %     mark=square,
+    %     line width=1pt,
+    %     ]
+    %     coordinates {
+    %         (2023, 16.4)(2024, 18.3)(2025, 16.7)
+    %     };
+
+    % \addplot[
+    %     color=Dandelion,
+    %     mark=triangle,
+    %     line width=1pt,
+    %     ]
+    %     coordinates {
+    %         (2023, 30.6)(2024, 28.7)(2025, 29.9)
+    %     };
+
+    \legend{C++ [DirectSum], Rust [DirectSum]}
+    \end{axis}
+\end{tikzpicture}
+\caption{Rust and C++ raw performance on a ``two bodies collision'' input dataset, with average time of 20 runs mapped against amount of simulation ticks, 2,400 particles and a cell size of $5 \times 5 \times 5$ in the LinkedCells implementation.}
+\label{fig:benchmark-sequential}
+\end{figure}
+
+For the DirectSum implementation, when measuring sequential performance against simulation steps $S$ and other configuration data fixed, we observe linear runtime $\mathcal{O}(S)$. This is because, despite having to compute all particle pairs, the amount of particles $N$ and hence the workload per simulation step is constant in this graph.
+
+To ensure the credibility of the computed average, the fluctuations between minimal and maximal run duration have also been recorded.
+% The biggest relative outlier occured with Rust at 210 steps with a fluctuation of $20.9\%$.
+The biggest absolute outlier occured with Rust with the measurement at 310 steps with a fluctuation of $435.6$ms or $7.4\%$. Fluctuations can be perceived in the graph as small `bumps'. At 500 steps, the recorded fluctuation in measured performance for both Rust and C++ are below $0.4\%$.
+
+We can therefore derive the following claim in regards to the sequential performance ratio: Rust DirectSum completes in $86.6\%$ of the time taken by the C++ DirectSum implementation, with a speedup of $15.5\%$.
+
+\section{Parallel}
+
+Todo! x = thread, y = runtime (absolute [strong scaling] or relative [strong scaling speedup])
+
+\chapter{Conclusion}
+
+conclude that rust is more usable, performs better
+
+\chapter{Discussion}
+
+discuss why you should not switch to rust (rewrite tech debt, team skills and language learning logistics)
+
+% template
+
+\part{Template Stub (Remove)}
+
+\chapter{Tips}
+\subsection{How to Describe}
+% optional: set the spacing between columns
+\setlength{\columnsep}{30 pt}
+When listing several points you have three basic options:
+\begin{multicols}{3}
+    \begin{itemize}
+        \item itemize
+        \item enumerate
+        \item description
+    \end{itemize}
+
+    \vfill\null
+    \columnbreak
+
+    \begin{enumerate}
+        \item itemize
+        \item enumerate
+        \item description
+    \end{enumerate}
+
+    \vfill\null
+    \columnbreak
+
+    \begin{description}
+        \item[itemize] short, unordered
+        \item[enumerate] short ordered
+        \item[description] listing of descriptions. Also nice for longer ones.
+    \end{description}
+
+\end{multicols}
+
+
+\subsection{How to Quote}
+
+\begin{quote}
+    "This is a quote!"
+\end{quote}
+
+\begin{itemize}
+    \item Citations to a source can be made like this \verb|\cite{gratl17task}| =~\cite{gratl17task}
+    \subitem Always join text and the citation with a non-breaking space: \verb|text~\cite{foo}|.
+    \item Referencing Sections, Figures, Tables, Formulas: \verb|\autoref{sec:intro}| = \autoref{sec:intro}.
+    \item Footnotes for url or further notes: \verb|\footnote{\url{https://www.top500.org}}| = \footnote{\url{https://www.top500.org}}
+\end{itemize}
+
+\subsection{How to Math}
+
+Use the align environment for equations especially if you want to align them somehow.
+
+\begin{align}
+1 + 1 &\ne 3\\
+\left(\dfrac{10}{1}\right) - 9 &= 1
+\end{align}
+
+% if you need a pagebreak because figure placement is broken:
+\clearpage
+
+\section{Environments}
+
+\subsection{How to Figure}
+
+Anything can also be put in multiple columns.
+
+\begin{multicols}{2} % defines an environment with two columns
+    \begin{figure}[H] % [H] for HERE
+        \centering
+        \includegraphics[width=.9\columnwidth]{figures/scenario_clip_rot.png}
+        \caption[Example Figure]{Some Caption. Always also include a source if it wasn't created by you!\\
+            \tiny{Source: \cite{gratl17task}}}
+        \label{fig:exampleLabel1} % labels always have to be placed after the caption
+    \end{figure}
+
+    \columnbreak    % start next column
+
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=.9\columnwidth]{figures/scenario_clip_rot.png}};
+            \begin{scope}[x={(image.south east)},y={(image.north west)}]
+            \draw[red, thin,rounded corners] (.42,.42) rectangle (.58,.6);
+            \end{scope}
+        \end{tikzpicture}
+        \caption[Figure with tikz]{Figures can be drawn on or completely generated with tikz.}
+        \label{fig:exampleLabel2}
+    \end{figure}
+\end{multicols}
+
+\paragraph{Subfigures}
+If grouping of several pictures seems reasonable, think about using subfigures. This often comes in handy with plots.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.33\textwidth}
+        \includegraphics[width=\textwidth]{example-image-a}
+        \caption{example-image-a}
+        \label{fig:example-image-a}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.33\textwidth}
+        \includegraphics[width=\textwidth]{example-image-b}
+        \caption{example-image-b}
+        \label{fig:example-image-b}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.33\textwidth}
+        \includegraphics[width=\textwidth]{example-image-c}
+        \caption{example-image-c}
+        \label{fig:example-image-c}
+    \end{subfigure}
+    \caption{One caption to describe them all.}
+\end{figure}
+
+\subsection{How to Algorithm}
+
+\begin{figure}
+\begin{algorithm}[H]
+
+% Define custom keywords
+\SetKwFunction{KwNot}{not}
+% Define custom Functions
+\SetKwFunction{Fissorted}{is\_sorted}
+\SetKwFunction{Fbogosort}{bogosort}
+\SetKwFunction{Fshuffle}{shuffle}
+\SetKwProg{Fn}{Function}{:}{}
+\KwIn{\tabto{2cm}data array}
+\KwOut{\tabto{2cm} data sorted}
+\BlankLine
+
+\tcp{Checks if array is sorted}
+\Fn{\Fissorted{data}}{
+    \For{i $\leftarrow$ 0 \KwTo data.size() - 1}{
+    \label{algo:for}            % labels can also be put in the algorithm
+        \If{data[i] $>$ data[i+1]}{
+            \Return false
+        }
+    }
+    \Return true
+}
+
+\tcp{actual algorithm}
+\Fn{\Fbogosort{data}}{
+    \While{\KwNot \Fissorted{data}}{
+        random.\Fshuffle{data}
+    }
+}
+
+\caption[Bogosort]{Bogosort}
+\label{algo:example}
+\end{algorithm}
+\caption{some description what is happening}
+\end{figure}
+
+\clearpage
+
+\subsection{How to Code}
+\begin{lstlisting}[style=eclipse-cpp, caption=General form of a typical runner() function., label=code:runner]
+void runner(int type, void *data){
+    switch(type)
+        case taskType1:
+            // do stuff using data
+        case taskType2:
+            // do other stuff using data
+}
+\end{lstlisting}
+
+\subsection{How to Table}
+\begin{table}[H]
+    \begin{tabularx}{\columnwidth}{L | C | R}
+        \hline
+        \hline
+        bla left & bla centered\newline over two lines &  bla right\\
+        \hline
+        bla left & bla centered & \multirow[c]{2}{\hsize}{cell spanning two rows} \\
+        \cline{1-2}
+        \multicolumn{2}{c|}{cell spanning two columns} & \\
+    \end{tabularx}
+    \caption[Some Table]{Fancy table that can contain line breaks and extended cells.}
+    \label{tab:example}
+\end{table}
+
+\appendix
+\part{Appendix}
+\chapter{Some more stuff}
+
+For everything that does not really belong in the thesis but is good to mention.
+
+\listoffigures
+
+\listoftables
+
+\bibliographystyle{alpha}
+\bibliography{literature}
+
+\end{document}

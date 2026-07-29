@@ -6,83 +6,231 @@ mod log;
 mod rust;
 mod test;
 
-pub use log::Log;
+use std::{format, fs::File, process::Command};
+
+pub use log::Logger;
 use lscpu::Cpu;
 
+/// Amount of times (repetitions) to run a program for benching. It has been set
+/// to `5` previously for Github CI and is set to `20` on the `full` feature for
+/// better averaged data.
+#[cfg(not(feature = "full"))]
+pub const REPETITIONS: usize = 5;
+
+/// Amount of times (repetitions) to run a program for benching. It has been set
+/// to `5` previously for Github CI and is set to `20` on the `full` feature for
+/// better averaged data.
+#[cfg(feature = "full")]
+pub const REPETITIONS: usize = 20;
+
+/// Maximal amount of ticks (repetitions) to run a program for benching. It steps
+/// every `10` timesteps and was previously set to `50` for CI. With the `full`
+/// feature it is extended to use the argument and generate a custom range which
+/// steps every 10 units.
+#[cfg(not(feature = "full"))]
+#[allow(non_snake_case)]
+pub fn TIME_STEPS(_limit: usize, _step: usize) -> Vec<usize> {
+    return vec![1, 20, 50];
+}
+
+/// Maximal amount of ticks (repetitions) to run a program for benching. It steps
+/// every `10` timesteps and was previously set to `50` for CI. With the `full`
+/// feature it is extended to make sure the Two Bodies Collision occurs for linked
+/// cells.
+#[cfg(feature = "full")]
+#[allow(non_snake_case)]
+pub fn TIME_STEPS(limit: usize, step: usize) -> Vec<usize> {
+    use std::ops::Range;
+
+    Range {
+        start: 10,
+        end: limit + 1, // +1 so the limit is inclusive
+    }
+    .into_iter()
+    .filter(|i| i % step == 0)
+    .collect::<Vec<usize>>()
+}
+
+/// Optionally retrieve the filename of how to save the current logs. If set to none,
+/// no file name should be created.
+#[cfg(not(feature = "print"))]
+#[allow(non_snake_case)]
+pub fn LOG_FILE_NAME() -> Option<String> {
+    None
+}
+
+/// Optionally retrieve the filename of how to save the current logs. If set to none,
+/// no file name should be created.
+#[cfg(feature = "print")]
+#[allow(non_snake_case)]
+pub fn LOG_FILE_NAME() -> Option<String> {
+    use chrono::Utc;
+    let now = Utc::now();
+
+    // there is a bug where "1th and 2th" are generated. the fix is to not run this program
+    // on any day of the month which ends with 1 or 2.
+
+    Some(now.format("%dth %B, %H:%M.txt").to_string())
+}
+
+/// Optionally creates a log file in which everything that is printed to the console is
+/// also saved.
+#[allow(non_snake_case)]
+pub fn LOG_FILE() -> Option<File> {
+    match LOG_FILE_NAME()
+        .map(|f| format!("test-equality/results/{f}"))
+        .map(|path| File::create(path))
+    {
+        Some(Ok(f)) => Some(f),
+        _ => None,
+    }
+}
+
+/// Sets the number of threads for the parallel implementations, which is the environment
+/// variable `RAYON_NUM_THREADS` for Rust and `OMP_NUM_THREADS` for C++.
+/// 
+/// # Links
+/// 
+/// - https://www.openmp.org/spec-html/5.0/openmpse50.html#x289-20540006.2
+/// - https://github.com/rayon-rs/rayon/blob/main/FAQ.md
+pub fn set_thread_count(log: &mut Logger, count: usize) {
+    log.info("Threads :=", &count.to_string());
+    
+    unsafe {
+        std::env::set_var("RAYON_NUM_THREADS", count.to_string());
+        std::env::set_var("OMP_NUM_THREADS", count.to_string());
+    }
+}
+
 fn main() {
-    cpp::build();
-    rust::build();
+    let log_file = LOG_FILE();
+    let mut log: Logger = log_file.into();
+
+    // Print commit id and runner command.
+    let header_line = {
+        let git_hash = option_env!("GIT_COMMIT_HASH")
+            .map(|commit| format!("on commit {commit}"))
+            .unwrap_or("".into());
+        let features = env!("ENABLED_FEATURES");
+
+        format!("{git_hash}:\nFeatures: {features}\n\n")
+    };
+    log.file_only(header_line);
+
+    cpp::build(&mut log);
+    rust::build(&mut log);
     std::fs::create_dir_all("output/rs").expect("");
     std::fs::create_dir_all("output/cpp").expect("");
 
-    Log::header(format!("lscpu"));
+    // https://stackoverflow.com/questions/22155130/determine-number-of-cores-using-rust
+    #[allow(non_snake_case)]
+    let THREAD_COUNT = num_cpus::get();
+
+    // lscpu
     let cpu = Cpu::new();
-    Log::Info.log("Architecture\t", &cpu.architecture);
-    Log::Info.log("CPU op modes\t", &cpu.cpu_op_modes);
-    Log::Info.log("Address sizes\t", &cpu.address_sizes);
-    Log::Info.log("Byte order\t", &cpu.byte_order);
-    Log::Info.log("CPU count\t", &cpu.cpu_count.to_string());
-    Log::Info.log("On-line CPU\t", &cpu.on_line_cpu.to_string());
-    Log::Info.log("Vendor ID\t", &cpu.vendor_id);
-    Log::Info.log("Model name\t", &cpu.model_name);
-    Log::Info.log("CPU family\t", &cpu.cpu_family.to_string());
-    Log::Info.log("CPU model\t", &cpu.cpu_model.to_string());
-    Log::Info.log("Is hybrid\t", &cpu.is_hybrid);
-    Log::Info.log("Threads per core", &cpu.threads_per_core.to_string());
-    Log::Info.log("Cores per socket", &cpu.cores_per_socket.to_string());
-    Log::Info.log("Sockets\t", &cpu.sockets.to_string());
-    Log::Info.log("Stepping\t", &cpu.stepping.to_string());
-    Log::Info.log("Boost enabled\t", &cpu.boost_enabled);
+    log.header(format!("lscpu"));
+    log.info("Architecture\t", &cpu.architecture);
+    log.info("CPU op modes\t", &cpu.cpu_op_modes);
+    log.info("Address sizes\t", &cpu.address_sizes);
+    log.info("Byte order\t", &cpu.byte_order);
+    log.info("CPU count\t", &cpu.cpu_count.to_string());
+    log.info("On-line CPU\t", &cpu.on_line_cpu.to_string());
+    log.info("Vendor ID\t", &cpu.vendor_id);
+    log.info("Model name\t", &cpu.model_name);
+    log.info("CPU family\t", &cpu.cpu_family.to_string());
+    log.info("CPU model\t", &cpu.cpu_model.to_string());
+    log.info("Is hybrid\t", &cpu.is_hybrid);
+    log.info("Threads per core", &cpu.threads_per_core.to_string());
+    log.info("Cores per socket", &cpu.cores_per_socket.to_string());
+    log.info("Sockets\t", &cpu.sockets.to_string());
+    log.info("Stepping\t", &cpu.stepping.to_string());
+    log.info("Boost enabled\t", &cpu.boost_enabled);
 
-    // this benchmark verifies halleys comet correctness over 25 thousand steps
-    // cpp::run("halleys-comet", 0.0014, 25000);
-    // rust::run("halleys-comet", 0.0014, 25000);
-    // test::run("halleys-comet", 25000);
-    cpp::bench("halleys-comet", 0.0014, 25000000);
-    rust::bench("halleys-comet", 0.0014, 25000000);
+    // even more metrics
+    log.header(format!("extended cpu metrics"));
+    log.info("Thread Count", &THREAD_COUNT.to_string());
 
-    // this benchmark does nothing useful
-    cpp::run("two-colliding-particles", 0.0014, 100);
-    rust::run("two-colliding-particles", 0.0014, 100);
-    test::run("two-colliding-particles", 100);
+    #[cfg(all(feature = "extended"))]
+    {
+        // this benchmark verifies halleys comet correctness over 25 thousand steps
+        // cpp::run("halleys-comet", 0.0014, 25000);
+        // rust::run("halleys-comet", 0.0014, 25000);
+        // test::run("halleys-comet", 25000);
+        cpp::bench(&mut log, "halleys-comet", "halleys-comet", 0.0014, 25000000);
+        rust::bench(&mut log, "halleys-comet", "halleys-comet", 0.0014, 25000000);
 
-    // this benchmark measures I/O performance
-    cpp::run("two-bodies-collision-0001", 0.0007, 1);
-    rust::run("two-bodies-collision-0001", 0.0007, 1);
-    test::run("two-bodies-collision-0001", 1);
+        // test two colliding particles (direct sum, newton force)
+        cpp::run(&mut log, "two-colliding-particles", "two-colliding-particles", 0.0014, 100);
+        rust::run(&mut log, "two-colliding-particles", "two-colliding-particles", 0.0014, 100);
+        test::run(&mut log, "two-colliding-particles", 100);
 
-    // this benchmark additionally measures the accumulation of floating-point errors
-    // over many steps
-    cpp::bench("two-bodies-collision-0001", 0.0007, 20);
-    rust::bench("two-bodies-collision-0001", 0.0007, 20);
+        // test two-bodies-collision (direct sum, lennard jones)
+        cpp::run(&mut log, "two-bodies-collision [direct-sum]", "two-bodies-collision-0001", 0.0014, 100);
+        rust::run(&mut log, "two-bodies-collision [direct-sum]", "two-bodies-collision-0001", 0.0014, 100);
+        test::run(&mut log, "two-bodies-collision-0001", 100);
 
-    // this benchmark additionally measures the accumulation of floating-point errors
-    // over many steps
-    cpp::bench("two-bodies-collision-0001", 0.0007, 50);
-    rust::bench("two-bodies-collision-0001", 0.0007, 50);
+        // test two-bodies-collision (direct sum, parallel, lennard jones)
+        cpp::run(&mut log, "two-bodies-collision [direct-sum, parallel]", "two-bodies-collision-0001-parallel", 0.0014, 100);
+        rust::run(&mut log, "two-bodies-collision [direct-sum, parallel]", "two-bodies-collision-0001-parallel", 0.0014, 100);
+        test::run(&mut log, "two-bodies-collision-0001-parallel", 100);
+    }
 
-    // this benchmark measures I/O performance
-    cpp::run("two-bodies-collision-0001-linked-cells", 0.0007, 1);
-    rust::run("two-bodies-collision-0001-linked-cells", 0.0007, 1);
-    test::run("two-bodies-collision-0001-linked-cells", 1);
+    #[cfg(feature = "direct-sum")]
+    {
+        // this benchmark measures I/O performance
+        cpp::run(&mut log, "two-bodies-collision-0001 [IO]", "two-bodies-collision-0001", 0.0007, 1);
+        rust::run(&mut log, "two-bodies-collision-0001 [IO]", "two-bodies-collision-0001", 0.0007, 1);
+        test::run(&mut log, "two-bodies-collision-0001", 1);
+    
+        // This benchmark measures DirectSum (Sequential).
+        for frames in TIME_STEPS(500, 10) {
+            cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum]"), "two-bodies-collision-0001", 0.0007, frames);
+            rust::bench(&mut log, &format!("two-bodies-collision [direct-sum]"), "two-bodies-collision-0001", 0.0007, frames);
+        }
+    }
 
-    // this benchmark additionally measures the accumulation of floating-point errors
-    // over many steps
-    cpp::bench("two-bodies-collision-0001-linked-cells", 0.0007, 20);
-    rust::bench("two-bodies-collision-0001-linked-cells", 0.0007, 20);
+    #[cfg(feature = "linked-cells")]
+    {
+        // this benchmark measures I/O performance
+        cpp::run(&mut log, "two-bodies-collision-0001-linked-cells [IO]", "two-bodies-collision-0001-linked-cells", 0.0007, 1);
+        rust::run(&mut log, "two-bodies-collision-0001-linked-cells [IO]", "two-bodies-collision-0001-linked-cells", 0.0007, 1);
+        test::run(&mut log, "two-bodies-collision-0001-linked-cells", 1);
+    
+        // This benchmark measures LinkedCells (Sequential).
+        for frames in TIME_STEPS(500, 10) {
+            cpp::bench(&mut log, &format!("two-bodies-collision [linked-cells]"), "two-bodies-collision-0001-linked-cells", 0.0007, frames);
+            rust::bench(&mut log, &format!("two-bodies-collision [linked-cells]"), "two-bodies-collision-0001-linked-cells", 0.0007, frames);
+        }
+    }
 
-    // this benchmark additionally measures the accumulation of floating-point errors
-    // over many steps
-    cpp::bench("two-bodies-collision-0001-linked-cells", 0.0007, 50);
-    rust::bench("two-bodies-collision-0001-linked-cells", 0.0007, 50);
+    #[cfg(feature = "direct-sum-parallel")]
+    {
+        // this benchmark measures I/O performance
+        cpp::run(&mut log, "two-bodies-collision-0001-parallel [IO]", "two-bodies-collision-0001-parallel", 0.0007, 1);
+        rust::run(&mut log, "two-bodies-collision-0001-parallel [IO]", "two-bodies-collision-0001-parallel", 0.0007, 1);
+    
+        // This benchmark measures DirectSum (Parallel).
+        for thread_count in (1 .. (THREAD_COUNT + 1)).rev() {
+            set_thread_count(&mut log, thread_count);
+    
+            #[cfg(feature = "extended")]
+            for frames in TIME_STEPS(500, 25) {
+                cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
+                rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
+            }
 
-    // this benchmark measures I/O performance
-    cpp::run("two-bodies-collision-0001-parallel", 0.0007, 1);
-    rust::run("two-bodies-collision-0001-parallel", 0.0007, 1);
+            #[cfg(not(feature = "extended"))]
+            {
+                // if not feature "extended", compute different thread counts for 200 ticks and 500
 
-    cpp::bench("two-bodies-collision-0001-parallel", 0.0007, 20);
-    rust::bench("two-bodies-collision-0001-parallel", 0.0007, 20);
+                // // 200
+                // cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, 200);
+                // rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, 200);
 
-    cpp::bench("two-bodies-collision-0001-parallel", 0.0007, 50);
-    rust::bench("two-bodies-collision-0001-parallel", 0.0007, 50);
+                // 500
+                cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, 500);
+                rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, 500);
+            }
+        }
+    }
 }

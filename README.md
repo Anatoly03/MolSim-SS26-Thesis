@@ -5,20 +5,25 @@
 [![Rust Documentation](https://badges.ws/badge?icon=rust&value=Rustdoc)](https://anatoly03.github.io/MolSim-SS26-Thesis/moldyn_core/index.html)
 [![C++ Doxygen](https://badges.ws/badge?icon=c%2b%2b&value=Doxygen)](https://anatoly03.github.io/MolSim-SS26-Thesis/cpp/index.html)
 
-This project implements molecular dynamics simulations in C++ and Rust. The goal of this workspace is to look at the programming languages in terms of (developer experience of) program architecture design and comparative benchmarking.
+This project implements molecular dynamics simulations in C++ and Rust. The primary goal of this project is to look at the programming languages in terms of (developer experience of) program architecture design and comparative benchmarking. The secondary goal is to contribute to the TUM practical "Scientific Computing (PSE) Molekulardynamik" with a working Rust starter template.
 
-> **Benchmark Result**: On average, sequential Rust code performs slower than the C++ equivalent in the field of molecular dynamics. This thesis codebase attempts to dive into the question of 'What?' performance and code architecture differences
+> **Benchmark Result**: For DirectSum implementation, Rust performs 15% faster than C++.
 
-- [`cpp-moldyn-cli`](./cppmoldyn-cli/src/): C++ Executable Workspace
-- [`cpp-moldyn-core`](./cppmoldyn-core/src/): C++ Library Workspace
-- [`cpp-moldyn-io`](./cppmoldyn-io/src/): C++ File System Bindings
-- [`cpp-moldyn-test`](./cppmoldyn-test/src/): C++ Tests
+- [`benchmark`](./benchmark/): [Unused] Various reports with `perf`
+- [`cpp-moldyn-cli`](./cpp-moldyn-cli/): C++ Executable Workspace
+- [`cpp-moldyn-core`](./cpp-moldyn-core/): C++ Library Workspace
+- [`cpp-moldyn-io`](./cpp-moldyn-io/): C++ File System Bindings
+- [`cpp-moldyn-test`](./cpp-moldyn-test/): C++ Tests
+- [`input`](./input/): Various input configurations, used for both benchmarking and testing.
 - [`moldyn-cli`](./moldyn-cli/src/): Rust Executable Workspace
 - [`moldyn-core`](./moldyn-core/src/): Rust Library Workspace
 - [`moldyn-io`](./moldyn-io/src/): Rust File System Bindings
-- [`moldyn-wasm`](./moldyn-wasm/src/): Rust Molecular Dynamics WebAssembly Bindings
+- [`moldyn-wasm`](./moldyn-wasm/src/): [Unused] Rust Molecular Dynamics WebAssembly Bindings
+- [`presentation`](./presentation/): LaTeX of weekly presentation reports to advisor.
 - [`template-cpp`](./template-cpp/): C++ Molecular Dynamics template (Copy, Reformatted)
 - [`template-rust`](./template-rust/): Rust Molecular Dynamics template (Rewrite)
+- [`test-equality`](./test-equality/): Custom Benchmark Runner, written in Rust, compiles and runs Rust and C++ and benchmarks execution time of binary
+- [`thesis`](./thesis/): Bachelors' thesis LaTeX source code.
 
 ## Building & Running Rust
 
@@ -48,6 +53,12 @@ cargo run -p test-equality
 ```
 
 This script will compile and run Rust and C++ binaries in release mode and verify their output equivalence, as well as record execution benchmarks.
+
+```sh
+cargo run -p test-equality --features full,print
+```
+
+For thesis measurements, we use the `full` feature flag which takes a bit longer to execute but yields more averaged results.
 
 ## Benchmarking
 

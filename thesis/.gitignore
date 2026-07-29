@@ -10,6 +10,7 @@
 *.ind
 *.ilg
 *.log
+*.lof
 *.lov
 *.lot
 *.nav

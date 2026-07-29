@@ -77,8 +77,9 @@ public:
             {
                 if (i == j) continue; // skip self-interaction
                 auto& p1 = particles_vec[i];
-                const auto& p2 = particles_vec[j];
+                auto& p2 = particles_vec[j];
                 callback(p1, p2);
+                callback(p2, p1);
             }
         }
     }

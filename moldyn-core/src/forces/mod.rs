@@ -89,7 +89,7 @@ pub trait Force: Send + Sync {
         // direction * self.potential(particle, other)
     }
 
-    /// Applies the calculated force to a particle pair.
+    /// Applies the calculated force to one particle of a pair interaction
     ///
     /// # Example
     ///
@@ -102,10 +102,10 @@ pub trait Force: Send + Sync {
     /// let lennard_jones = LennardJonesForce::default();
     /// let force = lennard_jones.apply_force(&mut particle1, &mut particle2);
     /// ```
-    fn apply_force(&self, particle: &mut Particle, other: &mut Particle) {
+    fn apply_force(&self, particle: &mut Particle, other: &Particle) {
         let force = self.force(particle, other);
         particle.apply_force(force);
-        other.apply_force(-force);
+        // other.apply_force(-force);
     }
 }
 

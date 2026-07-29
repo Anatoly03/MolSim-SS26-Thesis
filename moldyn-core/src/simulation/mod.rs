@@ -91,7 +91,7 @@ impl<Container: ParticleContainer> Simulation<Container> {
     /// - If you receive a pair `(a, b)` it is guaranteed that you will not receive `(b, a)`.
     /// - There is no guarantee you will receive all pairs.
     #[inline]
-    fn for_each_particle_pairs_mut(&mut self, f: &(dyn Fn(&mut Particle, &mut Particle) + Send + Sync)) {
+    fn for_each_particle_pairs_mut(&mut self, f: &(dyn Fn(&mut Particle, &Particle) + Send + Sync)) {
         self.container.for_each_particle_pairs_mut(f);
     }
 

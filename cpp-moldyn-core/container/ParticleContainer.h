@@ -73,6 +73,11 @@ public:
     virtual void for_each_particle_pairs_mut(std::function<void(Particle &, const Particle &)> callback) = 0;
 
     /**
+     * @brief iterates
+     */
+    virtual void on_after_position_update() {}
+
+    /**
      * @brief Adds a new particle to the container by cloning.
      */
     virtual void add_particle(const Particle &particle) = 0;

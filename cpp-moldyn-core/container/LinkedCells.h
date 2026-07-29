@@ -229,6 +229,23 @@ public:
         }
     }
 
+    void on_after_position_update() override
+    {
+        std::map<Vec3<int>, ParticleContainerT> new_chunks;
+        for (const auto &chunk : particle_containers_chunk)
+        {
+            chunk.second.for_each_particles([&](const Particle &p) {
+                Vec3<double> pos = p.get_position();
+                Vec3<int> chunk_pos(
+                    static_cast<int>(std::floor(pos.x / cell_size.x)),
+                    static_cast<int>(std::floor(pos.y / cell_size.y)),
+                    static_cast<int>(std::floor(pos.z / cell_size.z)));
+                new_chunks[chunk_pos].add_particle(p);
+            });
+        }
+        particle_containers_chunk = std::move(new_chunks);
+    }
+
     void add_particle(const Particle &particle) override
     {
         Vec3<double> pos = particle.get_position();

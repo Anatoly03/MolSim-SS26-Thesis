@@ -11,7 +11,8 @@ on:
       - moldyn-cli/**
       - moldyn-core/**
       - moldyn-io/**
-      - test-equality/**
+      - test-equality/src/**
+      - test-equality/Cargo.toml
   workflow_dispatch:
 
 concurrency:
