@@ -160,7 +160,7 @@ public:
     outline void step(const double delta_t)
     {
         update_position(delta_t);
-        // self.container.on_after_position_update();
+        this->particle_container->on_after_position_update();
         delay_force();
         apply_force();
         // APPLY GRAVITY HERE
