@@ -123,7 +123,7 @@ I acknowlege everyone who has been with me on this journey and major milestone o
 
 My Family, who has been always with me, sponsored my education and gave me the opportunity to become who I am today.
 
-My Friends, who were always there for me, who gave me the energy and motivation to continue to study. I especially credit Faid Rihan, Niklas Feurstein, Anna Lena Müller, Samhitha Girish Jois, Roman Danylchuk, Kirill Tikhomirov, Kameswara Siddharth Sishta, Kacper Darowski, Lucy Yang, Junguo (Ryan) Xu, Melisa Aslan, Jongtae (Jerry) Park, Patrick Dirks.
+My Friends, who were always there for me, who gave me the energy and motivation to continue to study. I especially credit Faid Rihan, Niklas Feurstein, Anna Lena Müller, Samhitha Girish Jois, Roman Danylchuk, Kirill Tikhomirov, Kameswara Siddharth Sishta, Kacper Darowski, Lucy Yang, Joana Arguirova, Junguo (Ryan) Xu, Melisa Aslan, Jongtae (Jerry) Park, Patrick Dirks.
 
 My advisor, Markus Mühlhäußer, who is an amazing teacher and a great mentor. Without him I would not be able to organize my thesis into smaller scopes and probably would have moved most of the workload into the deadline week.
 
@@ -224,7 +224,7 @@ In 2025 the StackOverflow's developer survey has ranked Rust as the most admired
         };
 
     \addplot[
-        color=Dandelion,
+        color=Bittersweet,
         mark=triangle,
         line width=1pt,
         ]
@@ -242,7 +242,7 @@ In 2025 the StackOverflow's developer survey has ranked Rust as the most admired
     %     };
 
     % \addplot[
-    %     color=orange,
+    %     color=Dandelion,
     %     mark=triangle,
     %     line width=1pt,
     %     ]
@@ -258,15 +258,17 @@ In 2025 the StackOverflow's developer survey has ranked Rust as the most admired
 \label{fig:stackoverflow-most-admired}
 \end{figure}
 
-The same year on 18th November, the technology company Cloudflare ``began experiencing significant failures to deliver core network traffic''\cite{cloudflare-outage}, with Rust being featured as part of the error in the blogpost, creating a lot online discussions about the languages' relevance.
+In 2020, the social platform Discord had already published several blogposts explaining that they are rewritting software components in Rust\cite{discord-moves-to-rust}. Their main reasoning behind this decision was mostly about reaching high performance demands, but also about Rusts' type system which contrary to functional programming languages allowed mutation.
 
-The error was discovered to be with their Bot Management System. This software routes traffic and to do so it reads a `feature file' to stay in sync with an updated list of cyber attacks.
-A change to Cloudflares' database permissions caused the `feature file' to be written with duplicated rows.
-The Rust proxy-service, which had limited memory allocated, then became the source of the unhandled error when the feature file size grew three times larger than expected.
+Specifically the blogpost mentions issuesses with the garbage collector of the Go Programming Language, which was rescanning the entire LRU cache for memory which can be freed, causing to latency spikes every 2 minutes.
 
-In 2024, Google has published a security blogpost focusing on making their software memory safe, in which they mentioned a new migration approach called ``interoperability'' which offers an incremental approach to adopting memory safety in software\cite{google-eliminating-memory-safety-vulnerabilities}. This allows working on a multi-lingual codebase where new code is written in Rust, allowing the team to define their own pace of migrating to Rust.
+% The same year on 18th November, the technology company Cloudflare ``began experiencing significant failures to deliver core network traffic''\cite{cloudflare-outage}, with Rust being featured as part of the error in the blogpost, creating a lot online discussions about the languages' relevance.
 
-Already in 2020, the social platform Discord had published several blogposts explaining that they are rewritting software components in Rust with the main reasoning being performance, type safety, ecosystem and tooling\cite{discord-moves-to-rust}.
+% The error was discovered to be with their Bot Management System. This software routes traffic and to do so it reads a `feature file' to stay in sync with an updated list of cyber attacks.
+% A change to Cloudflares' database permissions caused the `feature file' to be written with duplicated rows.
+% The Rust proxy-service, which had limited memory allocated, then became the source of the unhandled error when the feature file size grew three times larger than expected.
+
+In 2024, Google has published a security blogpost with the topic on making their software memory safe, in which they mentioned a new migration approach called ``interoperability'' which offers an incremental approach to adopting memory safety in software\cite{google-eliminating-memory-safety-vulnerabilities}. This allows working on a multi-lingual codebase where new code is written in Rust, allowing the team to define their own pace of migrating to Rust.
 
 This paper takes the goal of diving deeper into a more direct and technical comparison between Rust and C++ by writing a molecular dynamics simulation program in both programming languages and analyze the differences in usability and benchmark performance.
 
@@ -397,7 +399,174 @@ All following benchmarks are executed on a 64-bit 12th Gen Intel(R) Core(TM) i7-
 
 \section{Sequential}
 
-direct sum and linked cells raw numbers
+\vspace{1.5em}
+\begin{figure}[h!]
+\begin{tikzpicture}
+    \begin{axis}[
+        width=0.7\textwidth,  
+        height=0.3\textheight,
+        xlabel={Simulation Steps},
+        ylabel={Average Time (ms)},
+        xtick={0, 100, 200, 300, 400, 500},
+        ytick={0, 2000, 4000, 6000, 8000, 10000},
+        scaled x ticks=false,  
+        scaled y ticks=false,
+        ymajorgrids=true, 
+        grid style=dashed,
+        % ymin=-10,
+        % xmin=-5,
+        x tick label style={/pgf/number format/.cd, 1000 sep={}},
+        legend style={at={(0.02,0.98)},anchor=north west},
+    ]
+
+    \addplot[
+        color=blue,
+        mark=square,
+        mark repeat={10},
+        mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (10, 273.8165997)
+            (20, 516.9802851000001)
+            (30, 740.55466115)
+            (40, 937.56702935)
+            (50, 1155.55535655)
+            (60, 1370.89085105)
+            (70, 1590.08775205)
+            (80, 1804.2172272999999)
+            (90, 2025.46045965)
+            (100, 2216.8778125)
+            (110, 2431.91059725)
+            (120, 2647.86904725)
+            (130, 2874.7884709)
+            (140, 3081.6999533499998)
+            (150, 3299.1595616)
+            (160, 3517.76840055)
+            (170, 3740.72414485)
+            (180, 3987.1059080500004)
+            (190, 4178.9094133)
+            (200, 4394.18286335)
+            (210, 4615.9988649)
+            (220, 4830.2009383)
+            (230, 5033.0900034)
+            (240, 5259.07758855)
+            (250, 5475.493254)
+            (260, 5696.6816693)
+            (270, 5900.11267575)
+            (280, 6128.872172)
+            (290, 6351.41395755)
+            (300, 6575.61442405)
+            (310, 6782.6294163)
+            (320, 6997.100106100001)
+            (330, 7214.3388998)
+            (340, 7420.6009662)
+            (350, 7642.31302525)
+            (360, 7876.449799149999)
+            (370, 8077.65604555)
+            (380, 8293.26344745)
+            (390, 8508.0315137)
+            (400, 8734.0040768)
+            (410, 8950.470459350001)
+            (420, 9174.05059475)
+            (430, 9384.57252745)
+            (440, 9638.45208945)
+            (450, 9848.6973095)
+            (460, 10044.4907458)
+            (470, 10293.8542321)
+            (480, 10476.38084845)
+            (490, 10701.7011691)
+            (500, 10917.5842851)
+        };
+
+    \addplot[
+        color=Bittersweet,
+        mark=triangle,
+        mark repeat={10},
+        mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (10, 206.09075190000001)
+            (20, 420.86882985)
+            (30, 609.5883635499999)
+            (40, 784.47083405)
+            (50, 972.9397255499999)
+            (60, 1160.30990525)
+            (70, 1350.95556955)
+            (80, 1539.5883787)
+            (90, 1729.51311195)
+            (100, 1901.3169879000002)
+            (110, 2087.1569292)
+            (120, 2278.9023803)
+            (130, 2468.1327925)
+            (140, 2652.2499233000003)
+            (150, 2840.19161545)
+            (160, 3024.94122365)
+            (170, 3213.6127385)
+            (180, 3406.8531513000003)
+            (190, 3597.93581975)
+            (200, 3786.7982349)
+            (210, 4033.17009595)
+            (220, 4191.15093275)
+            (230, 4338.96322725)
+            (240, 4536.2946618000005)
+            (250, 4720.02117385)
+            (260, 4911.74336795)
+            (270, 5100.7897686999995)
+            (280, 5281.31964145)
+            (290, 5475.7793846)
+            (300, 5669.91193965)
+            (310, 5901.7394782)
+            (320, 6039.34020995)
+            (330, 6228.61913715)
+            (340, 6407.84774325)
+            (350, 6613.3648029)
+            (360, 6791.39326845)
+            (370, 6978.2380791000005)
+            (380, 7175.9149278)
+            (390, 7354.5108424499995)
+            (400, 7551.263935399999)
+            (410, 7733.4011731499995)
+            (420, 7924.4063864)
+            (430, 8122.7348954)
+            (440, 8329.46436305)
+            (450, 8498.965259300001)
+            (460, 8693.306484)
+            (470, 8885.7254749)
+            (480, 9067.0104245)
+            (490, 9255.374591950002)
+            (500, 9456.65880155)
+        };
+
+    % \addplot[
+    %     color=cyan,
+    %     mark=square,
+    %     line width=1pt,
+    %     ]
+    %     coordinates {
+    %         (2023, 16.4)(2024, 18.3)(2025, 16.7)
+    %     };
+
+    % \addplot[
+    %     color=Dandelion,
+    %     mark=triangle,
+    %     line width=1pt,
+    %     ]
+    %     coordinates {
+    %         (2023, 30.6)(2024, 28.7)(2025, 29.9)
+    %     };
+
+    \legend{C++ [DirectSum], Rust [DirectSum]}
+    \end{axis}
+\end{tikzpicture}
+\caption{Rust and C++ raw performance on a ``two bodies collision'' input dataset, with average time of 20 runs mapped against amount of simulation ticks, 2,400 particles and a cell size of $5 \times 5 \times 5$ in the LinkedCells implementation.}
+\label{fig:benchmark-sequential}
+\end{figure}
+
+For the DirectSum implementation, when measuring sequential performance against simulation steps with other configuration data fixed, we observe linear runtime $\mathcal{O}(n)$. This is because, despite having to compute all particle pairs, the amount of particles and hence the workload per simulation step is constant.
+
+We can derive the following claim in regards to the performance difference: Rust DirectSum completes in $86.62\%$ of the time taken by the C++ DirectSum implementation, with a speedup of $15.45\%$.
 
 \section{Parallel}
 
