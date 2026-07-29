@@ -153,10 +153,20 @@ fn main() {
         cpp::bench(&mut log, "halleys-comet", "halleys-comet", 0.0014, 25000000);
         rust::bench(&mut log, "halleys-comet", "halleys-comet", 0.0014, 25000000);
 
-        // this benchmark does nothing useful
+        // test two colliding particles (direct sum, newton force)
         cpp::run(&mut log, "two-colliding-particles", "two-colliding-particles", 0.0014, 100);
         rust::run(&mut log, "two-colliding-particles", "two-colliding-particles", 0.0014, 100);
-        test::run(&mut log, "two-colliding-particles", "two-colliding-particles", 100);
+        test::run(&mut log, "two-colliding-particles", 100);
+
+        // test two-bodies-collision (direct sum, lennard jones)
+        cpp::run(&mut log, "two-bodies-collision [direct-sum]", "two-bodies-collision-0001", 0.0014, 100);
+        rust::run(&mut log, "two-bodies-collision [direct-sum]", "two-bodies-collision-0001", 0.0014, 100);
+        test::run(&mut log, "two-bodies-collision-0001", 100);
+
+        // test two-bodies-collision (direct sum, parallel, lennard jones)
+        cpp::run(&mut log, "two-bodies-collision [direct-sum, parallel]", "two-bodies-collision-0001-parallel", 0.0014, 100);
+        rust::run(&mut log, "two-bodies-collision [direct-sum, parallel]", "two-bodies-collision-0001-parallel", 0.0014, 100);
+        test::run(&mut log, "two-bodies-collision-0001-parallel", 100);
     }
 
     #[cfg(feature = "direct-sum")]
