@@ -160,6 +160,9 @@ public:
             coords.push_back(chunk.first);
         }
 
+        std::vector<Particle *> lhs_mut;
+        std::vector<Particle *> rhs_mut;
+
         // code from old molsim repository, Vec3 iteration has been unpacked to loops dx, dy, dz
         // Visit each neighboring cell pair only once using positive half-space offsets.
         for (const auto &cell_coords : coords)
@@ -193,8 +196,11 @@ public:
                             continue;
                         }
 
-                        std::vector<Particle *> lhs_mut;
-                        std::vector<Particle *> rhs_mut;
+                        // reserve space, avoid allocating new vector
+                        lhs_mut.clear();
+                        rhs_mut.clear();
+                        lhs_mut.reserve(cell_it->second.size());
+                        rhs_mut.reserve(neighbour_it->second.size());
 
                         cell_it->second.for_each_particles_mut([&](Particle &p) { lhs_mut.push_back(&p); });
                         neighbour_it->second.for_each_particles_mut([&](Particle &p) { rhs_mut.push_back(&p); });
