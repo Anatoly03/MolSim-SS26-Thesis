@@ -397,7 +397,7 @@ talk about perf
 
 \chapter{Benchmarking}
 
-All following benchmarks are executed on a 64-bit 12th Gen Intel(R) Core(TM) i7-12700K with 3 sockets, 21 cores per socket and 0 threads per core.
+All following benchmarks are executed on a 64-bit 12th Gen Intel(R) Core(TM) i7-12700K. It has 12 cores and 20 logical CPU threads\cite{cpu-benchmark-intel-core-i7-12700k}.
 
 \section{Sequential}
 
@@ -829,8 +829,10 @@ We can derive the following further claims in regards to the sequential performa
 
 Within the languages, we can derive the following claims in regards to choice of algorithm: Rust LinkedCells completes in $9.2\%$ of Rust DirectSum with a speedup of $1084.7\%$. C++ LinkedCells completes in $10.2\%$ of C++ DirectSum, with a speedup of $984.6\%$.
 
+\newpage
 \section{Parallel}
-\begin{figure}[h]
+
+\begin{figure}[!htb]
 \begin{tikzpicture}
     \begin{axis}[
         width=0.7\textwidth,  
@@ -846,7 +848,7 @@ Within the languages, we can derive the following claims in regards to choice of
         % ymin=-10,
         % xmin=-5,
         x tick label style={/pgf/number format/.cd, 1000 sep={}},
-        legend style={at={(0.39,0.98)},anchor=north west},
+        legend style={at={(0.64,0.98)},anchor=north west},
     ]
 
     \addplot[
@@ -949,7 +951,10 @@ Within the languages, we can derive the following claims in regards to choice of
             (40, 1253.9120003)
         };
 
-    \legend{C++ [DirectSum-Parallel], Rust [DirectSum-Parallel]}
+    \draw[dashed, red, line width=0.5pt] (axis cs:8.5,0) -- (axis cs:8.5,10000);
+    \draw[dashed, red, line width=0.5pt] (axis cs:20.5,0) -- (axis cs:20.5,10000);
+
+    \legend{C++ [OMP], Rust [Rayon]}
     \end{axis}
 \end{tikzpicture}
 \caption{Absolute strong scaling Rust and C++ performance on a ``two bodies collision'' input dataset, with 500 simulation steps executed with the parallel DirectSum implementation.}
@@ -958,7 +963,15 @@ Within the languages, we can derive the following claims in regards to choice of
 
 % Todo! x = thread, y = runtime (absolute [strong scaling] or relative [strong scaling speedup])
 
-The thread count was set with environment variables \texttt{RAYON\_NUM\_THREADS} and \texttt{OMP\_NUM\_THREADS}.
+In the parallelized DirectSum implementation for both Rust and C++ we only parallelize the code segment which performs operations for every particle pair, by parallelizing the `outer' iteration and keeping the `inner' iteration sequential. We should also note here, that we don't really compare the capacities of the programming languages here, but of two specific parallelization libraries.
+
+For Rust, we use Rayon as the parallelization library, and for C++ we use OMP. The thread count was set with environment variables \texttt{RAYON\_NUM\_THREADS} and \texttt{OMP\_NUM\_THREADS}.
+
+The first difference we observe is that there are specific thread counts, where OMP performance drops. On the machine where the benchmarks were run, there was a 1066ms drop between thread counts 8 and 9, and a 1508ms drop between thread counts 20 and 21. This is probably because OMP takes the environment variable without further preprocessing and Rayon prefers the smaller of the environment variable and logical cores. The performance drop is marked with vertical dashed lines in figure~\ref{fig:benchmark-parallel}.
+
+It's also noteworthy that above 20 threads, the the C++ implementation shows no stable performance pattern, this is most likely because at an overhead this high, the operating software dispatcher affects measurements.
+
+At 2 threads, Rust parallel DirectSum completes in $88.5\%$ of the time taken by the C++ parallel DirectSum implementation, with a speedup of $22.6\%$. At 8 threads, Rust parallel DirectSum completes in $81.6\%$ of the time taken by the C++ parallel DirectSum implementation, with a speedup of $13\%$.
 
 \chapter{Conclusion}
 
