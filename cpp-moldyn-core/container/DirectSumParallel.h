@@ -58,10 +58,11 @@ public:
 #pragma omp parallel for
         for (size_t i = 0; i < particles_vec.size(); ++i)
         {
+            const auto& p1 = particles_vec[i];
+
             for (size_t j = 0; j < particles_vec.size(); ++j)
             {
                 if (i == j) continue; // skip self-interaction
-                const auto& p1 = particles_vec[i];
                 const auto& p2 = particles_vec[j];
                 callback(p1, p2);
             }
@@ -73,13 +74,13 @@ public:
 #pragma omp parallel for
         for (size_t i = 0; i < particles_vec.size(); ++i)
         {
+            auto& p1 = particles_vec[i];
+
             for (size_t j = 0; j < particles_vec.size(); ++j)
             {
                 if (i == j) continue; // skip self-interaction
-                auto& p1 = particles_vec[i];
-                auto& p2 = particles_vec[j];
+                const auto& p2 = particles_vec[j];
                 callback(p1, p2);
-                callback(p2, p1);
             }
         }
     }
