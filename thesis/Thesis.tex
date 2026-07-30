@@ -830,8 +830,135 @@ We can derive the following further claims in regards to the sequential performa
 Within the languages, we can derive the following claims in regards to choice of algorithm: Rust LinkedCells completes in $9.2\%$ of Rust DirectSum with a speedup of $1084.7\%$. C++ LinkedCells completes in $10.2\%$ of C++ DirectSum, with a speedup of $984.6\%$.
 
 \section{Parallel}
+\begin{figure}[h!]
+\begin{tikzpicture}
+    \begin{axis}[
+        width=0.7\textwidth,  
+        height=0.3\textheight,
+        xlabel={Threads},
+        ylabel={Average Time (ms)},
+        xtick={1, 5, 10, 15, 20, 25, 30, 35, 40},
+        ytick={0, 2000, 4000, 6000, 8000, 10000},
+        scaled x ticks=false,  
+        scaled y ticks=false,
+        ymajorgrids=true, 
+        grid style=dashed,  
+        % ymin=-10,
+        % xmin=-5,
+        x tick label style={/pgf/number format/.cd, 1000 sep={}},
+        legend style={at={(0.39,0.98)},anchor=north west},
+    ]
 
-Todo! x = thread, y = runtime (absolute [strong scaling] or relative [strong scaling speedup])
+    \addplot[
+        color=blue,
+        mark=square,
+        mark repeat={10},
+        mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (1, 10549.44102935)
+            (2, 5571.0913138000005)
+            (3, 3828.3011744)
+            (4, 2959.53039775)
+            (5, 2453.5616619)
+            (6, 2086.83681485)
+            (7, 1872.2937152)
+            (8, 1776.9810624000002)
+            (9, 2842.05725815)
+            (10, 2579.0881229)
+            (11, 2237.2077405)
+            (12, 2098.12427635)
+            (13, 1945.8673943499998)
+            (14, 1834.7854885)
+            (15, 1737.7995877)
+            (16, 1635.72036285)
+            (17, 1548.6944922)
+            (18, 1484.56652175)
+            (19, 1410.4665424000002)
+            (20, 1378.5975749000002)
+            (21, 2886.65640485)
+            (22, 2820.35793615)
+            (23, 2570.67194405)
+            (24, 2418.262331)
+            (25, 2386.08754575)
+            (26, 2306.1179389)
+            (27, 2212.4575794499997)
+            (28, 2085.6263195)
+            (29, 1841.7964625999998)
+            (30, 1776.5723484)
+            (31, 1657.9944204)
+            (32, 1630.8799666500001)
+            (33, 1597.1685227)
+            (34, 1561.5688749)
+            (35, 1558.91068575)
+            (36, 1581.21849395)
+            (37, 1628.8673056)
+            (38, 1715.87312205)
+            (39, 1765.7758779)
+            (40, 1790.1709173)
+        };
+
+    \addplot[
+        color=Bittersweet,
+        mark=triangle,
+        mark repeat={10},
+        mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (1, 9658.2842576)
+            (2, 4928.910334)
+            (3, 3444.8674518000003)
+            (4, 2587.9484446)
+            (5, 2123.67822905)
+            (6, 1860.88941835)
+            (7, 1599.865377)
+            (8, 1449.7257015)
+            (9, 1346.69641615)
+            (10, 1280.6119758)
+            (11, 1219.16149855)
+            (12, 1134.953047)
+            (13, 1137.1112062)
+            (14, 1124.4028151500002)
+            (15, 1138.0777120999999)
+            (16, 1138.08137515)
+            (17, 1124.48505445)
+            (18, 1124.25393865)
+            (19, 1131.8717731)
+            (20, 1134.6383659)
+            (21, 1142.52283475)
+            (22, 1149.5561255)
+            (23, 1153.69549885)
+            (24, 1171.25854415)
+            (25, 1176.3205187)
+            (26, 1184.5056304500001)
+            (27, 1184.9608248499999)
+            (28, 1202.0229382999999)
+            (29, 1205.6641779000001)
+            (30, 1207.92434495)
+            (31, 1230.0749434000002)
+            (32, 1227.61008325)
+            (33, 1237.89594195)
+            (34, 1251.675005)
+            (35, 1264.6783749)
+            (36, 1273.0318458499999)
+            (37, 1251.2744953499998)
+            (38, 1243.1092524)
+            (39, 1260.36524855)
+            (40, 1253.9120003)
+        };
+
+    \legend{C++ [DirectSum-Parallel], Rust [DirectSum-Parallel]}
+    \end{axis}
+\end{tikzpicture}
+\caption{Absolute strong scaling Rust and C++ performance on a ``two bodies collision'' input dataset, with 500 simulation steps executed with the parallel DirectSum implementation.}
+\label{fig:benchmark-parallel}
+\end{figure}
+
+% Todo! x = thread, y = runtime (absolute [strong scaling] or relative [strong scaling speedup])
+
+The thread count was set with environment variables \texttt{RAYON\_NUM\_THREADS} and \texttt{OMP\_NUM\_THREADS}.
 
 \chapter{Conclusion}
 
