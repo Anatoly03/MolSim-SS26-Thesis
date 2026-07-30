@@ -37,7 +37,7 @@ pub fn TIME_STEPS(_limit: usize, _step: usize) -> Vec<usize> {
 /// every `10` timesteps and was previously set to `50` for CI. With the `full`
 /// feature it is extended to use the argument and generate a custom range which
 /// steps every 10 units.
-#[cfg(not(all(feature = "quick", feature = "full")))]
+#[cfg(all(not(feature = "quick"), not(feature = "full")))]
 #[allow(non_snake_case)]
 pub fn TIME_STEPS(_limit: usize, _step: usize) -> Vec<usize> {
     return vec![1, 20, 50];
