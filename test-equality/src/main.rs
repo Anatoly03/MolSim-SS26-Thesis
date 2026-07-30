@@ -232,8 +232,14 @@ fn main() {
         }
     
         // This benchmark measures DirectSum (Parallel).
+        #[cfg(feature = "twice-thread-cap")]
+        let thread_count_cap = (THREAD_COUNT * 2) + 1;
+
+        #[cfg(not(feature = "twice-thread-cap"))]
+        let thread_count_cap = THREAD_COUNT + 1;
+
         #[cfg(any(feature = "full", feature = "extended"))]
-        for thread_count in (1 .. (THREAD_COUNT + 1)).rev() {
+        for thread_count in (1 .. thread_count_cap).rev() {
             set_thread_count(&mut log, thread_count);
     
             #[cfg(feature = "extended")]

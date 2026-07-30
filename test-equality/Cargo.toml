@@ -12,6 +12,7 @@ extended = ["full"]
 quick = []
 rust = []
 cpp = []
+twice-thread-cap = []
 
 # algorithms
 direct-sum = []
