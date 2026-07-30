@@ -27,7 +27,17 @@ pub const REPETITIONS: usize = 20;
 /// every `10` timesteps and was previously set to `50` for CI. With the `full`
 /// feature it is extended to use the argument and generate a custom range which
 /// steps every 10 units.
-#[cfg(not(feature = "full"))]
+#[cfg(feature = "quick")]
+#[allow(non_snake_case)]
+pub fn TIME_STEPS(_limit: usize, _step: usize) -> Vec<usize> {
+    return vec![250];
+}
+
+/// Maximal amount of ticks (repetitions) to run a program for benching. It steps
+/// every `10` timesteps and was previously set to `50` for CI. With the `full`
+/// feature it is extended to use the argument and generate a custom range which
+/// steps every 10 units.
+#[cfg(not(all(feature = "quick", feature = "full")))]
 #[allow(non_snake_case)]
 pub fn TIME_STEPS(_limit: usize, _step: usize) -> Vec<usize> {
     return vec![1, 20, 50];
@@ -37,7 +47,7 @@ pub fn TIME_STEPS(_limit: usize, _step: usize) -> Vec<usize> {
 /// every `10` timesteps and was previously set to `50` for CI. With the `full`
 /// feature it is extended to make sure the Two Bodies Collision occurs for linked
 /// cells.
-#[cfg(feature = "full")]
+#[cfg(all(not(feature = "quick"), feature = "full"))]
 #[allow(non_snake_case)]
 pub fn TIME_STEPS(limit: usize, step: usize) -> Vec<usize> {
     use std::ops::Range;
@@ -105,6 +115,9 @@ pub fn set_thread_count(log: &mut Logger, count: usize) {
 fn main() {
     let log_file = LOG_FILE();
     let mut log: Logger = log_file.into();
+
+    #[cfg(all(feature = "extended", feature = "quick"))]
+    panic!("Features `extended` and `quick` not compatible.");
 
     // Print commit id and runner command.
     let header_line = {
@@ -177,10 +190,13 @@ fn main() {
 
     #[cfg(feature = "direct-sum")]
     {
-        // this benchmark measures I/O performance
-        cpp::run(&mut log, "two-bodies-collision-0001 [IO]", "two-bodies-collision-0001", 0.0007, 1);
-        rust::run(&mut log, "two-bodies-collision-0001 [IO]", "two-bodies-collision-0001", 0.0007, 1);
-        test::run(&mut log, "two-bodies-collision-0001", 1);
+        #[cfg(not(feature = "quick"))]
+        {
+            // this benchmark measures I/O performance
+            cpp::run(&mut log, "two-bodies-collision-0001 [IO]", "two-bodies-collision-0001", 0.0007, 1);
+            rust::run(&mut log, "two-bodies-collision-0001 [IO]", "two-bodies-collision-0001", 0.0007, 1);
+            test::run(&mut log, "two-bodies-collision-0001", 1);
+        }
     
         // This benchmark measures DirectSum (Sequential).
         for frames in TIME_STEPS(500, 10) {
@@ -191,10 +207,13 @@ fn main() {
 
     #[cfg(feature = "linked-cells")]
     {
-        // this benchmark measures I/O performance
-        cpp::run(&mut log, "two-bodies-collision-0001-linked-cells [IO]", "two-bodies-collision-0001-linked-cells", 0.0007, 1);
-        rust::run(&mut log, "two-bodies-collision-0001-linked-cells [IO]", "two-bodies-collision-0001-linked-cells", 0.0007, 1);
-        test::run(&mut log, "two-bodies-collision-0001-linked-cells", 1);
+        #[cfg(not(feature = "quick"))]
+        {
+            // this benchmark measures I/O performance
+            cpp::run(&mut log, "two-bodies-collision-0001-linked-cells [IO]", "two-bodies-collision-0001-linked-cells", 0.0007, 1);
+            rust::run(&mut log, "two-bodies-collision-0001-linked-cells [IO]", "two-bodies-collision-0001-linked-cells", 0.0007, 1);
+            test::run(&mut log, "two-bodies-collision-0001-linked-cells", 1);
+        }
     
         // This benchmark measures LinkedCells (Sequential).
         for frames in TIME_STEPS(500, 10) {
@@ -205,9 +224,12 @@ fn main() {
 
     #[cfg(feature = "direct-sum-parallel")]
     {
-        // this benchmark measures I/O performance
-        cpp::run(&mut log, "two-bodies-collision-0001-parallel [IO]", "two-bodies-collision-0001-parallel", 0.0007, 1);
-        rust::run(&mut log, "two-bodies-collision-0001-parallel [IO]", "two-bodies-collision-0001-parallel", 0.0007, 1);
+        #[cfg(not(feature = "quick"))]
+        {
+            // this benchmark measures I/O performance
+            cpp::run(&mut log, "two-bodies-collision-0001-parallel [IO]", "two-bodies-collision-0001-parallel", 0.0007, 1);
+            rust::run(&mut log, "two-bodies-collision-0001-parallel [IO]", "two-bodies-collision-0001-parallel", 0.0007, 1);
+        }
     
         // This benchmark measures DirectSum (Parallel).
         #[cfg(any(feature = "full", feature = "extended"))]

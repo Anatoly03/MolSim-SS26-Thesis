@@ -9,6 +9,7 @@ default = ["direct-sum", "linked-cells", "direct-sum-parallel"]
 print = ["chrono"]
 full = []
 extended = ["full"]
+quick = []
 
 # algorithms
 direct-sum = []
