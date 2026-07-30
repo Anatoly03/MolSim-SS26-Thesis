@@ -8,6 +8,9 @@ use std::process::{Command, Stdio};
 /// make -C target/cpp -j4 --no-print-directory
 /// ```
 pub fn build(log: &mut Logger) {
+    #[cfg(not(feature = "cpp"))]
+    return;
+
     log.success("Compiling", "target-cpp");
 
     let cmake_status = Command::new("cmake")
@@ -93,12 +96,18 @@ fn internal(log: &mut Logger, name: &str, delta: f64, frames: usize, write_outpu
 
 /// Runs C++
 pub fn run(log: &mut Logger, name: &str, file_name: &str, delta: f64, frames: usize) {
+    #[cfg(not(feature = "cpp"))]
+    return;
+
     log.header(format!("{name} (cpp, {frames} steps)"));
     internal(log, file_name, delta, frames, true, 1);
 }
 
 /// Runs C++
 pub fn bench(log: &mut Logger, name: &str, file_name: &str, delta: f64, frames: usize) {
+    #[cfg(not(feature = "cpp"))]
+    return;
+
     log.header(format!("{name} (cpp, {frames} steps)"));
     internal(log, file_name, delta, frames, false, crate::REPETITIONS);
 }

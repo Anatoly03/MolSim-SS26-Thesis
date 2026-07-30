@@ -3,6 +3,9 @@ use std::process::{Command, Stdio};
 
 /// Builds Rust
 pub fn build(log: &mut Logger) {
+    #[cfg(not(feature = "rust"))]
+    return;
+
     log.success("Compiling", "target-rs");
 
     let _cargo_status = Command::new("cargo")
@@ -69,12 +72,18 @@ pub fn internal(log: &mut Logger, name: &str, delta: f64, frames: usize, write_o
 
 /// Runs C++
 pub fn run(log: &mut Logger, name: &str, file_name: &str, delta: f64, frames: usize) {
+    #[cfg(not(feature = "rust"))]
+    return;
+
     log.header(format!("{name} (rust, {frames} steps)"));
     internal(log, file_name, delta, frames, true, 1);
 }
 
 /// Runs C++
 pub fn bench(log: &mut Logger, name: &str, file_name: &str, delta: f64, frames: usize) {
+    #[cfg(not(feature = "rust"))]
+    return;
+
     log.header(format!("{name} (rust, {frames} steps)"));
     internal(log, file_name, delta, frames, false, crate::REPETITIONS);
 }

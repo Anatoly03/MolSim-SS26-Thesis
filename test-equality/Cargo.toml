@@ -5,11 +5,13 @@ publish = false
 edition = "2024"
 
 [features]
-default = ["direct-sum", "linked-cells", "direct-sum-parallel"]
+default = ["rust", "cpp", "direct-sum", "linked-cells", "direct-sum-parallel"]
 print = ["chrono"]
 full = []
 extended = ["full"]
 quick = []
+rust = []
+cpp = []
 
 # algorithms
 direct-sum = []
