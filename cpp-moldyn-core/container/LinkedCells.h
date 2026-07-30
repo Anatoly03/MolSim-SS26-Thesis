@@ -5,10 +5,11 @@
 #pragma once
 
 #include <iterator>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <type_traits>
 #include <cmath>
+#include <functional>
 
 #include "Particle.h"
 #include "ParticleContainer.h"
@@ -35,7 +36,7 @@ private:
     /**
      * @brief Hashmap of cell chunks
      */
-    std::map<Vec3<int>, ParticleContainerT> particle_containers_chunk;
+    std::unordered_map<Vec3<int>, ParticleContainerT> particle_containers_chunk;
 
 public:
     /**
@@ -231,7 +232,7 @@ public:
 
     void on_after_position_update() override
     {
-        std::map<Vec3<int>, ParticleContainerT> new_chunks;
+        std::unordered_map<Vec3<int>, ParticleContainerT> new_chunks;
         for (const auto &chunk : particle_containers_chunk)
         {
             chunk.second.for_each_particles([&](const Particle &p) {

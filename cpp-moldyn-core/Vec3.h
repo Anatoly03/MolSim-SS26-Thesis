@@ -166,8 +166,10 @@ public:
      */
     inline constexpr bool operator<(const Vec3 &other) const
     {
-        if (x != other.x) return x < other.x;
-        if (y != other.y) return y < other.y;
+        if (x != other.x)
+            return x < other.x;
+        if (y != other.y)
+            return y < other.y;
         return z < other.z;
     }
 
@@ -239,3 +241,21 @@ inline std::ostream &operator<<(std::ostream &os, const Vec3<T> &vec)
     os << "[" << vec.x << ", " << vec.y << ", " << vec.z << "]";
     return os;
 }
+
+// https://stackoverflow.com/questions/17016175/c-unordered-map-using-a-custom-class-type-as-the-key
+template <typename K>
+struct std::hash<Vec3<K>>
+{
+    std::size_t operator()(const Vec3<K> &k) const
+    {
+        using std::hash;
+        using std::size_t;
+        using std::string;
+
+        // Compute individual hash values for first,
+        // second and third and combine them using XOR
+        // and bit shifting:
+
+        return ((hash<K>()(k.x) ^ (hash<K>()(k.y) << 1)) >> 1) ^ (hash<K>()(k.z) << 1);
+    }
+};
