@@ -14,9 +14,10 @@ rust = []
 cpp = []
 twice-thread-cap = []
 
-# algorithms
+# algorithms & "big" bench suits
 direct-sum = []
 linked-cells = []
+linked-cells-collision-point = []
 direct-sum-parallel = []
 
 [dependencies]

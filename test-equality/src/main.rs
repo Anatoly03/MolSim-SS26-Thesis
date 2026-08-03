@@ -14,14 +14,21 @@ use lscpu::Cpu;
 /// Amount of times (repetitions) to run a program for benching. It has been set
 /// to `5` previously for Github CI and is set to `20` on the `full` feature for
 /// better averaged data.
-#[cfg(not(feature = "full"))]
+#[cfg(feature = "quick")]
 pub const REPETITIONS: usize = 5;
 
 /// Amount of times (repetitions) to run a program for benching. It has been set
 /// to `5` previously for Github CI and is set to `20` on the `full` feature for
 /// better averaged data.
-#[cfg(feature = "full")]
+#[cfg(not(feature = "quick"))]
 pub const REPETITIONS: usize = 20;
+
+// warn simple errors
+#[cfg(all(feature = "quick", feature = "full"))]
+compile_error!("the features `quick` and `full` are mutually exclusive [hint: `extended` enables `full`]");
+
+#[cfg(not(any(feature = "rust", feature = "cpp")))]
+compile_error!("at least either of features `rust` or `cpp` have to be set");
 
 /// Maximal amount of ticks (repetitions) to run a program for benching. It steps
 /// every `10` timesteps and was previously set to `50` for CI. With the `full`
@@ -30,24 +37,14 @@ pub const REPETITIONS: usize = 20;
 #[cfg(feature = "quick")]
 #[allow(non_snake_case)]
 pub fn TIME_STEPS(_limit: usize, _step: usize) -> Vec<usize> {
-    return vec![250];
-}
-
-/// Maximal amount of ticks (repetitions) to run a program for benching. It steps
-/// every `10` timesteps and was previously set to `50` for CI. With the `full`
-/// feature it is extended to use the argument and generate a custom range which
-/// steps every 10 units.
-#[cfg(all(not(feature = "quick"), not(feature = "full")))]
-#[allow(non_snake_case)]
-pub fn TIME_STEPS(_limit: usize, _step: usize) -> Vec<usize> {
-    return vec![1, 20, 50];
+    return vec![1, 20, 50, 250];
 }
 
 /// Maximal amount of ticks (repetitions) to run a program for benching. It steps
 /// every `10` timesteps and was previously set to `50` for CI. With the `full`
 /// feature it is extended to make sure the Two Bodies Collision occurs for linked
 /// cells.
-#[cfg(all(not(feature = "quick"), feature = "full"))]
+#[cfg(not(feature = "quick"))]
 #[allow(non_snake_case)]
 pub fn TIME_STEPS(limit: usize, step: usize) -> Vec<usize> {
     use std::ops::Range;
@@ -210,15 +207,27 @@ fn main() {
         #[cfg(not(feature = "quick"))]
         {
             // this benchmark measures I/O performance
-            cpp::run(&mut log, "two-bodies-collision-0001-linked-cells [IO]", "two-bodies-collision-0001-linked-cells", 0.0007, 1);
-            rust::run(&mut log, "two-bodies-collision-0001-linked-cells [IO]", "two-bodies-collision-0001-linked-cells", 0.0007, 1);
+            cpp::run(&mut log, "two-bodies-collision-0001-linked-cells [IO]", "two-bodies-collision-0001-linked-cells", 0.007, 1);
+            rust::run(&mut log, "two-bodies-collision-0001-linked-cells [IO]", "two-bodies-collision-0001-linked-cells", 0.007, 1);
             test::run(&mut log, "two-bodies-collision-0001-linked-cells", 1);
         }
     
         // This benchmark measures LinkedCells (Sequential).
         for frames in TIME_STEPS(500, 10) {
-            cpp::bench(&mut log, &format!("two-bodies-collision [linked-cells]"), "two-bodies-collision-0001-linked-cells", 0.0007, frames);
-            rust::bench(&mut log, &format!("two-bodies-collision [linked-cells]"), "two-bodies-collision-0001-linked-cells", 0.0007, frames);
+            cpp::bench(&mut log, &format!("two-bodies-collision [linked-cells]"), "two-bodies-collision-0001-linked-cells", 0.007, frames);
+            rust::bench(&mut log, &format!("two-bodies-collision [linked-cells]"), "two-bodies-collision-0001-linked-cells", 0.007, frames);
+        }
+    }
+
+    #[cfg(feature = "linked-cells-collision-point")]
+    {
+        // With manual CLI tests I found a good combination of values:
+        // ./target/release/moldyn-cli input/two-bodies-collision-0001-linked-cells.yaml -d 0.0014 -t 10 -s10
+        // Collision starts at time step 700.
+
+        for frames in TIME_STEPS(1500, 20) {
+            cpp::bench(&mut log, &format!("two-bodies-collision [linked-cells; collision at=700]"), "two-bodies-collision-0001-linked-cells", 0.0014, frames);
+            rust::bench(&mut log, &format!("two-bodies-collision [linked-cells; collision at=700]"), "two-bodies-collision-0001-linked-cells", 0.0014, frames);
         }
     }
 
