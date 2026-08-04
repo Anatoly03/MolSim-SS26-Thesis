@@ -8,7 +8,7 @@ mod log;
 mod rust;
 mod test;
 
-use std::{format, fs::File, process::Command};
+use std::{format, fs::File, process::{Command, Stdio}};
 
 pub use log::Logger;
 use lscpu::Cpu;
@@ -29,8 +29,8 @@ pub const REPETITIONS: usize = 20;
 #[cfg(all(feature = "quick", feature = "full"))]
 compile_error!("the features `quick` and `full` are mutually exclusive [hint: `extended` enables `full`]");
 
-#[cfg(not(any(feature = "rust", feature = "cpp")))]
-compile_error!("at least either of features `rust` or `cpp` have to be set");
+// #[cfg(not(any(feature = "rust", feature = "cpp")))]
+// compile_error!("at least either of features `rust` or `cpp` have to be set");
 
 /// Maximal amount of ticks (repetitions) to run a program for benching. It steps
 /// every `10` timesteps and was previously set to `50` for CI. With the `full`
@@ -139,8 +139,21 @@ fn main() {
     let THREAD_COUNT = num_cpus::get();
 
     // lscpu
+    log.header(format!("lscpu [console]"));
+    let lscpu_output = Command::new("lscpu")
+        .stdout(Stdio::piped())
+        .output()
+        .expect("Failed to execute lscpu");
+    let lscpu_stdout = String::from_utf8(lscpu_output.stdout).unwrap();
+    let lscpu_lines = lscpu_stdout.lines().for_each(|line| {
+        let mut iter = line.split_inclusive(':');
+        let title = iter.next().unwrap_or("");
+        let body = iter.collect::<Vec<&str>>().join("");
+        log.info(title, body.trim());
+    });
+
     let cpu = Cpu::new();
-    log.header(format!("lscpu"));
+    log.header(format!("lscpu [rust crate]"));
     log.info("Architecture\t", &cpu.architecture);
     log.info("CPU op modes\t", &cpu.cpu_op_modes);
     log.info("Address sizes\t", &cpu.address_sizes);
