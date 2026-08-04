@@ -1382,7 +1382,7 @@ void runner(int type, void *data){
 \label{fig:benchmark-linked-cells-collision}
 \end{figure}
 
-For the \texttt{LinkedCells} benchmark, one could argue that ``since the benchmarks do not measure the collision point, the comparison is unfair'', because the amount of computation increases as the average particle density grows per cell. Figure~\ref{fig:benchmark-linked-cells-collision} adjusts the benchmarks to cover the collision point of the dataset. The evaluation is, that the collision has minimal performance impact and is neglectable for this comparison.
+For the \texttt{LinkedCells} benchmark, one could argue that ``since the benchmarks do not measure the collision point, the comparison to \texttt{DirectSum} is unfair, since the amount of computation increases as the average particle density grows per cell''. Figure~\ref{fig:benchmark-linked-cells-collision} adjusts the benchmarks to cover the collision point of the dataset. The evaluation is, that the collision has at most minimal performance impact and is neglectable for this comparison.
 
 % In~\ref{fig:benchmark-sequential} you can see all the sequential benchmarks in one graph.
 
