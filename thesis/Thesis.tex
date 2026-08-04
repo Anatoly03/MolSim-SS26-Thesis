@@ -204,7 +204,7 @@ My bestie Kasane Teto, who has not said a word but always morally supported me w
 % labels can be put almost anywhere and can be referencef from anywhere.
 \label{sec:intro}
 
-In 2025 the StackOverflow's developer survey has ranked Rust as the most admired programming language, holding the title consecutively for nine years\cite{stackoverflow-technology-admired-and-desired}.
+In 2025 the StackOverflow's developer survey has ranked Rust as the most admired programming language, holding the title consecutively for nine years\cite{stackoverflow-developer-survey}.
 
 % https://survey.stackoverflow.co/
 % https://survey.stackoverflow.co/2025/technology#admired-and-desired
@@ -283,7 +283,7 @@ In 2025 the StackOverflow's developer survey has ranked Rust as the most admired
 \label{fig:stackoverflow-most-admired}
 \end{figure}
 
-In 2020, the social platform Discord had already published several blogposts explaining that they are rewritting software components in Rust\cite{discord-moves-to-rust}. Their main reasoning behind this decision was mostly about reaching high performance demands, but also about Rusts' type system which contrary to functional programming languages allowed mutation.
+In 2020, the social platform Discord had already published several blogposts explaining that they are rewritting software components in Rust\cite{discord-moves-to-rust}. Their main reasoning behind this decision was explained to be mostly about reaching high performance demands but also went into detail about Rusts' type system.
 
 Specifically the blogpost mentions issuesses with the garbage collector of the Go Programming Language, which was rescanning the entire LRU cache for memory which can be freed, causing to latency spikes every 2 minutes.
 
@@ -325,19 +325,17 @@ It's noteworthy to mention that there's no equivalent to GDB in the Rust ecosyst
 
 % We will now look at the syntax of `Safe Rust'.
 
-\subsection{Syntax}
+% \subsection{Syntax}
 
-It's always better to see the syntax than get it explained, so in the figure below you can see an example.
+% It's always better to see the syntax than get it explained, so in the figure below you can see an example.
 
-Compared to C++, the main syntactical difference in Rust is that the type always follows the variable, attribute and function argument and not preceeds it. 
-
-TODO
+% Compared to C++, the main syntactical difference in Rust is that the type always follows the variable, attribute and function argument and not preceeds it. 
 
 \subsection{Structs and Traits}
 
-Structs in Rust are almost entirely equivalent to C++ structs. A struct is a type which defines a collection of fields. Unlike in C++ however, Rust has no concept of struct inheritance. Instead of abstract classes, Rust provides traits, which is an abstract interface that types can implement explicitly.
+Structs in Rust are almost entirely equivalent to C++ structs. A struct is a type which defines a collection of fields. Unlike in C++ however, Rust has no concept of struct inheritance. Instead of abstract classes, Rust provides traits\cite{rust-book-traits}, an abstract interface that types can implement explicitly. This introduces the concept of composability in Rust, giving one type the feature to express multiple traits.
 
-% \vspace{1.5em}
+\vspace{0.5em}
 % \setlength{\columnsep}{2em}
 % \begin{multicols}{2}
 % \begin{lstlisting}[style=eclipse-cpp, caption=An abstract class in C++, label=code:cpp-abstract-class]
@@ -349,24 +347,41 @@ Structs in Rust are almost entirely equivalent to C++ structs. A struct is a typ
 % \vfill\null
 % \columnbreak
 
-% \begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=A Trait definition in Rust, label=code:rust-trait]
-% pub trait Force {
-%     fn potential(&self, particle: &Particle, other: &Particle) -> f64;
-% }
-% \end{lstlisting}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=A Trait definition in Rust (Note: A comparison wether position difference is zero is omitted for code flow simplicity), label=code:rust-trait]
+pub trait Force {
+    fn potential(&self, particle: &Particle, other: &Particle)
+        -> f64;
 
-% \begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=An implementation of the Force trait in Rust, label=code:rust-trait-implement]
-% impl Force for NewtonForce {
-%     fn potential(&self, particle: &Particle, other: &Particle) -> f64 {
+    fn force(&self, particle: &Particle, other: &Particle) -> Vec3 {
+        let potential = self.potential(particle, other);
+        let diff = Particle::position_difference(other, particle);
+        -diff * (potential / diff.length2())
+    }
+}
+\end{lstlisting}
 
-%     }
-% }
-% \end{lstlisting}
+A trait is, more comparable to the concept in Java, an abstract interface, defining the interface name and a collection of methods. Some methods can have a default definition and thus do not need to be redefined. Traits are explicitly implemented for types with an implementation block.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=An implementation of the Force trait in Rust (Note: A comparison wether distance is zero is omitted for code flow simplicity), label=code:rust-trait-implement]
+impl Force for NewtonForce {
+    fn potential(&self, particle: &Particle, other: &Particle)
+    -> f64 {
+        let distance = Particle::distance(particle, other);
+        let mass_prod = Particle::mass_product(particle, other);
+        -self.factor * mass_prod / distance
+    }
+}
+\end{lstlisting}
 % \end{multicols}
 
-In C++ a class can only inherit from one `abstract class'. An abstract class is From a developer
+Similar to C++ operator overloads, Rust backes some operators by traits, providing similar syntactic sugar to overload certain operators.
 
-Todo!
+For example the infix notation of the $+$ operator can be defined with the trait \texttt{Add<Rhs>}, where the self type acts as left hand side and a generic type defines the type of the right hand side. This way string buffers can be concated over the same operator as integers are being summed over. In listing~\ref{code:rust-trait} we overload the $*$ operator to allow multiplication of the custom vector type implementation with a scalar.
+
+This `atomicity' of an implementation block is good for two reasons: Firstly, it allows for code readability, differentiating between ``type methods'' and ``trait implementation''. Secondly, this prevents a collision between traits using the same identifier for a method.
+
+As the second argument can cause some confusion with how Rust resolves the ambiguity with overlapping trait method names, appendix note~\ref{section:rust-trait-same-identifier} offers some clarification. However this is mostly irrelevant to the thesis and skipped here.
 
 \subsection{Ownership Model}
 
@@ -374,7 +389,9 @@ Todo!
 
 \subsection{Dynamic Dispatch}
 
-Both the C++ and Rust implementations use dynamic dispatch. 
+Both the C++ and Rust implementations use dynamic dispatch to convert a type into an interface at runtime. This is not a zero-cost abstraction, but allows for a fair comparison and code writing simplicity.
+
+For example, the types \texttt{NewtonForce} and \texttt{LennardJonesForce} both implement (or inherit for the C++ codebase) the \texttt{Force} trait. For the simulation run we convert both force implementations into a dynamic \texttt{Force} object. At the cost of losing any information on the underlying type, we get a force black box capable of yielding the potential and force values for any two particles.
 
 \subsection{Error Handling}
 
@@ -1229,6 +1246,37 @@ void runner(int type, void *data){
 
 \appendix
 \part{Appendix}
+
+\chapter{Rust Programming Language}
+
+\section{Rust Traits with Ambiguity}\label{section:rust-trait-same-identifier}
+
+This section aims to provide some understanding on how Rust determines which function is executed when a type implements multiple traits that share a common method identifier. Consider the following example.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small]
+struct FooBar;
+
+trait Foo {
+    fn foobar(&self) {
+        println!("Foo");
+    }
+}
+
+trait Bar {
+    fn foobar(&self) {
+        println!("Bar");
+    }
+}
+
+impl Foo for FooBar {};
+impl Bar for FooBar {};
+
+let x = FooBar;
+x.foobar();
+\end{lstlisting}
+
+The example above will not compile, as \texttt{foobar()} is ambiguous. The solution is to rewrite the last line into \texttt{Foo::fobar(x)} if we want to print `Foo'. By using the path notation, the ambiguity is resolved. Intuitively, this makes the method static with a clear, unique name. 
 
 \chapter{Benchmarks}
 
