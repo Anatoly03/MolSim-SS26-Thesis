@@ -1,6 +1,8 @@
 //! This runnable builds and tests the equality of the C++ and Rust implementations
 //! for arithmetic equality.
 
+#![allow(dead_code, unused)]
+
 mod cpp;
 mod log;
 mod rust;
@@ -225,7 +227,7 @@ fn main() {
         // ./target/release/moldyn-cli input/two-bodies-collision-0001-linked-cells.yaml -d 0.0014 -t 10 -s10
         // Collision starts at time step 700.
 
-        for frames in TIME_STEPS(1500, 20) {
+        for frames in TIME_STEPS(2000, 20) {
             cpp::bench(&mut log, &format!("two-bodies-collision [linked-cells; collision at=700]"), "two-bodies-collision-0001-linked-cells", 0.0014, frames);
             rust::bench(&mut log, &format!("two-bodies-collision [linked-cells; collision at=700]"), "two-bodies-collision-0001-linked-cells", 0.0014, frames);
         }
