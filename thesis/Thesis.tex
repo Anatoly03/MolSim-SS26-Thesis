@@ -19,6 +19,31 @@
 \usetikzlibrary{automata,positioning}
 \usepackage[dvipsnames]{xcolor}
 
+\lstdefinestyle{eclipse-rust} {
+    captionpos=b,
+    language=C++,
+    otherkeywords={final},
+    basicstyle=\footnotesize,
+    numbers=left,
+    numberstyle=\small,
+    showstringspaces=false,
+    tabsize=2,
+    frame=single,
+    breaklines=true,
+    keywordstyle=\bfseries\color[RGB]{127,0,85},
+    identifierstyle=\color[RGB]{0,0,192},
+    stringstyle=\color[RGB]{42,0,255},
+    commentstyle=\color[RGB]{63,127,95},
+}
+\lstdefinelanguage{Rust}{
+    sensitive=true,
+    morekeywords={as, break, const, continue, crate, else, enum, extern, false, fn, for, if, impl, in, let, loop, match, mod, move, mut, pub, ref, return, self, Self, static, struct, super, trait, true, type, unsafe, use, where, while, async, await, dyn, Result, Option, Ok, Err, panic},
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]",
+    morestring=[b]',
+}
+
 % -------------------------------------------------------------------------------
 % --------------------------------- Thesis Info ---------------------------------
 % -------------------------------------------------------------------------------
@@ -302,19 +327,54 @@ It's noteworthy to mention that there's no equivalent to GDB in the Rust ecosyst
 
 \subsection{Syntax}
 
-Todo!
+It's always better to see the syntax than get it explained, so in the figure below you can see an example.
+
+Compared to C++, the main syntactical difference in Rust is that the type always follows the variable, attribute and function argument and not preceeds it. 
+
+TODO
 
 \subsection{Structs and Traits}
 
 Structs in Rust are almost entirely equivalent to C++ structs. A struct is a type which defines a collection of fields. Unlike in C++ however, Rust has no concept of struct inheritance. Instead of abstract classes, Rust provides traits, which is an abstract interface that types can implement explicitly.
 
-In C++ a class can only inherit from one `abstract class'.
+% \vspace{1.5em}
+% \setlength{\columnsep}{2em}
+% \begin{multicols}{2}
+% \begin{lstlisting}[style=eclipse-cpp, caption=An abstract class in C++, label=code:cpp-abstract-class]
+% class Force {
+%     virtual double potential(const Particle &particle, const Particle &other) const;
+% }
+% \end{lstlisting}
+
+% \vfill\null
+% \columnbreak
+
+% \begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=A Trait definition in Rust, label=code:rust-trait]
+% pub trait Force {
+%     fn potential(&self, particle: &Particle, other: &Particle) -> f64;
+% }
+% \end{lstlisting}
+
+% \begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=An implementation of the Force trait in Rust, label=code:rust-trait-implement]
+% impl Force for NewtonForce {
+%     fn potential(&self, particle: &Particle, other: &Particle) -> f64 {
+
+%     }
+% }
+% \end{lstlisting}
+% \end{multicols}
+
+In C++ a class can only inherit from one `abstract class'. An abstract class is From a developer
 
 Todo!
 
 \subsection{Ownership Model}
 
 Todo!
+
+\subsection{Dynamic Dispatch}
+
+Both the C++ and Rust implementations use dynamic dispatch. 
 
 \subsection{Error Handling}
 
@@ -365,6 +425,8 @@ serde
 
 \chapter{Application with Molecular Dynamics}
 
+talk briefly about the physics
+
 \chapter{Methods and Implementation}
 
 talk about project infrastructure
@@ -397,7 +459,11 @@ talk about perf
 
 \chapter{Benchmarking}
 
-All following benchmarks are executed on a 64-bit 12th Gen Intel(R) Core(TM) i7-12700K. It has 12 cores and 20 logical CPU threads\cite{cpu-benchmark-intel-core-i7-12700k}.
+All following benchmarks are executed on a 64-bit 12th Gen Intel(R) Core(TM) i7-12700K. It has 12 cores and 20 logical CPU threads\cite{cpu-benchmark-intel-core-i7-12700k}, the particle dataset \texttt{two-bodies-collision} is used for benchmarking, which moves a $20 \times 20$ matrix of particles against a $100 \times 20$ wall of particles, creating a dataset of $2,400$ particles. The statistics below were measured as ``the average of 20 runs'' of the x-axis value.
+
+Despite being two-dimensional input, the computational complexity of the algorithms remains identical, with \texttt{DirectSum} iterating over all particle pairs and \texttt{LinkedCells} only over neighbouring cells. The measured performance should also not change much because it is dominated by loop structure, and adding the z-axis to \texttt{LinkedCells} is a minimal change in comparison.
+
+For interested readers we will provide some further benchmarks (including 3D benchmarks) in the Appendix but not cover it in this section.
 
 \section{Sequential}
 
@@ -664,7 +730,7 @@ All following benchmarks are executed on a 64-bit 12th Gen Intel(R) Core(TM) i7-
     \legend{C++ [DirectSum], Rust [DirectSum], C++ [LinkedCells], Rust [LinkedCells]}
     \end{axis}
 \end{tikzpicture}
-\caption{Rust and C++ raw performance on a ``two bodies collision'' input dataset, with average time of 20 runs mapped against amount of simulation ticks, 2,400 particles and a cell size of $5 \times 5 \times 5$ in the LinkedCells implementation.}
+\caption{Rust and C++ sequential performance on a ``two bodies collision'' input.}
 \label{fig:benchmark-sequential}
 \end{figure}
 
@@ -672,7 +738,7 @@ For the DirectSum implementation, when measuring sequential performance against 
 
 To ensure the credibility of the computed average, the fluctuations between minimal and maximal run duration have also been recorded.
 % The biggest relative outlier occured with Rust at 210 steps with a fluctuation of $20.9\%$.
-The biggest absolute outlier occured with Rust with the measurement at 310 steps with a fluctuation of $435.6$ms or $7.4\%$. Fluctuations can be perceived in the graph as small `bumps'. At 500 steps, the recorded fluctuation in measured performance for both Rust and C++ are below $0.4\%$.
+A massive absolute outlier occured with Rust at the 310 steps benchmark, with a measured fluctuation of $435.6$ms or $7.4\%$. Fluctuations can be perceived in the graph as small `bumps'. At 500 steps, the recorded fluctuation in measured performance for both Rust and C++ are below $0.4\%$.
 
 We can therefore derive the following claim in regards to the sequential performance ratio: Rust DirectSum completes in $86.6\%$ of the time taken by the C++ DirectSum implementation, with a speedup of $15.5\%$.
 
@@ -818,12 +884,11 @@ We can therefore derive the following claim in regards to the sequential perform
     \legend{C++ [LinkedCells], Rust [LinkedCells]}
     \end{axis}
 \end{tikzpicture}
-\caption{Only the LinkedCells implementation from~\ref{fig:benchmark-sequential}}
+\caption{Only the \texttt{LinkedCells} implementation from~\ref{fig:benchmark-sequential}}
 \label{fig:benchmark-linked-cells}
 \end{figure}
 
-\newpage
-In figure~\ref{fig:benchmark-linked-cells} we can see the performance of specifically the LinkedCells implementation. The first thing that can be noticed is that the fluctuations are ``more noticable''. This is because as the graph is downscaled roughly 10 times on the y axis, a fluctuation of even 1ms is perceived ten times stronger.
+In figure~\ref{fig:benchmark-linked-cells} we can see the performance of specifically the LinkedCells implementation. The first thing that can be noticed is that the fluctuations are ``more noticable''. This is because as the graph is downscaled roughly 10 times on the y axis compared to figure~\ref{fig:benchmark-sequential}, a fluctuation of even 1ms is perceived ten times stronger.
 
 We can derive the following further claims in regards to the sequential performance ratio: Rust LinkedCells completes in $78.6\%$ of the time taken by the C++ LinkedCells implementation, with a speedup of $27.2\%$.
 
@@ -973,13 +1038,11 @@ It's also noteworthy that above 20 threads, the the C++ implementation shows no 
 
 At 2 threads, Rust parallel DirectSum completes in $88.5\%$ of the time taken by the C++ parallel DirectSum implementation, with a speedup of $22.6\%$. At 8 threads, Rust parallel DirectSum completes in $81.6\%$ of the time taken by the C++ parallel DirectSum implementation, with a speedup of $13\%$.
 
-\chapter{Conclusion}
+\chapter{Discussion and Conclusion}
 
-conclude that rust is more usable, performs better, mention implementation bias (again)
+discuss that rust is more usable, performs better, mention implementation bias (again)
 
-\chapter{Discussion}
-
-discuss why you should not switch to rust (rewrite tech debt, team skills and language learning logistics)
+conclude that you should not always switch to rust (rewrite tech debt, team skills and language learning logistics)
 
 % template
 
@@ -1166,273 +1229,160 @@ void runner(int type, void *data){
 
 \appendix
 \part{Appendix}
+
 \chapter{Benchmarks}
 
-% \begin{figure}[h!]
-% \begin{tikzpicture}
-%     \begin{axis}[
-%         width=0.7\textwidth,  
-%         height=0.3\textheight,
-%         xlabel={Simulation Steps},
-%         ylabel={Average Time (ms)},
-%         xtick={0, 100, 200, 300, 400, 500},
-%         ytick={0, 2000, 4000, 6000, 8000, 10000},
-%         scaled x ticks=false,  
-%         scaled y ticks=false,
-%         ymajorgrids=true, 
-%         grid style=dashed,
-%         % ymin=-10,
-%         % xmin=-5,
-%         x tick label style={/pgf/number format/.cd, 1000 sep={}},
-%         legend style={at={(0.02,0.98)},anchor=north west},
-%     ]
+\section{Linked Cells around Collision Point}
 
-%     \addplot[
-%         color=blue,
-%         mark=square,
-%         mark repeat={10},
-%         mark phase={10},
-%         line width=1pt,
-%         ]
-%         coordinates {
-%             (10, 273.8165997)
-%             (20, 516.9802851000001)
-%             (30, 740.55466115)
-%             (40, 937.56702935)
-%             (50, 1155.55535655)
-%             (60, 1370.89085105)
-%             (70, 1590.08775205)
-%             (80, 1804.2172272999999)
-%             (90, 2025.46045965)
-%             (100, 2216.8778125)
-%             (110, 2431.91059725)
-%             (120, 2647.86904725)
-%             (130, 2874.7884709)
-%             (140, 3081.6999533499998)
-%             (150, 3299.1595616)
-%             (160, 3517.76840055)
-%             (170, 3740.72414485)
-%             (180, 3987.1059080500004)
-%             (190, 4178.9094133)
-%             (200, 4394.18286335)
-%             (210, 4615.9988649)
-%             (220, 4830.2009383)
-%             (230, 5033.0900034)
-%             (240, 5259.07758855)
-%             (250, 5475.493254)
-%             (260, 5696.6816693)
-%             (270, 5900.11267575)
-%             (280, 6128.872172)
-%             (290, 6351.41395755)
-%             (300, 6575.61442405)
-%             (310, 6782.6294163)
-%             (320, 6997.100106100001)
-%             (330, 7214.3388998)
-%             (340, 7420.6009662)
-%             (350, 7642.31302525)
-%             (360, 7876.449799149999)
-%             (370, 8077.65604555)
-%             (380, 8293.26344745)
-%             (390, 8508.0315137)
-%             (400, 8734.0040768)
-%             (410, 8950.470459350001)
-%             (420, 9174.05059475)
-%             (430, 9384.57252745)
-%             (440, 9638.45208945)
-%             (450, 9848.6973095)
-%             (460, 10044.4907458)
-%             (470, 10293.8542321)
-%             (480, 10476.38084845)
-%             (490, 10701.7011691)
-%             (500, 10917.5842851)
-%         };
+\begin{figure}[h]
+\begin{tikzpicture}
+    \begin{axis}[
+        width=0.7\textwidth,  
+        height=0.3\textheight,
+        xlabel={Simulation Steps},
+        ylabel={Average Time (ms)},
+        xtick={0, 200, 400, 600, 800, 1000},
+        ytick={0, 500, 1000, 1500, 2000},
+        scaled x ticks=false,  
+        scaled y ticks=false,
+        ymajorgrids=true, 
+        grid style=dashed,
+        % ymin=-10,
+        % xmin=-5,
+        x tick label style={/pgf/number format/.cd, 1000 sep={}},
+        legend style={at={(0.02,0.98)},anchor=north west},
+    ]
 
-%     \addplot[
-%         color=Bittersweet,
-%         mark=triangle,
-%         mark repeat={10},
-%         mark phase={10},
-%         line width=1pt,
-%         ]
-%         coordinates {
-%             (10, 206.09075190000001)
-%             (20, 420.86882985)
-%             (30, 609.5883635499999)
-%             (40, 784.47083405)
-%             (50, 972.9397255499999)
-%             (60, 1160.30990525)
-%             (70, 1350.95556955)
-%             (80, 1539.5883787)
-%             (90, 1729.51311195)
-%             (100, 1901.3169879000002)
-%             (110, 2087.1569292)
-%             (120, 2278.9023803)
-%             (130, 2468.1327925)
-%             (140, 2652.2499233000003)
-%             (150, 2840.19161545)
-%             (160, 3024.94122365)
-%             (170, 3213.6127385)
-%             (180, 3406.8531513000003)
-%             (190, 3597.93581975)
-%             (200, 3786.7982349)
-%             (210, 4033.17009595)
-%             (220, 4191.15093275)
-%             (230, 4338.96322725)
-%             (240, 4536.2946618000005)
-%             (250, 4720.02117385)
-%             (260, 4911.74336795)
-%             (270, 5100.7897686999995)
-%             (280, 5281.31964145)
-%             (290, 5475.7793846)
-%             (300, 5669.91193965)
-%             (310, 5901.7394782)
-%             (320, 6039.34020995)
-%             (330, 6228.61913715)
-%             (340, 6407.84774325)
-%             (350, 6613.3648029)
-%             (360, 6791.39326845)
-%             (370, 6978.2380791000005)
-%             (380, 7175.9149278)
-%             (390, 7354.5108424499995)
-%             (400, 7551.263935399999)
-%             (410, 7733.4011731499995)
-%             (420, 7924.4063864)
-%             (430, 8122.7348954)
-%             (440, 8329.46436305)
-%             (450, 8498.965259300001)
-%             (460, 8693.306484)
-%             (470, 8885.7254749)
-%             (480, 9067.0104245)
-%             (490, 9255.374591950002)
-%             (500, 9456.65880155)
-%         };
+    \addplot[
+        color=cyan,
+        mark=square,
+        mark repeat={10},
+        mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (20, 99.119009)
+            (40, 140.531918)
+            (60, 184.58233455)
+            (80, 228.49639375)
+            (100, 269.28753525)
+            (120, 308.7818544)
+            (140, 352.43462869999996)
+            (160, 396.79394325)
+            (180, 441.42523989999995)
+            (200, 487.95777115)
+            (220, 532.38994905)
+            (240, 577.5590016)
+            (260, 623.67876255)
+            (280, 666.7369295499999)
+            (300, 712.8155602999999)
+            (320, 758.6055127999999)
+            (340, 801.56180465)
+            (360, 843.8945358)
+            (380, 888.54841925)
+            (400, 932.4887205499999)
+            (420, 978.2709071)
+            (440, 1025.39740575)
+            (460, 1071.20015075)
+            (480, 1117.77913605)
+            (500, 1170.0825066)
+            (520, 1207.7454967)
+            (540, 1251.5140302)
+            (560, 1298.772026)
+            (580, 1345.8775511)
+            (600, 1390.9521528)
+            (620, 1438.95170025)
+            (640, 1483.1670534500001)
+            (660, 1529.5628881500002)
+            (680, 1574.4950344000001)
+            (700, 1623.4481781)
+            (720, 1670.0522529500001)
+            (740, 1718.26120485)
+            (760, 1766.7172816500001)
+            (780, 1812.23831475)
+            (800, 1862.0009033)
+            (820, 1910.21174955)
+            (840, 1956.62661645)
+            (860, 2007.2522182999999)
+            (880, 2059.2538622)
+            (900, 2106.2267874)
+            (920, 2159.3411828499998)
+            (940, 2214.8769156500002)
+            (960, 2261.50176865)
+            (980, 2310.0084745500003)
+            (1000, 2362.20885275)
+        };
 
-%     \addplot[
-%         color=cyan,
-%         mark=square,
-%         mark repeat={10},
-%         mark phase={10},
-%         line width=1pt,
-%         ]
-%         coordinates {
-%             (10, 76.26055095000001)
-%             (20, 102.3570517)
-%             (30, 126.15546025)
-%             (40, 150.73419635)
-%             (50, 171.86932545)
-%             (60, 194.9052681)
-%             (70, 217.32918315)
-%             (80, 240.72866165)
-%             (90, 264.1395242)
-%             (100, 283.82979639999996)
-%             (110, 302.15426410000003)
-%             (120, 325.1116435)
-%             (130, 347.19890335)
-%             (140, 371.09032525)
-%             (150, 393.37061239999997)
-%             (160, 415.78822295)
-%             (170, 438.35920745)
-%             (180, 461.35811044999997)
-%             (190, 483.84490845)
-%             (200, 506.37097535000004)
-%             (210, 530.63645265)
-%             (220, 552.5082559)
-%             (230, 578.7646844)
-%             (240, 598.89850935)
-%             (250, 621.8504313999999)
-%             (260, 657.0936312)
-%             (270, 681.71063875)
-%             (280, 705.8262473999999)
-%             (290, 716.3537181)
-%             (300, 738.12240815)
-%             (310, 770.5525072)
-%             (320, 804.55619615)
-%             (330, 828.027705)
-%             (340, 839.81356105)
-%             (350, 856.77096235)
-%             (360, 882.4570060499999)
-%             (370, 905.5359196)
-%             (380, 927.65757165)
-%             (390, 951.45767655)
-%             (400, 975.15009975)
-%             (410, 999.7044121)
-%             (420, 1021.50160765)
-%             (430, 1046.57943865)
-%             (440, 1072.64734005)
-%             (450, 1095.9440304000002)
-%             (460, 1117.8636003)
-%             (470, 1142.9312547)
-%             (480, 1167.7876568499998)
-%             (490, 1190.2549084000002)
-%             (500, 1214.69906305)
-%         };
+    \addplot[
+        color=Dandelion,
+        mark=triangle,
+        mark repeat={10},
+        mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (20, 46.70311715)
+            (40, 80.33549205)
+            (60, 115.71074920000001)
+            (80, 149.2197213)
+            (100, 178.729326)
+            (120, 213.6933109)
+            (140, 248.000696)
+            (160, 283.02638635)
+            (180, 319.3487282)
+            (200, 356.307628)
+            (220, 388.17323115)
+            (240, 423.3177513)
+            (260, 457.4581005)
+            (280, 494.56400714999995)
+            (300, 530.4369423)
+            (320, 566.3463011499999)
+            (340, 600.0414737000001)
+            (360, 634.9091482)
+            (380, 669.3341351)
+            (400, 705.59002025)
+            (420, 740.3113601499999)
+            (440, 778.1187172)
+            (460, 813.8612598)
+            (480, 849.2487981)
+            (500, 884.7988854)
+            (520, 920.9416008)
+            (540, 957.7384191)
+            (560, 994.6082244500001)
+            (580, 1029.71114285)
+            (600, 1067.28240855)
+            (620, 1104.7540735999999)
+            (640, 1139.8662398)
+            (660, 1177.78663655)
+            (680, 1214.9823722)
+            (700, 1252.28492975)
+            (720, 1291.3413099000002)
+            (740, 1331.2161291500001)
+            (760, 1370.7635148499999)
+            (780, 1411.1328792000002)
+            (800, 1448.1911933499998)
+            (820, 1493.88125795)
+            (840, 1534.39562595)
+            (860, 1570.29367525)
+            (880, 1611.9905621500002)
+            (900, 1650.4752088)
+            (920, 1693.6394815)
+            (940, 1732.38575865)
+            (960, 1773.7628410999998)
+            (980, 1814.6220623499999)
+            (1000, 1857.6814230999998)
+        };
 
-%     \addplot[
-%         color=Dandelion,
-%         mark=triangle,
-%         mark repeat={10},
-%         mark phase={10},
-%         line width=1pt,
-%         ]
-%         coordinates {
-%             (10, 28.013442050000002)
-%             (20, 48.023687100000004)
-%             (30, 65.20919214999999)
-%             (40, 81.64149454999999)
-%             (50, 98.8272592)
-%             (60, 114.3483536)
-%             (70, 132.27922695)
-%             (80, 149.11345219999998)
-%             (90, 166.00965965)
-%             (100, 178.76147815000002)
-%             (110, 194.35375275)
-%             (120, 211.73683935)
-%             (130, 228.51652615)
-%             (140, 245.5042519)
-%             (150, 261.61059385)
-%             (160, 279.19483825)
-%             (170, 295.67724695)
-%             (180, 313.23755255000003)
-%             (190, 330.21416165)
-%             (200, 346.37079935)
-%             (210, 362.80136555)
-%             (220, 380.05870830000003)
-%             (230, 411.41355265)
-%             (240, 414.25709345)
-%             (250, 435.87884994999996)
-%             (260, 458.97159545)
-%             (270, 476.02770625)
-%             (280, 493.43407035)
-%             (290, 502.29934195)
-%             (300, 520.41695385)
-%             (310, 554.5337899)
-%             (320, 565.9049047000001)
-%             (330, 583.9541938)
-%             (340, 589.600479)
-%             (350, 608.392485)
-%             (360, 625.04884805)
-%             (370, 643.18865175)
-%             (380, 659.46755515)
-%             (390, 677.32664225)
-%             (400, 695.7386448999999)
-%             (410, 712.75113485)
-%             (420, 730.49943815)
-%             (430, 747.7464812999999)
-%             (440, 766.51917615)
-%             (450, 783.7218594)
-%             (460, 801.9372038500001)
-%             (470, 818.69841815)
-%             (480, 837.5274133500001)
-%             (490, 854.6188709500001)
-%             (500, 871.80830505)
-%         };
+    \draw[dashed, red, line width=0.5pt] (axis cs:700,0) -- (axis cs:700,10000);
 
-%     \legend{C++ [DirectSum], Rust [DirectSum], C++ [LinkedCells], Rust [LinkedCells]}
-%     \end{axis}
-% \end{tikzpicture}
-% \caption{Rust and C++ raw performance on a ``two bodies collision'' input dataset, with average time of 20 runs mapped against amount of simulation ticks, 2,400 particles and a cell size of $5 \times 5 \times 5$ in the LinkedCells implementation.}
-% \label{fig:benchmark-sequential}
-% \end{figure}
+    \legend{C++ [LinkedCells], Rust [LinkedCells]}
+    \end{axis}
+\end{tikzpicture}
+\caption{The \texttt{LinkedCells} benchmark run to analyze performance impact at collision point of two bodies. To accelerate the duration of benchmarking, the delta time step was set to $\Delta t = 0.0014$, making the collision start at time step $t_c = 700$ (visualized in the graph as a vertical bar).}
+\label{fig:benchmark-linked-cells-collision}
+\end{figure}
+
+For the \texttt{LinkedCells} benchmark, one could argue that ``since the benchmarks do not measure the collision point, the comparison is unfair'', because the amount of computation increases as the average particle density grows per cell. Figure~\ref{fig:benchmark-linked-cells-collision} adjusts the benchmarks to cover the collision point of the dataset. The evaluation is, that the collision has minimal performance impact and is neglectable for this comparison.
 
 % In~\ref{fig:benchmark-sequential} you can see all the sequential benchmarks in one graph.
 
