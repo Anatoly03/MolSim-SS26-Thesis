@@ -391,7 +391,7 @@ Todo!
 
 Both the C++ and Rust implementations use dynamic dispatch to convert a type into an interface at runtime. This is not a zero-cost abstraction, but allows for a fair comparison and code writing simplicity.
 
-For example, the types \texttt{NewtonForce} and \texttt{LennardJonesForce} both implement (or inherit for the C++ codebase) the \texttt{Force} trait. For the simulation run we convert both force implementations into a dynamic \texttt{Force} object. At the cost of losing any information on the underlying type, we get a force black box capable of yielding the potential and force values for any two particles.
+For example, the types \texttt{NewtonForce} and \texttt{LennardJonesForce} both implement (or inherit for the C++ codebase) the \texttt{Force} trait. For the simulation run we convert both force implementations into a dynamic \texttt{Force} object. At the cost of losing all information on the underlying type, we get a black box of a model, capable of yielding the potential and force interaction for any two particles.
 
 \subsection{Error Handling}
 
@@ -426,19 +426,43 @@ mention how rusts' compiler error messages differ from C++
 
 \section{Major Dependencies in Rust}
 
-Below are two creditworthy libraries which are utilized in the project and severely improve the programming workflow. They utilize procedural macros to generate code from a struct.
+Below are few creditworthy libraries which are utilized in the Rust project and severely improve the programming workflow. They utilize procedural macros to generate code from a struct.
 
 \subsection{Clap}
 
-clap
+Clap is used in the program frame, it provides a macro capable of parsing a struct and generating the command line parser, mapping console input to values in the struct. This helps keep the code quality much cleaner and removes the need of \texttt{getopt}'s seemingly magic syntax. The command line parser is generate with \texttt{\#[derive(Parser)]}
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=An example of using clap in Rust, label=code:rust-clap]
+/// The comment will be visible with --help
+#[derive(Parser)]
+struct Args {
+    /// Positional argument.
+    input: PathBuf,
+
+    /// Non-positional argument.
+    #[arg(short, long, default_value = "output/out.vtk")]
+    output: PathBuf,
+
+    /// Simulation time step.
+    #[arg(short, long)]
+    delta_time: Option<f64>,
+}
+\end{lstlisting}
+
+The above figure shows a struct definition annotated with macros and attributes from the Clap crate. The line \texttt{let args = Args::parse()} can then be used in the main function to invoke the command line parser and retrieve all arguments. This moves the input validation completely to a depenency and is a huge improvement in comparison to \texttt{getopt}.
+
+To make for a fair comparison to C++, it is crucial to add that there are CLI parser alternatives in the C++ ecosystem which are more modern, feature-rich and provide better error handling like CLI11\cite{cpp-cli11}.
 
 \subsection{Serde}
 
-serde
+Serde is the standard of serialization and deserialization across the Rust package ecosystem, having reached over 1 billion all-time downloads\cite{rust-crates-serde}. It provides the traits \texttt{Serialize} and \texttt{Deserialize} that map Rust types into and from an internal data format. Various data formats like JSON, YAML or VTU can then implement the traits \texttt{Serializer} and \texttt{Deserializer} to communicate with Serde's internal data format.
+
+The derive macros \texttt{\#[derive(Serialize, Deserialize)]} can be used to automatically generate the proper mapping. In the project this is extremely helpful for the structs \texttt{FileDefinition} and \texttt{Particle}. This way most of the input validation is once again moved to a dependency and there is no need implement checks for missing fields yourself.
 
 \subsection{Rayon}
 
-serde
+Rayon is a parallelization library similar to OMP. Instead of pragmas, Rayon uses Rust Traits to implement parallelization behaviour for iterators.
 
 \chapter{Application with Molecular Dynamics}
 

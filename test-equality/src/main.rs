@@ -8,7 +8,7 @@ mod log;
 mod rust;
 mod test;
 
-use std::{format, fs::File, process::{Command, Stdio}};
+use std::{format, fs::File, process::{Command, Output, Stdio}};
 
 pub use log::Logger;
 use lscpu::Cpu;
@@ -140,17 +140,20 @@ fn main() {
 
     // lscpu
     log.header(format!("lscpu [console]"));
-    let lscpu_output = Command::new("lscpu")
+    match Command::new("lscpu")
         .stdout(Stdio::piped())
-        .output()
-        .expect("Failed to execute lscpu");
-    let lscpu_stdout = String::from_utf8(lscpu_output.stdout).unwrap();
-    let lscpu_lines = lscpu_stdout.lines().for_each(|line| {
-        let mut iter = line.split_inclusive(':');
-        let title = iter.next().unwrap_or("");
-        let body = iter.collect::<Vec<&str>>().join("");
-        log.info(title, body.trim());
-    });
+        .output() {
+            Ok(Output { stdout, .. }) => {
+                let lscpu_stdout = String::from_utf8(stdout).unwrap();
+                let lscpu_lines = lscpu_stdout.lines().for_each(|line| {
+                    let mut iter = line.split_inclusive(':');
+                    let title = iter.next().unwrap_or("");
+                    let body = iter.collect::<Vec<&str>>().join("");
+                    log.info(title, body.trim());
+                });
+            },
+            Err(e) => log.warn("failed to run lscpu:", &e.to_string()),
+        };
 
     let cpu = Cpu::new();
     log.header(format!("lscpu [rust crate]"));
