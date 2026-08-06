@@ -112,6 +112,8 @@ pub fn set_thread_count(log: &mut Logger, count: usize) {
 }
 
 /// Sets the environment variable `OMP_PLACES`. Possible values: `cores`, `threads` or `sockets`.
+/// 
+/// See https://www.openmp.org/spec-html/5.0/openmpse53.html
 #[cfg(feature = "direct-sum-parallel")]
 pub fn set_omp_places(log: &mut Logger, place: &str) {
     log.info("OMP Places :=", place);
@@ -122,6 +124,8 @@ pub fn set_omp_places(log: &mut Logger, place: &str) {
 }
 
 /// Sets the environment variable `OMP_PROC_BIND`. Possible values: `CLOSE` or `SPREAD`.
+/// 
+/// See https://www.openmp.org/spec-html/5.0/openmpse52.html
 #[cfg(feature = "direct-sum-parallel")]
 pub fn set_omp_proc_bind(log: &mut Logger, proc_bind: &str) {
     log.info("OMP Proc Bind :=", proc_bind);
@@ -271,6 +275,12 @@ fn main() {
 
     #[cfg(feature = "direct-sum-parallel")]
     {
+        // this doesn't work
+        // https://www.openmp.org/spec-html/5.0/openmpse61.html
+        unsafe {
+            std::env::set_var("OMG_DISPLAY_AFFINITY", "TRUE");
+        }
+
         #[cfg(not(feature = "quick"))]
         {
             // this benchmark measures I/O performance
@@ -310,12 +320,30 @@ fn main() {
             {
                 // if not feature "extended", compute different thread counts for 200 ticks and 500
 
-                // // 200
-                // cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, 200);
-                // rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, 200);
+                // 200
+                for omp_place in ["cores", "threads", "sockets"].iter() {
+                    set_omp_places(&mut log, omp_place);
+
+                    for omp_proc_bind in ["CLOSE", "SPREAD"].iter() {
+                        set_omp_proc_bind(&mut log, omp_proc_bind);
+
+                        cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}, omp_place={omp_place}, omp_proc_bind={omp_proc_bind}]"), "two-bodies-collision-0001-parallel", 0.0007, 200);
+                    }
+                }
+
+                rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, 200);
 
                 // 500
-                cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, 500);
+                for omp_place in ["cores", "threads", "sockets"].iter() {
+                    set_omp_places(&mut log, omp_place);
+
+                    for omp_proc_bind in ["CLOSE", "SPREAD"].iter() {
+                        set_omp_proc_bind(&mut log, omp_proc_bind);
+
+                        cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}, omp_place={omp_place}, omp_proc_bind={omp_proc_bind}]"), "two-bodies-collision-0001-parallel", 0.0007, 500);
+                    }
+                }
+
                 rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, 500);
             }
         }
