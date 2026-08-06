@@ -500,9 +500,13 @@ talk about perf
 
 \chapter{Benchmarking}
 
-All following benchmarks are executed on a 64-bit 12th Gen Intel(R) Core(TM) i7-12700K. It has 12 cores and 20 logical CPU threads\cite{cpu-benchmark-intel-core-i7-12700k}, the particle dataset \texttt{two-bodies-collision} is used for benchmarking, which moves a $20 \times 20$ matrix of particles against a $100 \times 20$ wall of particles, creating a dataset of $2,400$ particles. The statistics below were measured as ``the average of 20 runs'' of the x-axis value.
+All following benchmarks are executed on a 64-bit 12th Gen Intel(R) Core(TM) i7-12700K. It has 12 cores, of which 8 are performance cores with a pair of threads using Intel(R) Hyper-Threading Technology and 4 efficiency cores, each having their own thread, making for a total of 20 threads.\cite{cpu-intel-core-i7-12700k}
 
-Despite being two-dimensional input, the computational complexity of the algorithms remains identical, with \texttt{DirectSum} iterating over all particle pairs and \texttt{LinkedCells} only over neighbouring cells. The measured performance should also not change much because it is dominated by loop structure, and adding the z-axis to \texttt{LinkedCells} is a minimal change in comparison.
+% \cite{cpu-benchmark-intel-core-i7-12700k}, the particle dataset \texttt{two-bodies-collision} is used for benchmarking, which moves a $20 \times 20$ matrix of particles against a $100 \times 20$ wall of particles, creating a dataset of $2,400$ particles. The statistics below were measured as ``the average of 20 runs'' of the x-axis value.
+
+The benchmarks below run on the \texttt{two-bodies-collision} dataset which is a particle layout of two two-dimensional grids of size $100 \times 20$ and $20 \times 20$, with the smaller grid moving into the larger body. The statistics below were measured as ``the average of 20 runs'' of the x-axis value.
+
+Despite being two-dimensional input, the computational complexity of the algorithms remains identical, with \texttt{DirectSum} iterating over all particle pairs and \texttt{LinkedCells} only over neighbouring cells. The measured performance should also not change much because most of the performance is dominated by loop structure and adding the z-axis to \texttt{LinkedCells} is a minimal change in comparison.
 
 For interested readers we will provide some further benchmarks (including 3D benchmarks) in the Appendix but not cover it in this section.
 
@@ -1073,11 +1077,174 @@ In the parallelized DirectSum implementation for both Rust and C++ we only paral
 
 For Rust, we use Rayon as the parallelization library, and for C++ we use OMP. The thread count was set with environment variables \texttt{RAYON\_NUM\_THREADS} and \texttt{OMP\_NUM\_THREADS}.
 
-The first difference we observe is that there are specific thread counts, where OMP performance drops. On the machine where the benchmarks were run, there was a 1066ms drop between thread counts 8 and 9, and a 1508ms drop between thread counts 20 and 21. This is probably because OMP takes the environment variable without further preprocessing and Rayon prefers the smaller of the environment variable and logical cores. The performance drop is marked with vertical dashed lines in figure~\ref{fig:benchmark-parallel}.
+The first difference we observe is that there are specific thread counts, where OMP performance drops. On the machine where the benchmarks were run, there was a 1066ms drop between thread counts 8 and 9, and a 1508ms drop between thread counts 20 and 21.
 
-It's also noteworthy that above 20 threads, the the C++ implementation shows no stable performance pattern, this is most likely because at an overhead this high, the operating software dispatcher affects measurements.
+The performance spikes can be explained by the choice of CPU and the fact that OMP provides the developer with full control over thread distribution:
 
-At 2 threads, Rust parallel DirectSum completes in $88.5\%$ of the time taken by the C++ parallel DirectSum implementation, with a speedup of $22.6\%$. At 8 threads, Rust parallel DirectSum completes in $81.6\%$ of the time taken by the C++ parallel DirectSum implementation, with a speedup of $13\%$.
+According to the product specification of the CPU\cite{cpu-intel-core-i7-12700k}, we have 8 performance cores running at a base frequency of 3.60 GHz, each having two threads sharing one cache, and several further efficiency cores running at 2.70 GHz. When we set the thread count to 9, we either use one further efficiency core, or a thread in a already used performance core.
+
+For the first scenario, a new thread will compute at a lower base frequency, making the other 8 threads finish faster and having to wait the remaining time. In the second scenario, we compute at another thread in the same core, leading to more frequent cache rewrites, and therefore cache misses, which also leads to a performance drop. The performance drop is marked with vertical dashed lines in figure~\ref{fig:benchmark-parallel}.
+
+% This is probably because OMP takes the environment variable without further preprocessing and Rayon prefers the smaller of the environment variable and logical cores.
+
+At above 20 threads, OMP reaches the CPU limits and the operating systems' overhead affects the measurements negatively.
+
+% It's also noteworthy that above 20 threads, the the C++ implementation shows no stable performance pattern, this is most likely because at an overhead this high, the operating software dispatcher affects measurements.
+
+% At 2 threads, Rust parallel DirectSum completes in $88.5\%$ of the time taken by the C++ parallel DirectSum implementation, with a speedup of $22.6\%$. At 8 threads, Rust parallel DirectSum completes in $81.6\%$ of the time taken by the C++ parallel DirectSum implementation, with a speedup of $13\%$.
+
+\newpage
+\begin{figure}[!htb]
+\begin{tikzpicture}
+    \begin{axis}[
+        width=0.7\textwidth,  
+        height=0.3\textheight,
+        xlabel={Threads},
+        ylabel={Average Time (ms)},
+        xtick={1, 5, 10, 15, 20},
+        ytick={0, 2000, 4000, 6000, 8000, 10000},
+        scaled x ticks=false,  
+        scaled y ticks=false,
+        ymajorgrids=true, 
+        grid style=dashed,  
+        % ymin=-10,
+        % xmin=-5,
+        x tick label style={/pgf/number format/.cd, 1000 sep={}},
+        legend style={at={(0.54,0.98)},anchor=north west},
+    ]
+
+    \addplot[
+        color=blue,
+        % mark=square,
+        % mark repeat={10},
+        % mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (1, 10708.41017635)
+            (2, 5536.9101238)
+            (3, 3812.98409965)
+            (4, 2934.6982999)
+            (5, 2436.9715569)
+            (6, 2070.1730377999997)
+            (7, 1832.2225790999998)
+            (8, 1634.96264475)
+            (9, 2454.84450415)
+            (10, 2242.7897995)
+            (11, 2205.09735045)
+            (12, 2122.91127965)
+            (13, 1977.2878790999998)
+            (14, 1856.5438572)
+            (15, 1752.4553993)
+            (16, 1646.3915261500001)
+            (17, 1561.8315487)
+            (18, 1488.76594785)
+            (19, 1415.4344762)
+            (20, 1381.3949508)
+        };
+
+    \addplot[
+        color=blue!20,
+        % mark=square,
+        % mark repeat={10},
+        % mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (1, 10700.60173485)
+            (2, 5537.985565100001)
+            (3, 6710.49581355)
+            (4, 5097.77116405)
+            (5, 4325.0294539)
+            (6, 3627.14510575)
+            (7, 3400.1999684)
+            (8, 3104.03397525)
+            (9, 2775.72798555)
+            (10, 2507.89380535)
+            (11, 2308.9884945999997)
+            (12, 2118.2206516)
+            (13, 1978.67351945)
+            (14, 1855.7700864)
+            (15, 1752.0356315)
+            (16, 1646.6101586)
+            (17, 1557.70410275)
+            (18, 1487.48757595)
+            (19, 1412.4526308499999)
+            (20, 1356.9883275999998)
+        };
+
+    \addplot[
+        color=violet,
+        % mark=square,
+        % mark repeat={10},
+        % mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (1, 10718.75787005)
+            (2, 10453.0575283)
+            (3, 7023.7201451)
+            (4, 5320.35871545)
+            (5, 4291.4898582)
+            (6, 3628.1225947)
+            (7, 3122.4870475)
+            (8, 2815.9494681)
+            (9, 2522.3846499499996)
+            (10, 2294.6556916)
+            (11, 2100.71776615)
+            (12, 1974.5514632)
+            (13, 1839.48078285)
+            (14, 1728.8956905999999)
+            (15, 1633.8877816)
+            (16, 1545.7560654000001)
+            (17, 1448.6859538499998)
+            (18, 1394.8838240999999)
+            (19, 1360.1085876)
+            (20, 1363.900727)
+        };
+
+    \addplot[
+        color=violet!40,
+        % mark=square,
+        % mark repeat={10},
+        % mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (1, 10719.39672835)
+            (2, 5522.087047800001)
+            (3, 3815.9626624)
+            (4, 2934.9655795)
+            (5, 4126.0501684)
+            (6, 3466.40889305)
+            (7, 3005.64181125)
+            (8, 2812.3548558499997)
+            (9, 2663.35786045)
+            (10, 2335.5324329)
+            (11, 2207.8229939000003)
+            (12, 2124.02226655)
+            (13, 1967.8149627)
+            (14, 1838.40812765)
+            (15, 1737.53333405)
+            (16, 1646.80993805)
+            (17, 1551.12358075)
+            (18, 1481.01051075)
+            (19, 1410.59151935)
+            (20, 1360.1401951500002)
+        };
+
+    \draw[dashed, red, line width=0.5pt] (axis cs:2.5,0) -- (axis cs:2.5,10000);
+    \draw[dashed, red, line width=0.5pt] (axis cs:4.5,0) -- (axis cs:4.5,10000);
+    \draw[dashed, red, line width=0.5pt] (axis cs:8.5,0) -- (axis cs:8.5,10000);
+
+    \legend{Close Cores, Spread Cores, Close Threads, Spread Threads}
+    \end{axis}
+\end{tikzpicture}
+\caption{todo}
+\label{fig:benchmark-parallel-omp-modi}
+\end{figure}
+
+In figure~\ref{fig:benchmark-parallel-omp-modi} we see OMP tested with different modi to understand the artifacts seen previously in figure~\ref{fig:benchmark-parallel}. `Close' is defined as setting the environment variable 
 
 \chapter{Discussion and Conclusion}
 

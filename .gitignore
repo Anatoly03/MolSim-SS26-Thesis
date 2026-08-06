@@ -8,3 +8,6 @@ local
 # for benchmarking
 perf.data
 perf.data.old
+
+# stupid apple
+.DS_Store
