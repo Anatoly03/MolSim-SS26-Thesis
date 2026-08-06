@@ -296,7 +296,8 @@ fn main() {
         let thread_count_cap = THREAD_COUNT + 1;
 
         #[cfg(any(feature = "full", feature = "extended"))]
-        for thread_count in (1 .. thread_count_cap).rev() {
+        for thread_count in (1 .. thread_count_cap) {
+        // for thread_count in (1 .. thread_count_cap).rev() {
             set_thread_count(&mut log, thread_count);
 
             #[cfg(feature = "extended")]
