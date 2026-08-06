@@ -320,6 +320,7 @@ fn main() {
             {
                 // if not feature "extended", compute different thread counts for 200 ticks and 500
 
+                /*
                 // 200
                 for omp_place in ["cores", "threads", "sockets"].iter() {
                     set_omp_places(&mut log, omp_place);
@@ -332,6 +333,7 @@ fn main() {
                 }
 
                 rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, 200);
+                */
 
                 // 500
                 for omp_place in ["cores", "threads", "sockets"].iter() {
