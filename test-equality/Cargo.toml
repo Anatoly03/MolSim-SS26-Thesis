@@ -15,6 +15,7 @@ cpp = []
 twice-thread-cap = []
 
 # algorithms & "big" bench suits
+halleys-comet = []
 direct-sum = []
 linked-cells = []
 linked-cells-collision-point = []

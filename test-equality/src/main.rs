@@ -111,6 +111,26 @@ pub fn set_thread_count(log: &mut Logger, count: usize) {
     }
 }
 
+/// Sets the environment variable `OMP_PLACES`. Possible values: `cores`, `threads` or `sockets`.
+#[cfg(feature = "direct-sum-parallel")]
+pub fn set_omp_places(log: &mut Logger, place: &str) {
+    log.info("OMP Places :=", place);
+
+    unsafe {
+        std::env::set_var("OMP_PLACES", place);
+    }
+}
+
+/// Sets the environment variable `OMP_PROC_BIND`. Possible values: `CLOSE` or `SPREAD`.
+#[cfg(feature = "direct-sum-parallel")]
+pub fn set_omp_proc_bind(log: &mut Logger, proc_bind: &str) {
+    log.info("OMP Proc Bind :=", proc_bind);
+
+    unsafe {
+        std::env::set_var("OMP_PROC_BIND", proc_bind);
+    }
+}
+
 fn main() {
     let log_file = LOG_FILE();
     let mut log: Logger = log_file.into();
@@ -178,7 +198,7 @@ fn main() {
     log.header(format!("extended cpu metrics"));
     log.info("Thread Count", &THREAD_COUNT.to_string());
 
-    #[cfg(all(feature = "extended"))]
+    #[cfg(all(feature = "extended", feature = "halleys-comet"))]
     {
         // this benchmark verifies halleys comet correctness over 25 thousand steps
         // cpp::run("halleys-comet", 0.0014, 25000);
@@ -268,10 +288,21 @@ fn main() {
         #[cfg(any(feature = "full", feature = "extended"))]
         for thread_count in (1 .. thread_count_cap).rev() {
             set_thread_count(&mut log, thread_count);
-    
+
             #[cfg(feature = "extended")]
             for frames in TIME_STEPS(500, 25) {
-                cpp::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
+                for omp_place in ["cores", "threads", "sockets"].iter() {
+                    set_omp_places(&mut log, omp_place);
+
+                    for omp_proc_bind in ["CLOSE", "SPREAD"].iter() {
+                        set_omp_proc_bind(&mut log, omp_proc_bind);
+
+                        cpp::bench(
+                            &mut log,
+                            &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}, omp_place={omp_place}, omp_proc_bind={omp_proc_bind}]"),
+                            "two-bodies-collision-0001-parallel", 0.0007, frames);
+                    }
+                }
                 rust::bench(&mut log, &format!("two-bodies-collision [direct-sum, parallel, threads={thread_count}]"), "two-bodies-collision-0001-parallel", 0.0007, frames);
             }
 
