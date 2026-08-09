@@ -779,6 +779,8 @@ For interested readers we will provide some further benchmarks (including 3D ben
 \label{fig:benchmark-sequential}
 \end{figure}
 
+% We will first bench the performance of different sequential implementations to ensure the the credibility of the measured data as seen in~\autoref{fig:benchmark-sequential}. The graph can only hint at general performance hierarchy. 
+
 For the DirectSum implementation, when measuring sequential performance against simulation steps $S$ and other configuration data fixed, we observe linear runtime $\mathcal{O}(S)$. This is because, despite having to compute all particle pairs, the amount of particles $N$ and hence the workload per simulation step is constant in this graph.
 
 To ensure the credibility of the computed average, the fluctuations between minimal and maximal run duration have also been recorded.
@@ -1077,17 +1079,19 @@ In the parallelized DirectSum implementation for both Rust and C++ we only paral
 
 For Rust, we use Rayon as the parallelization library, and for C++ we use OMP. The thread count was set with environment variables \texttt{RAYON\_NUM\_THREADS} and \texttt{OMP\_NUM\_THREADS}.
 
-The first difference we observe is that there are specific thread counts, where OMP performance drops. On the machine where the benchmarks were run, there was a 1066ms drop between thread counts 8 and 9, and a 1508ms drop between thread counts 20 and 21.
+The first artefact we observe is that there are specific thread counts, where OMP performance drops. On the machine where the benchmarks were run, there was a 1066ms drop between thread counts 8 and 9, and a 1508ms drop between thread counts 20 and 21.
 
-The performance spikes can be explained by the choice of CPU and the fact that OMP provides the developer with full control over thread distribution:
+The artefacts can generally be explained with OMP giving the developer more low-level control over thread to hardware assignments, and Rayon taking a more high-level approach. The performance decline at 21 threads can be explained with operating system overhead: When there are more threads requested than resources available, the scheduling overhead of dispatching threads starts to affect measurements.
 
-According to the product specification of the CPU\cite{cpu-intel-core-i7-12700k}, we have 8 performance cores running at a base frequency of 3.60 GHz, each having two threads sharing one cache, and several further efficiency cores running at 2.70 GHz. When we set the thread count to 9, we either use one further efficiency core, or a thread in a already used performance core.
+To understand the artefact at 8 to 9 threads, we will measure OMP performance with different thread-to-hardware mappings in the next figure.
 
-For the first scenario, a new thread will compute at a lower base frequency, making the other 8 threads finish faster and having to wait the remaining time. In the second scenario, we compute at another thread in the same core, leading to more frequent cache rewrites, and therefore cache misses, which also leads to a performance drop. The performance drop is marked with vertical dashed lines in figure~\ref{fig:benchmark-parallel}.
+% The performance spikes can be explained by the choice of CPU and the fact that OMP provides the developer with full control over thread distribution:
+
+% For the first scenario, a new thread will compute at a lower base frequency, making the other 8 threads finish faster and having to wait the remaining time. In the second scenario, we compute at another thread in the same core, leading to more frequent cache rewrites, and therefore cache misses, which also leads to a performance drop. The performance drop is marked with vertical dashed lines in figure~\ref{fig:benchmark-parallel}.
 
 % This is probably because OMP takes the environment variable without further preprocessing and Rayon prefers the smaller of the environment variable and logical cores.
 
-At above 20 threads, OMP reaches the CPU limits and the operating systems' overhead affects the measurements negatively.
+% At above 20 threads, OMP reaches the CPU limits and the operating systems' overhead affects the measurements negatively.
 
 % It's also noteworthy that above 20 threads, the the C++ implementation shows no stable performance pattern, this is most likely because at an overhead this high, the operating software dispatcher affects measurements.
 
@@ -1244,13 +1248,58 @@ At above 20 threads, OMP reaches the CPU limits and the operating systems' overh
 \label{fig:benchmark-parallel-omp-modi}
 \end{figure}
 
-In figure~\ref{fig:benchmark-parallel-omp-modi} we see OMP tested with different modi to understand the artifacts seen previously in figure~\ref{fig:benchmark-parallel}. `Close' is defined as setting the environment variable 
+In~\autoref{fig:benchmark-parallel-omp-modi} we see OMP tested with different modi in a more controlled environment to understand the artifacts seen previously in~\autoref{fig:benchmark-parallel}. `Close' and `Spread' defines the value of the environment variable \texttt{OMP\_PROC\_BIND} and `Cores' and `Threads' defines the value of the environment variable \texttt{OMP\_PLACES}.
+
+Intuitively, `Close' means we claim resources in close proximity, and `Spread' means we use distant resources, with `Cores' and `Threads' selecting what to count as a resource. For example `Close Threads' means we use nearby threads, even if the share the same core and cache, while `Close Cores' will try to use different nearby cores, even if it skips some threads.
+
+We define the two ``curves'' seen in ~\autoref{fig:benchmark-parallel-omp-modi} as following: The ``efficient'' curve follows ``Close Threads'' from threads 2 to 20. The ``performant'' curve follows ``Close Cores'' from threads 1 to 8.
+
+According to the product specification of the CPU used for benchmarking\cite{cpu-intel-core-i7-12700k}, we have 8 performance cores running at a base frequency of 3.60 GHz, each having two threads using Intel(R) Hyper-Threading Technology, and several further efficiency cores running at 2.70 GHz. With this information in mind we will give an individual explanation for the artefacts seen above.
+
+\begin{description}
+    \item[Close Threads] We don't really see a performance decline for this configuration, however at threads 1 to 2 we can see a visual jump to the efficient curve as we start using two threads within the same core. One explanation here could be NUMA effects, which lead to rewrites in the cores' cache.
+
+    \item[Spread Cores] The performance decline occurs at 2 to 3 threads. Since we are unlikely to use threads in close proximity, the most likely explanation is that we use efficiency cores, which run at a lower base frequency and lead to overall slower performance.
+
+    \item[Spread Threads] The performance decline occurs at 4 to 5 threads respectively. The explanation is analogous to Spread Cores.
+    
+    \item[Close Cores] The performance decline occurs at 8 to 9 threads, as we run out of performance cores, we either have to use an efficiency core or share the cores cache, both leading to undesired performance loss.
+\end{description}
 
 \chapter{Discussion and Conclusion}
 
-discuss that rust is more usable, performs better, mention implementation bias (again)
+The results presented in this thesis show that Rust is at least as competitive with C++ in terms of performance but also outperforms C++ in memory safet models, overall developer experience, ecosystem and tooling.
 
-conclude that you should not always switch to rust (rewrite tech debt, team skills and language learning logistics)
+However it is important to highlight that the results are subject to implementation bias with non-zero cost abstractions used in the hot loop of the physics implementation. In this work, we compare Rusts' \texttt{HashMap} against C++ \texttt{unordered\_map}, we use dynamic dispatch and minor difference in memory layout and compiler optimizations can contribute to observed performance differences. Since the hot loop is subject to these paradigms, a small relative performance difference is instantly upscaled in the benchmarks.
+
+The Rust compiler \texttt{rustc} uses LLVM and the C++ code was compiled with the CMake default (which is GCC), which make different trade-offs in inling, loop-unrolling and link-time optimizations.
+
+The parallelization implementations are also not directly comparable due to different threading models, with Rayon being more high-level and memory safe and OMP giving more hardware control at the cost of relying on unsafe memory models.
+
+The conclusion of the thesis suggests that Rust offers the following.
+
+\begin{description}
+    \item[Competitive Performance] The sequential benchmarks show that Rust is in general a bit faster with some exceptional implementations outperforming C++ up to $25\%$ faster.
+
+    \item[Memory Safety] The type system and ownership model of Rust is a significant advantage, with guarantees on memory safety reducing the cognitive overhead in comparison to C++, where 
+
+    \item[Ecosystem and Tooling] Rust provides a good set of tools with its' package manager and community-written dependencies, which enhance productivity and developer experience. The integrated compiler, documentation generator, linter and error messages reduce the  
+\end{description}
+
+However, this does not mean that everyone should write all new or rewrite existing applications in Rust, because of the following reasons.
+
+\begin{description}
+    \item[Technical Debt] The attempt to rewrite large C++ codebases introduces technical debt. Incremental adoption with interoperability, as practiced by Google, is a more realistic approach to code migration.
+    \item[Learning Curve] Rust has a higher learning curve than C++ because it does not use Java-style OOP concepts like abstract classes and inheritance. Instead it relies on traits and patterns from functional programming. This requires to relearn most concepts from scratch in Rust.
+    \item[Dependencies] Rusts' ecosystem, despite growing rapidly is still lacking some field-specific libraries, requiring additional effort to either bind C++ code or rewrite entire components in Rust. One such example is the LLVM project, which the Rust compiler relies on, but is written in C++.
+    \item[Well-optimized Projects] For projects that are already well optimized and understood in C++, the rewrite in Rust may not yield much better performance.
+\end{description}
+
+In conclusion, Rust is good alternative to C++ for new projects that involve security and maintainability, as Rust offers better tooling to start applications and immediately start coding, reduces configuration overhead, offers strong performance and introduces memory safety without garbage collection.
+
+However the decision to adopt Rust (or any other programming language) for a project should be assesed based on project requirements, team expertise and existing infrastructure.
+
+This thesis contributes data and insights to inform that decision, demonstrating that Rust is a safe and performant language.
 
 % template
 
