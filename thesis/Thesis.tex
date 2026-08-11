@@ -1514,19 +1514,21 @@ This thesis contributes data and insights to inform that decision, demonstrating
 
 \section{Rust Traits with Ambiguity}\label{section:rust-trait-same-identifier}
 
-This section aims to provide some understanding on how Rust determines which function is executed when a type implements multiple traits that share a common method identifier. Consider the following example.
+This section aims to provide some understanding on how Rust determines which function is executed when a type implements multiple traits that share a common method identifier.
+
+Generally, trait methods are not seen in a scope even if the struct implements them. In Rust, you have to explicitly include the trait in the scope where you wish to use it. Consider the following code to be in \texttt{foobar.rs}
 
 \vspace{0.5em}
 \begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small]
-struct FooBar;
+pub struct FooBar;
 
-trait Foo {
+pub trait Foo {
     fn foobar(&self) {
         println!("Foo");
     }
 }
 
-trait Bar {
+pub trait Bar {
     fn foobar(&self) {
         println!("Bar");
     }
@@ -1534,12 +1536,48 @@ trait Bar {
 
 impl Foo for FooBar {};
 impl Bar for FooBar {};
-
-let x = FooBar;
-x.foobar();
 \end{lstlisting}
 
-The example above will not compile, as \texttt{foobar()} is ambiguous. The solution is to rewrite the last line into \texttt{Foo::fobar(x)} if we want to print `Foo'. By using the path notation, the ambiguity is resolved. Intuitively, this makes the method static with a clear, unique name. 
+In this definition we have a struct \texttt{FooBar}, which implements the traits \texttt{Foo} and \texttt{Bar}. Since both traits define a method with the same name, this can cause ambiguity in code execution. Consider the following three examples in \texttt{main.rs}, and an explanation below if it will or why not compile.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small]
+mod foobar; // this declares foobar.rs 
+use foobar::FooBar; // this imports the FooBar struct
+
+fn main() {
+    let x = FooBar;
+    x.foobar();
+}
+\end{lstlisting}
+
+The example above will not compile. Per default, trait methods are tied with the trait they belong to in Rust, which is required to be imported in the scope.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small]
+mod foobar; 
+use foobar::{FooBar, Foo}; // also import Foo
+
+fn main() {
+    let x = FooBar;
+    x.foobar(); // prints `Foo'
+}
+\end{lstlisting}
+
+The example above will compile as the \texttt{Foo} trait is imported and therefore visible on structs that implement it.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small]
+mod foobar; 
+use foobar::{FooBar, Foo, Bar}; // imports both traits
+
+fn main() {
+    let x = FooBar;
+    x.foobar();
+}
+\end{lstlisting}
+
+The example above will not compile, as \texttt{foobar()} is ambiguous. The solution is to rewrite the last line into \texttt{Foo::fobar(x)} if we want to print `Foo'. By using the path notation, the ambiguity is resolved. Intuitively, this makes the method static with a clear, unique name.
 
 \chapter{Benchmarks}
 
