@@ -170,7 +170,11 @@ My bestie Kasane Teto, who has not said a word but always morally supported me w
 \end{center}
 \vspace{1cm}
 
-\lipsum[2]
+In the past decades, Rust has gained more admiration as a low-level, performant, memory-safe programming language, while C++ remains the dominant choice for high-performance computing in the academic field. This thesis presents empirical results by writing six molecular dynamics implementations for both Rust and C++.
+
+Both languages implement three different approaches of particle management and computation patterns, with DirectSum computing over all particle pairs in the hot loop, LinkedCells introducing a three-dimensional chunk system to reduce the overall workload, and DirectSumParallel using multi-threaded paradigms to accelerate computation.
+
+This thesis aims to inform the decision of adopting Rust in emerging software for performance-critical applications with high memory-safety requirements.
 
 \cleardoublepage
 
@@ -182,7 +186,12 @@ My bestie Kasane Teto, who has not said a word but always morally supported me w
 \end{center}
 \vspace{1cm}
 
-\lipsum[2]
+In den letzten Jahrzehnten kriegt Rust zunehmend Anerkennung als eine systemnahe, performante, speichersichere Programmiersprache, während C++ im akademischen Bereich weiterhin die dominierte Sprache für Hochleistungsrechnungen ist. Diese Arbeit präsentiert empirische Ergebnisse, die auf der Implementierung von sechs Verfahren der Molekulardynamik in Rust und C++ basiert.
+
+Beide Sprachen implementieren jeweils drei unterschiedliche Ansätze zur Partikelverwaltung einer Simulation: DirectSum berechnet Interaktionen über alle Partikelpaare in der Hot-Loop, LinkedCells fügt ein dreidimensionales Zellsystem zur Reduzierungen des gesamten Arbeitsaufwandes und DirectSumParallel nutzt Multithreading zur Beschleunigung der Berechnungen.
+
+Ziel dieser Arbeit ist es, die Entscheidung für den Einsatz von Rust in neuer, performanten Software mit sicherheitskritischen Anforderungen.
+
 
 \cleardoublepage
 
@@ -1317,186 +1326,186 @@ This thesis contributes data and insights to inform that decision, demonstrating
 
 % template
 
-\part{Template Stub (Remove)}
+% \part{Template Stub (Remove)}
 
-\chapter{Tips}
-\subsection{How to Describe}
-% optional: set the spacing between columns
-\setlength{\columnsep}{30 pt}
-When listing several points you have three basic options:
-\begin{multicols}{3}
-    \begin{itemize}
-        \item itemize
-        \item enumerate
-        \item description
-    \end{itemize}
+% \chapter{Tips}
+% \subsection{How to Describe}
+% % optional: set the spacing between columns
+% \setlength{\columnsep}{30 pt}
+% When listing several points you have three basic options:
+% \begin{multicols}{3}
+%     \begin{itemize}
+%         \item itemize
+%         \item enumerate
+%         \item description
+%     \end{itemize}
 
-    \vfill\null
-    \columnbreak
+%     \vfill\null
+%     \columnbreak
 
-    \begin{enumerate}
-        \item itemize
-        \item enumerate
-        \item description
-    \end{enumerate}
+%     \begin{enumerate}
+%         \item itemize
+%         \item enumerate
+%         \item description
+%     \end{enumerate}
 
-    \vfill\null
-    \columnbreak
+%     \vfill\null
+%     \columnbreak
 
-    \begin{description}
-        \item[itemize] short, unordered
-        \item[enumerate] short ordered
-        \item[description] listing of descriptions. Also nice for longer ones.
-    \end{description}
+%     \begin{description}
+%         \item[itemize] short, unordered
+%         \item[enumerate] short ordered
+%         \item[description] listing of descriptions. Also nice for longer ones.
+%     \end{description}
 
-\end{multicols}
+% \end{multicols}
 
 
-\subsection{How to Quote}
+% \subsection{How to Quote}
 
-\begin{quote}
-    "This is a quote!"
-\end{quote}
+% \begin{quote}
+%     "This is a quote!"
+% \end{quote}
 
-\begin{itemize}
-    \item Citations to a source can be made like this \verb|\cite{gratl17task}| =~\cite{gratl17task}
-    \subitem Always join text and the citation with a non-breaking space: \verb|text~\cite{foo}|.
-    \item Referencing Sections, Figures, Tables, Formulas: \verb|\autoref{sec:intro}| = \autoref{sec:intro}.
-    \item Footnotes for url or further notes: \verb|\footnote{\url{https://www.top500.org}}| = \footnote{\url{https://www.top500.org}}
-\end{itemize}
+% \begin{itemize}
+%     \item Citations to a source can be made like this \verb|\cite{gratl17task}| =~\cite{gratl17task}
+%     \subitem Always join text and the citation with a non-breaking space: \verb|text~\cite{foo}|.
+%     \item Referencing Sections, Figures, Tables, Formulas: \verb|\autoref{sec:intro}| = \autoref{sec:intro}.
+%     \item Footnotes for url or further notes: \verb|\footnote{\url{https://www.top500.org}}| = \footnote{\url{https://www.top500.org}}
+% \end{itemize}
 
-\subsection{How to Math}
+% \subsection{How to Math}
 
-Use the align environment for equations especially if you want to align them somehow.
+% Use the align environment for equations especially if you want to align them somehow.
 
-\begin{align}
-1 + 1 &\ne 3\\
-\left(\dfrac{10}{1}\right) - 9 &= 1
-\end{align}
+% \begin{align}
+% 1 + 1 &\ne 3\\
+% \left(\dfrac{10}{1}\right) - 9 &= 1
+% \end{align}
 
-% if you need a pagebreak because figure placement is broken:
-\clearpage
+% % if you need a pagebreak because figure placement is broken:
+% \clearpage
 
-\section{Environments}
+% \section{Environments}
 
-\subsection{How to Figure}
+% \subsection{How to Figure}
 
-Anything can also be put in multiple columns.
+% Anything can also be put in multiple columns.
 
-\begin{multicols}{2} % defines an environment with two columns
-    \begin{figure}[H] % [H] for HERE
-        \centering
-        \includegraphics[width=.9\columnwidth]{figures/scenario_clip_rot.png}
-        \caption[Example Figure]{Some Caption. Always also include a source if it wasn't created by you!\\
-            \tiny{Source: \cite{gratl17task}}}
-        \label{fig:exampleLabel1} % labels always have to be placed after the caption
-    \end{figure}
+% \begin{multicols}{2} % defines an environment with two columns
+%     \begin{figure}[H] % [H] for HERE
+%         \centering
+%         \includegraphics[width=.9\columnwidth]{figures/scenario_clip_rot.png}
+%         \caption[Example Figure]{Some Caption. Always also include a source if it wasn't created by you!\\
+%             \tiny{Source: \cite{gratl17task}}}
+%         \label{fig:exampleLabel1} % labels always have to be placed after the caption
+%     \end{figure}
 
-    \columnbreak    % start next column
+%     \columnbreak    % start next column
 
-    \begin{figure}[H]
-        \centering
-        \begin{tikzpicture}
-            \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=.9\columnwidth]{figures/scenario_clip_rot.png}};
-            \begin{scope}[x={(image.south east)},y={(image.north west)}]
-            \draw[red, thin,rounded corners] (.42,.42) rectangle (.58,.6);
-            \end{scope}
-        \end{tikzpicture}
-        \caption[Figure with tikz]{Figures can be drawn on or completely generated with tikz.}
-        \label{fig:exampleLabel2}
-    \end{figure}
-\end{multicols}
+%     \begin{figure}[H]
+%         \centering
+%         \begin{tikzpicture}
+%             \node[anchor=south west,inner sep=0] (image) at (0,0) {\includegraphics[width=.9\columnwidth]{figures/scenario_clip_rot.png}};
+%             \begin{scope}[x={(image.south east)},y={(image.north west)}]
+%             \draw[red, thin,rounded corners] (.42,.42) rectangle (.58,.6);
+%             \end{scope}
+%         \end{tikzpicture}
+%         \caption[Figure with tikz]{Figures can be drawn on or completely generated with tikz.}
+%         \label{fig:exampleLabel2}
+%     \end{figure}
+% \end{multicols}
 
-\paragraph{Subfigures}
-If grouping of several pictures seems reasonable, think about using subfigures. This often comes in handy with plots.
+% \paragraph{Subfigures}
+% If grouping of several pictures seems reasonable, think about using subfigures. This often comes in handy with plots.
 
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}[b]{0.33\textwidth}
-        \includegraphics[width=\textwidth]{example-image-a}
-        \caption{example-image-a}
-        \label{fig:example-image-a}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.33\textwidth}
-        \includegraphics[width=\textwidth]{example-image-b}
-        \caption{example-image-b}
-        \label{fig:example-image-b}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.33\textwidth}
-        \includegraphics[width=\textwidth]{example-image-c}
-        \caption{example-image-c}
-        \label{fig:example-image-c}
-    \end{subfigure}
-    \caption{One caption to describe them all.}
-\end{figure}
+% \begin{figure}[H]
+%     \centering
+%     \begin{subfigure}[b]{0.33\textwidth}
+%         \includegraphics[width=\textwidth]{example-image-a}
+%         \caption{example-image-a}
+%         \label{fig:example-image-a}
+%     \end{subfigure}
+%     \begin{subfigure}[b]{0.33\textwidth}
+%         \includegraphics[width=\textwidth]{example-image-b}
+%         \caption{example-image-b}
+%         \label{fig:example-image-b}
+%     \end{subfigure}
+%     \begin{subfigure}[b]{0.33\textwidth}
+%         \includegraphics[width=\textwidth]{example-image-c}
+%         \caption{example-image-c}
+%         \label{fig:example-image-c}
+%     \end{subfigure}
+%     \caption{One caption to describe them all.}
+% \end{figure}
 
-\subsection{How to Algorithm}
+% \subsection{How to Algorithm}
 
-\begin{figure}
-\begin{algorithm}[H]
+% \begin{figure}
+% \begin{algorithm}[H]
 
-% Define custom keywords
-\SetKwFunction{KwNot}{not}
-% Define custom Functions
-\SetKwFunction{Fissorted}{is\_sorted}
-\SetKwFunction{Fbogosort}{bogosort}
-\SetKwFunction{Fshuffle}{shuffle}
-\SetKwProg{Fn}{Function}{:}{}
-\KwIn{\tabto{2cm}data array}
-\KwOut{\tabto{2cm} data sorted}
-\BlankLine
+% % Define custom keywords
+% \SetKwFunction{KwNot}{not}
+% % Define custom Functions
+% \SetKwFunction{Fissorted}{is\_sorted}
+% \SetKwFunction{Fbogosort}{bogosort}
+% \SetKwFunction{Fshuffle}{shuffle}
+% \SetKwProg{Fn}{Function}{:}{}
+% \KwIn{\tabto{2cm}data array}
+% \KwOut{\tabto{2cm} data sorted}
+% \BlankLine
 
-\tcp{Checks if array is sorted}
-\Fn{\Fissorted{data}}{
-    \For{i $\leftarrow$ 0 \KwTo data.size() - 1}{
-    \label{algo:for}            % labels can also be put in the algorithm
-        \If{data[i] $>$ data[i+1]}{
-            \Return false
-        }
-    }
-    \Return true
-}
+% \tcp{Checks if array is sorted}
+% \Fn{\Fissorted{data}}{
+%     \For{i $\leftarrow$ 0 \KwTo data.size() - 1}{
+%     \label{algo:for}            % labels can also be put in the algorithm
+%         \If{data[i] $>$ data[i+1]}{
+%             \Return false
+%         }
+%     }
+%     \Return true
+% }
 
-\tcp{actual algorithm}
-\Fn{\Fbogosort{data}}{
-    \While{\KwNot \Fissorted{data}}{
-        random.\Fshuffle{data}
-    }
-}
+% \tcp{actual algorithm}
+% \Fn{\Fbogosort{data}}{
+%     \While{\KwNot \Fissorted{data}}{
+%         random.\Fshuffle{data}
+%     }
+% }
 
-\caption[Bogosort]{Bogosort}
-\label{algo:example}
-\end{algorithm}
-\caption{some description what is happening}
-\end{figure}
+% \caption[Bogosort]{Bogosort}
+% \label{algo:example}
+% \end{algorithm}
+% \caption{some description what is happening}
+% \end{figure}
 
-\clearpage
+% \clearpage
 
-\subsection{How to Code}
-\begin{lstlisting}[style=eclipse-cpp, caption=General form of a typical runner() function., label=code:runner]
-void runner(int type, void *data){
-    switch(type)
-        case taskType1:
-            // do stuff using data
-        case taskType2:
-            // do other stuff using data
-}
-\end{lstlisting}
+% \subsection{How to Code}
+% \begin{lstlisting}[style=eclipse-cpp, caption=General form of a typical runner() function., label=code:runner]
+% void runner(int type, void *data){
+%     switch(type)
+%         case taskType1:
+%             // do stuff using data
+%         case taskType2:
+%             // do other stuff using data
+% }
+% \end{lstlisting}
 
-\subsection{How to Table}
-\begin{table}[H]
-    \begin{tabularx}{\columnwidth}{L | C | R}
-        \hline
-        \hline
-        bla left & bla centered\newline over two lines &  bla right\\
-        \hline
-        bla left & bla centered & \multirow[c]{2}{\hsize}{cell spanning two rows} \\
-        \cline{1-2}
-        \multicolumn{2}{c|}{cell spanning two columns} & \\
-    \end{tabularx}
-    \caption[Some Table]{Fancy table that can contain line breaks and extended cells.}
-    \label{tab:example}
-\end{table}
+% \subsection{How to Table}
+% \begin{table}[H]
+%     \begin{tabularx}{\columnwidth}{L | C | R}
+%         \hline
+%         \hline
+%         bla left & bla centered\newline over two lines &  bla right\\
+%         \hline
+%         bla left & bla centered & \multirow[c]{2}{\hsize}{cell spanning two rows} \\
+%         \cline{1-2}
+%         \multicolumn{2}{c|}{cell spanning two columns} & \\
+%     \end{tabularx}
+%     \caption[Some Table]{Fancy table that can contain line breaks and extended cells.}
+%     \label{tab:example}
+% \end{table}
 
 \appendix
 \part{Appendix}
@@ -1690,7 +1699,96 @@ For the \texttt{LinkedCells} benchmark, one could argue that ``since the benchma
 
 \section{CoolMUC Parallel}
 
-The parallel benchmarks have also been computed on the supercomputer CoolMUC\cite{coolmuc-stats}, which runs on a Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz. This is for two reasons, to test if the in the thesis discussed artefacts with OpenMP happen on a computer with more evenly distributed processing powers contrary to toe high end PC with cores of different types. The second reason is, that the insights could be interesting or relevant to the thesis. Since we are in the Appendix, the results were not really usable in the thesis narrative, but they are still interesting insights.
+The parallel benchmarks have also been computed on the supercomputer CoolMUC\cite{coolmuc-stats}, which runs on a Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz~\cite{cpu-intel-xeon-platinum-8380}. This is for two reasons, to test if the in the thesis discussed artefacts with OpenMP happen on a computer with more evenly distributed processing powers contrary to toe high end PC with cores of different types. The second reason is, that the insights could be interesting or relevant to the thesis. Since we are in the Appendix, the results were not really usable in the thesis narrative, but they are still interesting insights.
+
+\newpage
+\begin{figure}[!htb]
+\begin{tikzpicture}
+    \begin{axis}[
+        width=0.7\textwidth,  
+        height=0.3\textheight,
+        xlabel={Threads},
+        ylabel={Average Time (ms)},
+        xtick={1, 5, 10, 15, 20},
+        ytick={0, 5000, 10000, 20000, 30000},
+        scaled x ticks=false,  
+        scaled y ticks=false,
+        ymajorgrids=true, 
+        grid style=dashed,  
+        % ymin=-10,
+        % xmin=-5,
+        x tick label style={/pgf/number format/.cd, 1000 sep={}},
+        legend style={at={(0.54,0.98)},anchor=north west},
+    ]
+
+    \addplot[
+        color=cyan!40,
+        % mark=square,
+        % mark repeat={10},
+        % mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (1, 29561.099620099998)
+            (2, 15655.3660384)
+            (3, 10900.7191303)
+            (4, 8357.4223929)
+            (5, 6844.5432585)
+            (6, 5702.015592600001)
+            (7, 4925.9114201)
+            (8, 4390.0481942)
+            (9, 3981.1583802)
+            (10, 3698.0072834000002)
+            (11, 3387.0203608)
+            (12, 3226.620435)
+            (13, 2988.1345066)
+            (14, 2818.7368382)
+            (15, 2738.6731857)
+            (16, 2634.6802377)
+            (17, 2520.3039285)
+            (18, 2352.5839901)
+            (19, 2363.0320351)
+            (20, 2289.3528831)
+        };
+
+    \addplot[
+        color=Dandelion,
+        mark=triangle,
+        mark repeat={10},
+        mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (1, 26057.8932452)
+            (2, 13759.1239734)
+            (3, 9484.3187945)
+            (4, 7025.6493946)
+            (5, 5921.3357046)
+            (6, 4981.6138813)
+            (7, 4290.4569158)
+            (8, 3823.9243384)
+            (9, 3625.0984198)
+            (10, 3289.2438837)
+            (11, 3023.2168185)
+            (12, 2890.3131459)
+            (13, 2664.5321206999997)
+            (14, 2464.3249007)
+            (15, 2314.9592339)
+            (16, 2272.9985763)
+            (17, 2178.8767099)
+            (18, 2080.2299012)
+            (19, 2021.2854164)
+            (20, 1958.9813678)
+        };
+
+    \legend{C++ [OMP], Rust [Rayon]}
+    \end{axis}
+\end{tikzpicture}
+\caption{CoolMUC Benchmark Results comparing Rust and C++}
+\label{fig:benchmark-parallel-omp-modi-coolmuc}
+\end{figure}
+
+We can see the strong scaling diagrams for Rust (Rayon) and C++ (OpenMP with Spread Sockets). There is not much particularly interesting about this graph. We have previously determined that the Rust implementation is faster. The purpose of this graph is to strengthen the benchmark results, having measured the performance on two different devices.
 
 \begin{figure}[!htb]
 \begin{tikzpicture}
@@ -1898,11 +1996,13 @@ The parallel benchmarks have also been computed on the supercomputer CoolMUC\cit
 \label{fig:benchmark-parallel-omp-modi-coolmuc}
 \end{figure}
 
-On CoolMUC4, sequential code performs slower than on a high-end consumer PC, with the supercomputer CPU operating on a lower frequency. 
+On CoolMUC4, sequential code performs slower than on a high-end consumer CPU, as the supercomputer operates on a lower frequency. The strength of CoolMUC comes from the evenly distributed workload, generally preventing artefacts as seen in~\autoref{fig:benchmark-parallel}.
+
+However as it turns out, The Close Threads configuration performs poorly even on CoolMUC. This is because the CPU used on the supercomputer also makes use of Intel(R) Hyper-Threading Technology, with a pair of cache-sharing threads per core.
 
 \listoffigures
 
-\listoftables
+% \listoftables
 
 \bibliographystyle{alpha}
 \bibliography{literature}
