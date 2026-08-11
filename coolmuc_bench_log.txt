@@ -1,0 +1,2382 @@
+┌───────────────────┐
+│  lscpu [console]  │
+└───────────────────┘
+Architecture: x86_64
+CPU op-mode(s): 32-bit, 64-bit
+Address sizes: 46 bits physical, 57 bits virtual
+ Byte Order: Little Endian
+     CPU(s): 160
+On-line CPU(s) list: 0-159
+  Vendor ID: GenuineIntel
+ Model name: Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz
+ CPU family: 6
+      Model: 106
+Thread(s) per core: 2
+Core(s) per socket: 40
+  Socket(s): 2
+   Stepping: 6
+CPU(s) scaling MHz: 55%
+CPU max MHz: 2300.0000
+CPU min MHz: 800.0000
+   BogoMIPS: 4600.00
+      Flags: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 intel_ppin ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local split_lock_detect wbnoinvd dtherm arat pln pts vnmi avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg tme avx512_vpopcntdq la57 rdpid fsrm md_clear pconfig flush_l1d arch_capabilities indirect_thunk_its
+Virtualization: VT-x
+  L1d cache: 3.8 MiB (80 instances)
+  L1i cache: 2.5 MiB (80 instances)
+   L2 cache: 100 MiB (80 instances)
+   L3 cache: 120 MiB (2 instances)
+NUMA node(s): 4
+NUMA node0 CPU(s): 0-19,80-99
+NUMA node1 CPU(s): 20-39,100-119
+NUMA node2 CPU(s): 40-59,120-139
+NUMA node3 CPU(s): 60-79,140-159
+Vulnerability Gather data sampling: Mitigation; Microcode
+Vulnerability Indirect target selection: Mitigation; Aligned branch/return thunks
+Vulnerability Itlb multihit: Not affected
+Vulnerability L1tf: Not affected
+Vulnerability Mds: Not affected
+Vulnerability Meltdown: Not affected
+Vulnerability Mmio stale data: Mitigation; Clear CPU buffers; SMT vulnerable
+Vulnerability Reg file data sampling: Not affected
+Vulnerability Retbleed: Not affected
+Vulnerability Spec rstack overflow: Not affected
+Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1: Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2: Mitigation; Enhanced / Automatic IBRS; IBPB conditional; PBRSB-eIBRS SW sequence; BHI SW loop, KVM SW loop
+Vulnerability Srbds: Not affected
+Vulnerability Tsa: Not affected
+Vulnerability Tsx async abort: Not affected
+Vulnerability Vmscape: Not affected
+┌──────────────────────┐
+│  lscpu [rust crate]  │
+└──────────────────────┘
+Architecture     x86_64
+CPU op modes     32-bit, 64-bit
+Address sizes    46 bits physical, 57 bits virtual
+ Byte order      Little Endian
+  CPU count      128
+On-line CPU      1
+  Vendor ID      GenuineIntel
+ Model name      Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz
+ CPU family      6
+  CPU model      106
+  Is hybrid      no
+Threads per core 0
+Cores per socket 81
+    Sockets      3
+   Stepping      6
+Boost enabled    enabled
+┌────────────────────────┐
+│  extended cpu metrics  │
+└────────────────────────┘
+Thread Count 160
+┌──────────────────────────────────────────────────────────┐
+│  two-bodies-collision-0001-parallel [IO] (cpp, 1 steps)  │
+└──────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.0007 -d 0.0007 -s 1 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 199.33001 ms [run 1]
+┌───────────────────────────────────────────────────────────┐
+│  two-bodies-collision-0001-parallel [IO] (rust, 1 steps)  │
+└───────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.0007 -d 0.0007 -s 1 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 82.702485 ms [run 1]
+  Threads := 1
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=1, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 32241.407054 ms [run 1]
+       Bench 32421.464685 ms [run 2]
+       Bench 32325.712977 ms [run 3]
+       Bench 32110.294522 ms [run 4]
+       Bench 31253.237286 ms [run 5]
+       Bench 31266.868274 ms [run 6]
+       Bench 31054.012817 ms [run 7]
+       Bench 30923.047172 ms [run 8]
+       Bench 31081.325616 ms [run 9]
+       Bench 31629.337215 ms [run 10]
+     Average 31630.6707618 +/- 749.208756 ms
+OMP Proc Bind := SPREAD
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=1, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 31904.067363 ms [run 1]
+       Bench 31533.641139 ms [run 2]
+       Bench 32436.809652 ms [run 3]
+       Bench 32122.847277 ms [run 4]
+       Bench 32147.751426 ms [run 5]
+       Bench 32475.593007 ms [run 6]
+       Bench 32173.931533 ms [run 7]
+       Bench 31862.156691 ms [run 8]
+       Bench 31981.631527 ms [run 9]
+       Bench 32207.228057 ms [run 10]
+     Average 32084.5657672 +/- 470.975934 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=1, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 32134.270919 ms [run 1]
+       Bench 31823.520906 ms [run 2]
+       Bench 31277.712691 ms [run 3]
+       Bench 31385.050732 ms [run 4]
+       Bench 31730.117371 ms [run 5]
+       Bench 31539.83114 ms [run 6]
+       Bench 31439.448412 ms [run 7]
+       Bench 31769.380059 ms [run 8]
+       Bench 31586.770389 ms [run 9]
+       Bench 31324.576186 ms [run 10]
+     Average 31601.0678805 +/- 428.279114 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=1, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 31620.376722 ms [run 1]
+       Bench 31836.799765 ms [run 2]
+       Bench 32052.748473 ms [run 3]
+       Bench 30840.915626 ms [run 4]
+       Bench 30539.958788 ms [run 5]
+       Bench 31126.332636 ms [run 6]
+       Bench 31592.479173 ms [run 7]
+       Bench 30711.183796 ms [run 8]
+       Bench 30231.364955 ms [run 9]
+       Bench 30169.391254 ms [run 10]
+     Average 31072.155118799998 +/- 941.678609 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=1, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 29410.345944 ms [run 1]
+       Bench 29398.175203 ms [run 2]
+       Bench 29390.152782 ms [run 3]
+       Bench 30298.788161 ms [run 4]
+       Bench 29467.301085 ms [run 5]
+       Bench 29382.630454 ms [run 6]
+       Bench 29399.213708 ms [run 7]
+       Bench 29388.072032 ms [run 8]
+       Bench 29453.01827 ms [run 9]
+       Bench 29666.892587 ms [run 10]
+     Average 29525.4590226 +/- 458.078853 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=1, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 29412.123052 ms [run 1]
+       Bench 29529.247146 ms [run 2]
+       Bench 29918.403329 ms [run 3]
+       Bench 29939.529895 ms [run 4]
+       Bench 29679.526763 ms [run 5]
+       Bench 29320.209812 ms [run 6]
+       Bench 29685.983489 ms [run 7]
+       Bench 29415.643331 ms [run 8]
+       Bench 29362.261065 ms [run 9]
+       Bench 29348.068319 ms [run 10]
+     Average 29561.099620099998 +/- 309.660041 ms
+┌────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=1] (rust, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 26171.594627 ms [run 1]
+       Bench 25856.135456 ms [run 2]
+       Bench 26030.514905 ms [run 3]
+       Bench 25894.272662 ms [run 4]
+       Bench 26225.295822 ms [run 5]
+       Bench 26145.288965 ms [run 6]
+       Bench 26167.776234 ms [run 7]
+       Bench 26052.948024 ms [run 8]
+       Bench 26006.387861 ms [run 9]
+       Bench 26028.717896 ms [run 10]
+     Average 26057.8932452 +/- 184.580183 ms
+  Threads := 2
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=2, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 16653.364209 ms [run 1]
+       Bench 16490.031525 ms [run 2]
+       Bench 16659.098572 ms [run 3]
+       Bench 16584.469686 ms [run 4]
+       Bench 16468.772085 ms [run 5]
+       Bench 16603.711607 ms [run 6]
+       Bench 16513.090702 ms [run 7]
+       Bench 16438.586772 ms [run 8]
+       Bench 18579.873162 ms [run 9]
+       Bench 16557.467322 ms [run 10]
+     Average 16754.8465642 +/- 1070.643195 ms
+OMP Proc Bind := SPREAD
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=2, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 16094.13282 ms [run 1]
+       Bench 16282.518078 ms [run 2]
+       Bench 16115.455751 ms [run 3]
+       Bench 16124.300265 ms [run 4]
+       Bench 16045.174747 ms [run 5]
+       Bench 16080.859339 ms [run 6]
+       Bench 16158.122422 ms [run 7]
+       Bench 16148.498615 ms [run 8]
+       Bench 16312.405275 ms [run 9]
+       Bench 16456.84448 ms [run 10]
+     Average 16181.8311792 +/- 205.834866 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=2, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 35092.365152 ms [run 1]
+       Bench 34934.187879 ms [run 2]
+       Bench 34933.771366 ms [run 3]
+       Bench 34784.949997 ms [run 4]
+       Bench 34799.84169 ms [run 5]
+       Bench 34545.080182 ms [run 6]
+       Bench 34676.581463 ms [run 7]
+       Bench 34808.272639 ms [run 8]
+       Bench 34782.75662 ms [run 9]
+       Bench 34681.101471 ms [run 10]
+     Average 34803.8908459 +/- 273.642485 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=2, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 15993.88978 ms [run 1]
+       Bench 15803.463803 ms [run 2]
+       Bench 15854.795906 ms [run 3]
+       Bench 15775.928529 ms [run 4]
+       Bench 15825.87631 ms [run 5]
+       Bench 15883.233224 ms [run 6]
+       Bench 15863.444702 ms [run 7]
+       Bench 16019.818782 ms [run 8]
+       Bench 15910.305263 ms [run 9]
+       Bench 15924.923844 ms [run 10]
+     Average 15885.568014299999 +/- 121.945126 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=2, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 15336.0841 ms [run 1]
+       Bench 15387.109935 ms [run 2]
+       Bench 15373.622341 ms [run 3]
+       Bench 15343.803779 ms [run 4]
+       Bench 15406.014026 ms [run 5]
+       Bench 15447.309187 ms [run 6]
+       Bench 15360.226134 ms [run 7]
+       Bench 15590.749954 ms [run 8]
+       Bench 15388.56775 ms [run 9]
+       Bench 15371.69878 ms [run 10]
+     Average 15400.5185986 +/- 127.332927 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=2, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 15547.176032 ms [run 1]
+       Bench 15406.105517 ms [run 2]
+       Bench 15417.859832 ms [run 3]
+       Bench 15547.009945 ms [run 4]
+       Bench 15387.784132 ms [run 5]
+       Bench 15390.009496 ms [run 6]
+       Bench 15506.320429 ms [run 7]
+       Bench 15389.995207 ms [run 8]
+       Bench 15474.593885 ms [run 9]
+       Bench 17486.805909 ms [run 10]
+     Average 15655.3660384 +/- 1049.510888 ms
+┌────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=2] (rust, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 13756.833558 ms [run 1]
+       Bench 13804.950556 ms [run 2]
+       Bench 13870.629281 ms [run 3]
+       Bench 13702.02119 ms [run 4]
+       Bench 13570.949143 ms [run 5]
+       Bench 13655.036969 ms [run 6]
+       Bench 13594.269815 ms [run 7]
+       Bench 13988.698765 ms [run 8]
+       Bench 13901.795461 ms [run 9]
+       Bench 13746.054996 ms [run 10]
+     Average 13759.1239734 +/- 208.874811 ms
+  Threads := 3
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=3, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 10746.057065 ms [run 1]
+       Bench 10642.228834 ms [run 2]
+       Bench 10650.546661 ms [run 3]
+       Bench 10698.699053 ms [run 4]
+       Bench 10666.835706 ms [run 5]
+       Bench 10714.050591 ms [run 6]
+       Bench 10707.902094 ms [run 7]
+       Bench 10669.184161 ms [run 8]
+       Bench 10654.327959 ms [run 9]
+       Bench 10663.659771 ms [run 10]
+     Average 10681.3491895 +/- 51.914115 ms
+OMP Proc Bind := SPREAD
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=3, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 11101.153706 ms [run 1]
+       Bench 11236.732579 ms [run 2]
+       Bench 11186.711494 ms [run 3]
+       Bench 11169.516315 ms [run 4]
+       Bench 11282.545614 ms [run 5]
+       Bench 11154.025455 ms [run 6]
+       Bench 11230.462833 ms [run 7]
+       Bench 11106.956654 ms [run 8]
+       Bench 11258.464845 ms [run 9]
+       Bench 11134.416728 ms [run 10]
+     Average 11186.0986223 +/- 90.695954 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=3, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 23204.413346 ms [run 1]
+       Bench 23259.271106 ms [run 2]
+       Bench 23108.201488 ms [run 3]
+       Bench 23311.69752 ms [run 4]
+       Bench 23201.014326 ms [run 5]
+       Bench 23219.143633 ms [run 6]
+       Bench 23334.332842 ms [run 7]
+       Bench 23233.486516 ms [run 8]
+       Bench 23224.20823 ms [run 9]
+       Bench 23162.394306 ms [run 10]
+     Average 23225.8163313 +/- 113.065677 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=3, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 11095.952507 ms [run 1]
+       Bench 10984.387259 ms [run 2]
+       Bench 11560.750225 ms [run 3]
+       Bench 10996.429976 ms [run 4]
+       Bench 11269.585038 ms [run 5]
+       Bench 10974.19498 ms [run 6]
+       Bench 11651.597651 ms [run 7]
+       Bench 11274.540955 ms [run 8]
+       Bench 11085.183617 ms [run 9]
+       Bench 10981.318527 ms [run 10]
+     Average 11187.3940735 +/- 338.701335 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=3, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 10738.155401 ms [run 1]
+       Bench 10747.124467 ms [run 2]
+       Bench 10879.562329 ms [run 3]
+       Bench 10686.299922 ms [run 4]
+       Bench 10819.33925 ms [run 5]
+       Bench 10733.978714 ms [run 6]
+       Bench 11387.277294 ms [run 7]
+       Bench 10912.150019 ms [run 8]
+       Bench 10924.142456 ms [run 9]
+       Bench 10753.263343 ms [run 10]
+     Average 10858.1293195 +/- 350.488686 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=3, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 10737.020989 ms [run 1]
+       Bench 10652.853044 ms [run 2]
+       Bench 10750.731234 ms [run 3]
+       Bench 11224.277559 ms [run 4]
+       Bench 11189.349771 ms [run 5]
+       Bench 11057.511533 ms [run 6]
+       Bench 11242.25173 ms [run 7]
+       Bench 10824.264085 ms [run 8]
+       Bench 10677.136972 ms [run 9]
+       Bench 10651.794386 ms [run 10]
+     Average 10900.7191303 +/- 295.228672 ms
+┌────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=3] (rust, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 9646.638577 ms [run 1]
+       Bench 9149.499291 ms [run 2]
+       Bench 9234.351943 ms [run 3]
+       Bench 9752.683672 ms [run 4]
+       Bench 9646.65662 ms [run 5]
+       Bench 9660.676543 ms [run 6]
+       Bench 9571.709141 ms [run 7]
+       Bench 9356.613241 ms [run 8]
+       Bench 9537.588223 ms [run 9]
+       Bench 9286.770694 ms [run 10]
+     Average 9484.3187945 +/- 301.59219 ms
+  Threads := 4
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=4, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 8102.606782 ms [run 1]
+       Bench 8045.755818 ms [run 2]
+       Bench 8028.116267 ms [run 3]
+       Bench 8052.821426 ms [run 4]
+       Bench 7996.52709 ms [run 5]
+       Bench 8050.748538 ms [run 6]
+       Bench 8029.276416 ms [run 7]
+       Bench 7982.993127 ms [run 8]
+       Bench 8008.109517 ms [run 9]
+       Bench 8027.698246 ms [run 10]
+     Average 8032.4653227 +/- 59.806827 ms
+OMP Proc Bind := SPREAD
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=4, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 8707.764698 ms [run 1]
+       Bench 8487.865102 ms [run 2]
+       Bench 8559.015829 ms [run 3]
+       Bench 8629.145484 ms [run 4]
+       Bench 8591.905458 ms [run 5]
+       Bench 8685.493253 ms [run 6]
+       Bench 8622.066653 ms [run 7]
+       Bench 8554.775286 ms [run 8]
+       Bench 8612.50455 ms [run 9]
+       Bench 8605.999835 ms [run 10]
+     Average 8605.6536148 +/- 109.949798 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=4, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 17687.790238 ms [run 1]
+       Bench 17754.394306 ms [run 2]
+       Bench 17799.828681 ms [run 3]
+       Bench 17700.882689 ms [run 4]
+       Bench 17637.865982 ms [run 5]
+       Bench 17666.191961 ms [run 6]
+       Bench 17661.825135 ms [run 7]
+       Bench 17711.663875 ms [run 8]
+       Bench 17743.036452 ms [run 9]
+       Bench 17668.552995 ms [run 10]
+     Average 17703.203231400003 +/- 80.981349 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=4, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 8699.92626 ms [run 1]
+       Bench 8516.976043 ms [run 2]
+       Bench 8679.548107 ms [run 3]
+       Bench 8633.239277 ms [run 4]
+       Bench 8462.358386 ms [run 5]
+       Bench 8729.531236 ms [run 6]
+       Bench 8561.398914 ms [run 7]
+       Bench 8571.284928 ms [run 8]
+       Bench 8461.616422 ms [run 9]
+       Bench 8488.491326 ms [run 10]
+     Average 8580.4370899 +/- 133.957407 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=4, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 8302.664584 ms [run 1]
+       Bench 8640.787116 ms [run 2]
+       Bench 8384.783701 ms [run 3]
+       Bench 8394.408652 ms [run 4]
+       Bench 8393.372068 ms [run 5]
+       Bench 8351.647092 ms [run 6]
+       Bench 8286.874799 ms [run 7]
+       Bench 8349.220657 ms [run 8]
+       Bench 8333.283872 ms [run 9]
+       Bench 8315.242104 ms [run 10]
+     Average 8375.2284645 +/- 176.956158 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=4, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 8313.29258 ms [run 1]
+       Bench 8326.582088 ms [run 2]
+       Bench 8328.7145 ms [run 3]
+       Bench 8389.928383 ms [run 4]
+       Bench 8306.504596 ms [run 5]
+       Bench 8337.432005 ms [run 6]
+       Bench 8345.183821 ms [run 7]
+       Bench 8379.281734 ms [run 8]
+       Bench 8452.603737 ms [run 9]
+       Bench 8394.700485 ms [run 10]
+     Average 8357.4223929 +/- 73.04957 ms
+┌────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=4] (rust, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 7181.870957 ms [run 1]
+       Bench 7128.759644 ms [run 2]
+       Bench 7142.33138 ms [run 3]
+       Bench 6909.159764 ms [run 4]
+       Bench 6933.687804 ms [run 5]
+       Bench 6898.764929 ms [run 6]
+       Bench 7103.263426 ms [run 7]
+       Bench 6825.040342 ms [run 8]
+       Bench 7041.578238 ms [run 9]
+       Bench 7092.037462 ms [run 10]
+     Average 7025.6493946 +/- 178.415307 ms
+  Threads := 5
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=5, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 6729.91058 ms [run 1]
+       Bench 6561.3582 ms [run 2]
+       Bench 6567.818307 ms [run 3]
+       Bench 6543.032013 ms [run 4]
+       Bench 6579.595379 ms [run 5]
+       Bench 6565.454319 ms [run 6]
+       Bench 6526.854637 ms [run 7]
+       Bench 6501.319953 ms [run 8]
+       Bench 6519.955071 ms [run 9]
+       Bench 6501.819113 ms [run 10]
+     Average 6559.7117572 +/- 114.295313 ms
+OMP Proc Bind := SPREAD
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=5, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 6961.495136 ms [run 1]
+       Bench 6896.108946 ms [run 2]
+       Bench 6932.411497 ms [run 3]
+       Bench 6855.384798 ms [run 4]
+       Bench 6890.585306 ms [run 5]
+       Bench 6845.034864 ms [run 6]
+       Bench 6894.91247 ms [run 7]
+       Bench 6898.55537 ms [run 8]
+       Bench 6878.099132 ms [run 9]
+       Bench 6947.495688 ms [run 10]
+     Average 6900.0083207 +/- 58.230136 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=5, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 14117.418347 ms [run 1]
+       Bench 14097.976143 ms [run 2]
+       Bench 14097.911576 ms [run 3]
+       Bench 14081.708053 ms [run 4]
+       Bench 14039.844602 ms [run 5]
+       Bench 14079.284693 ms [run 6]
+       Bench 14054.561536 ms [run 7]
+       Bench 13963.231152 ms [run 8]
+       Bench 14049.981861 ms [run 9]
+       Bench 14093.227397 ms [run 10]
+     Average 14067.514536 +/- 77.093597 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=5, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 6889.342311 ms [run 1]
+       Bench 6871.634194 ms [run 2]
+       Bench 6887.950844 ms [run 3]
+       Bench 6877.161097 ms [run 4]
+       Bench 6947.582768 ms [run 5]
+       Bench 7305.009713 ms [run 6]
+       Bench 6841.094253 ms [run 7]
+       Bench 6975.890675 ms [run 8]
+       Bench 6837.613731 ms [run 9]
+       Bench 6986.641755 ms [run 10]
+     Average 6941.9921341 +/- 233.697991 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=5, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 6812.434931 ms [run 1]
+       Bench 6769.339989 ms [run 2]
+       Bench 6880.406547 ms [run 3]
+       Bench 6824.285007 ms [run 4]
+       Bench 6806.66655 ms [run 5]
+       Bench 6872.966163 ms [run 6]
+       Bench 6768.45262 ms [run 7]
+       Bench 6900.194313 ms [run 8]
+       Bench 7465.751941 ms [run 9]
+       Bench 6893.176399 ms [run 10]
+     Average 6899.367446 +/- 348.64966 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=5, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 6797.193294 ms [run 1]
+       Bench 6781.841516 ms [run 2]
+       Bench 6995.175507 ms [run 3]
+       Bench 6767.031191 ms [run 4]
+       Bench 6898.144181 ms [run 5]
+       Bench 6822.911549 ms [run 6]
+       Bench 6912.030579 ms [run 7]
+       Bench 6902.629162 ms [run 8]
+       Bench 6841.720785 ms [run 9]
+       Bench 6726.754821 ms [run 10]
+     Average 6844.5432585 +/- 134.210343 ms
+┌────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=5] (rust, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 5799.828337 ms [run 1]
+       Bench 5996.120088 ms [run 2]
+       Bench 5945.183279 ms [run 3]
+       Bench 5964.198756 ms [run 4]
+       Bench 5870.623733 ms [run 5]
+       Bench 5896.2822 ms [run 6]
+       Bench 5966.507453 ms [run 7]
+       Bench 5954.14307 ms [run 8]
+       Bench 5835.187778 ms [run 9]
+       Bench 5985.282352 ms [run 10]
+     Average 5921.3357046 +/- 98.145875 ms
+  Threads := 6
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=6, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 5709.087015 ms [run 1]
+       Bench 5690.733182 ms [run 2]
+       Bench 5575.542929 ms [run 3]
+       Bench 5624.061192 ms [run 4]
+       Bench 5475.183504 ms [run 5]
+       Bench 5580.349458 ms [run 6]
+       Bench 5488.740711 ms [run 7]
+       Bench 5483.867689 ms [run 8]
+       Bench 5504.938654 ms [run 9]
+       Bench 5426.794302 ms [run 10]
+     Average 5555.9298636 +/- 141.146356 ms
+OMP Proc Bind := SPREAD
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=6, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 5877.384249 ms [run 1]
+       Bench 5779.650389 ms [run 2]
+       Bench 5725.176084 ms [run 3]
+       Bench 5718.337539 ms [run 4]
+       Bench 5710.062659 ms [run 5]
+       Bench 5645.286676 ms [run 6]
+       Bench 5759.722247 ms [run 7]
+       Bench 5701.099414 ms [run 8]
+       Bench 5754.259928 ms [run 9]
+       Bench 5770.236446 ms [run 10]
+     Average 5744.1215631000005 +/- 116.048786 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=6, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 11803.557172 ms [run 1]
+       Bench 11721.867937 ms [run 2]
+       Bench 11717.985341 ms [run 3]
+       Bench 11764.011197 ms [run 4]
+       Bench 11940.804997 ms [run 5]
+       Bench 11743.447286 ms [run 6]
+       Bench 11757.959889 ms [run 7]
+       Bench 11891.388541 ms [run 8]
+       Bench 11745.221761 ms [run 9]
+       Bench 11807.086669 ms [run 10]
+     Average 11789.333079 +/- 111.409828 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=6, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 5734.682231 ms [run 1]
+       Bench 5739.264337 ms [run 2]
+       Bench 5715.830965 ms [run 3]
+       Bench 5722.71164 ms [run 4]
+       Bench 5730.702294 ms [run 5]
+       Bench 5715.618294 ms [run 6]
+       Bench 5700.976132 ms [run 7]
+       Bench 5709.395889 ms [run 8]
+       Bench 5687.064097 ms [run 9]
+       Bench 5721.786186 ms [run 10]
+     Average 5717.8032065 +/- 26.10012 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=6, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 5709.08641 ms [run 1]
+       Bench 5591.191721 ms [run 2]
+       Bench 5772.862263 ms [run 3]
+       Bench 5820.968123 ms [run 4]
+       Bench 5763.224405 ms [run 5]
+       Bench 5583.609973 ms [run 6]
+       Bench 5575.285529 ms [run 7]
+       Bench 5605.513642 ms [run 8]
+       Bench 5633.696382 ms [run 9]
+       Bench 5709.107412 ms [run 10]
+     Average 5676.454586 +/- 122.841297 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=6, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 5649.214543 ms [run 1]
+       Bench 5643.626386 ms [run 2]
+       Bench 5633.794445 ms [run 3]
+       Bench 5600.191627 ms [run 4]
+       Bench 5729.185897 ms [run 5]
+       Bench 5680.808054 ms [run 6]
+       Bench 5641.559603 ms [run 7]
+       Bench 6213.149595 ms [run 8]
+       Bench 5568.215676 ms [run 9]
+       Bench 5660.4101 ms [run 10]
+     Average 5702.015592600001 +/- 322.466959 ms
+┌────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=6] (rust, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 4891.503448 ms [run 1]
+       Bench 4995.285567 ms [run 2]
+       Bench 4934.522199 ms [run 3]
+       Bench 4998.417176 ms [run 4]
+       Bench 4970.057609 ms [run 5]
+       Bench 5115.928531 ms [run 6]
+       Bench 4952.150947 ms [run 7]
+       Bench 4932.173789 ms [run 8]
+       Bench 4969.891863 ms [run 9]
+       Bench 5056.207684 ms [run 10]
+     Average 4981.6138813 +/- 112.212541 ms
+  Threads := 7
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=7, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 4817.75746 ms [run 1]
+       Bench 4741.83803 ms [run 2]
+       Bench 4730.16874 ms [run 3]
+       Bench 4732.26612 ms [run 4]
+       Bench 4737.505263 ms [run 5]
+       Bench 4737.177567 ms [run 6]
+       Bench 4736.988034 ms [run 7]
+       Bench 4737.675346 ms [run 8]
+       Bench 4697.964854 ms [run 9]
+       Bench 4747.280399 ms [run 10]
+     Average 4741.6621813 +/- 59.896303 ms
+OMP Proc Bind := SPREAD
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=7, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 5015.507039 ms [run 1]
+       Bench 4954.779409 ms [run 2]
+       Bench 5251.628428 ms [run 3]
+       Bench 5978.064012 ms [run 4]
+       Bench 4960.831397 ms [run 5]
+       Bench 4981.150265 ms [run 6]
+       Bench 4997.135583 ms [run 7]
+       Bench 4995.675861 ms [run 8]
+       Bench 5004.105378 ms [run 9]
+       Bench 5037.232609 ms [run 10]
+     Average 5117.6109981 +/- 511.642301 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=7, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 10051.370702 ms [run 1]
+       Bench 10100.893919 ms [run 2]
+       Bench 10115.230014 ms [run 3]
+       Bench 10120.172099 ms [run 4]
+       Bench 10102.194473 ms [run 5]
+       Bench 10116.448274 ms [run 6]
+       Bench 10139.715037 ms [run 7]
+       Bench 10103.33577 ms [run 8]
+       Bench 10071.712438 ms [run 9]
+       Bench 10076.674309 ms [run 10]
+     Average 10099.7747035 +/- 44.172167 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=7, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 5212.161491 ms [run 1]
+       Bench 4987.293713 ms [run 2]
+       Bench 4971.47171 ms [run 3]
+       Bench 4978.23471 ms [run 4]
+       Bench 4993.088205 ms [run 5]
+       Bench 5038.477298 ms [run 6]
+       Bench 5033.774036 ms [run 7]
+       Bench 4943.314933 ms [run 8]
+       Bench 4901.383581 ms [run 9]
+       Bench 4935.741743 ms [run 10]
+     Average 4999.494142 +/- 155.388955 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=7, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 4899.441042 ms [run 1]
+       Bench 4904.678556 ms [run 2]
+       Bench 4902.721614 ms [run 3]
+       Bench 4866.125928 ms [run 4]
+       Bench 4923.479674 ms [run 5]
+       Bench 4979.296048 ms [run 6]
+       Bench 4878.242139 ms [run 7]
+       Bench 4938.026259 ms [run 8]
+       Bench 4920.010669 ms [run 9]
+       Bench 4935.067371 ms [run 10]
+     Average 4914.70893 +/- 56.58506 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=7, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 5069.076874 ms [run 1]
+       Bench 4919.089982 ms [run 2]
+       Bench 4948.668841 ms [run 3]
+       Bench 4940.417134 ms [run 4]
+       Bench 4912.745643 ms [run 5]
+       Bench 4899.243221 ms [run 6]
+       Bench 4874.022867 ms [run 7]
+       Bench 4882.489423 ms [run 8]
+       Bench 4862.758851 ms [run 9]
+       Bench 4950.601365 ms [run 10]
+     Average 4925.9114201 +/- 103.159011 ms
+┌────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=7] (rust, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 4403.127087 ms [run 1]
+       Bench 4378.489125 ms [run 2]
+       Bench 4064.31696 ms [run 3]
+       Bench 4271.017876 ms [run 4]
+       Bench 4150.733362 ms [run 5]
+       Bench 4164.925303 ms [run 6]
+       Bench 4339.177156 ms [run 7]
+       Bench 4372.903746 ms [run 8]
+       Bench 4382.16477 ms [run 9]
+       Bench 4377.713773 ms [run 10]
+     Average 4290.4569158 +/- 169.405063 ms
+  Threads := 8
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=8, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 4329.188036 ms [run 1]
+       Bench 4221.084719 ms [run 2]
+       Bench 4235.788278 ms [run 3]
+       Bench 4276.445844 ms [run 4]
+       Bench 4243.459046 ms [run 5]
+       Bench 4239.269712 ms [run 6]
+       Bench 4277.318197 ms [run 7]
+       Bench 4306.222462 ms [run 8]
+       Bench 4231.408748 ms [run 9]
+       Bench 4194.131503 ms [run 10]
+     Average 4255.4316545 +/- 67.528266 ms
+OMP Proc Bind := SPREAD
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=8, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 5374.965159 ms [run 1]
+       Bench 4507.083279 ms [run 2]
+       Bench 4477.913908 ms [run 3]
+       Bench 4444.825425 ms [run 4]
+       Bench 4411.321793 ms [run 5]
+       Bench 4440.964501 ms [run 6]
+       Bench 4458.237605 ms [run 7]
+       Bench 4412.922074 ms [run 8]
+       Bench 4519.947419 ms [run 9]
+       Bench 4407.710659 ms [run 10]
+     Average 4545.589182199999 +/- 483.62725 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=8, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 9016.309837 ms [run 1]
+       Bench 8855.45039 ms [run 2]
+       Bench 8891.321881 ms [run 3]
+       Bench 8878.01671 ms [run 4]
+       Bench 8856.781022 ms [run 5]
+       Bench 8916.80435 ms [run 6]
+       Bench 8932.958889 ms [run 7]
+       Bench 8926.825533 ms [run 8]
+       Bench 8934.9132 ms [run 9]
+       Bench 8886.881208 ms [run 10]
+     Average 8909.626302 +/- 80.429723 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=8, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 5207.560167 ms [run 1]
+       Bench 4396.213965 ms [run 2]
+       Bench 4381.525414 ms [run 3]
+       Bench 4458.89439 ms [run 4]
+       Bench 4397.601914 ms [run 5]
+       Bench 4404.86972 ms [run 6]
+       Bench 4458.031905 ms [run 7]
+       Bench 5110.512445 ms [run 8]
+       Bench 4385.238815 ms [run 9]
+       Bench 4343.859829 ms [run 10]
+     Average 4554.430856399999 +/- 431.850169 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=8, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 4497.76283 ms [run 1]
+       Bench 4525.112851 ms [run 2]
+       Bench 4362.395583 ms [run 3]
+       Bench 4508.533195 ms [run 4]
+       Bench 4351.583609 ms [run 5]
+       Bench 4360.884747 ms [run 6]
+       Bench 4405.825493 ms [run 7]
+       Bench 4321.137601 ms [run 8]
+       Bench 4274.743829 ms [run 9]
+       Bench 4367.974169 ms [run 10]
+     Average 4397.595390699999 +/- 125.184511 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=8, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 4328.609314 ms [run 1]
+       Bench 4597.717819 ms [run 2]
+       Bench 4420.804534 ms [run 3]
+       Bench 4336.128897 ms [run 4]
+       Bench 4433.691108 ms [run 5]
+       Bench 4365.831454 ms [run 6]
+       Bench 4385.401932 ms [run 7]
+       Bench 4348.686475 ms [run 8]
+       Bench 4344.77768 ms [run 9]
+       Bench 4338.832729 ms [run 10]
+     Average 4390.0481942 +/- 134.554252 ms
+┌────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=8] (rust, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 3857.692077 ms [run 1]
+       Bench 3878.016931 ms [run 2]
+       Bench 3884.520068 ms [run 3]
+       Bench 3783.646432 ms [run 4]
+       Bench 3863.290581 ms [run 5]
+       Bench 3847.952254 ms [run 6]
+       Bench 3620.319706 ms [run 7]
+       Bench 3698.848307 ms [run 8]
+       Bench 3898.403226 ms [run 9]
+       Bench 3906.553802 ms [run 10]
+     Average 3823.9243384 +/- 143.117048 ms
+  Threads := 9
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=9, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3937.492593 ms [run 1]
+       Bench 3817.693784 ms [run 2]
+       Bench 3830.613008 ms [run 3]
+       Bench 4176.468141 ms [run 4]
+       Bench 3897.165796 ms [run 5]
+       Bench 3773.556821 ms [run 6]
+       Bench 3766.464239 ms [run 7]
+       Bench 3885.014483 ms [run 8]
+       Bench 3758.322888 ms [run 9]
+       Bench 3823.038641 ms [run 10]
+     Average 3866.5830394 +/- 209.072626 ms
+OMP Proc Bind := SPREAD
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=9, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 4765.529495 ms [run 1]
+       Bench 4075.221326 ms [run 2]
+       Bench 3950.467693 ms [run 3]
+       Bench 3977.680708 ms [run 4]
+       Bench 3978.292895 ms [run 5]
+       Bench 4005.148775 ms [run 6]
+       Bench 3958.158743 ms [run 7]
+       Bench 3944.997905 ms [run 8]
+       Bench 3988.299438 ms [run 9]
+       Bench 3938.331492 ms [run 10]
+     Average 4058.212847 +/- 413.599001 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=9, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 7936.422747 ms [run 1]
+       Bench 7914.011419 ms [run 2]
+       Bench 7902.870514 ms [run 3]
+       Bench 7905.99524 ms [run 4]
+       Bench 7988.09154 ms [run 5]
+       Bench 7914.853138 ms [run 6]
+       Bench 7933.381924 ms [run 7]
+       Bench 7900.746029 ms [run 8]
+       Bench 7893.840808 ms [run 9]
+       Bench 7864.103774 ms [run 10]
+     Average 7915.4317133 +/- 61.993883 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=9, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3928.709665 ms [run 1]
+       Bench 4018.772304 ms [run 2]
+       Bench 3931.435322 ms [run 3]
+       Bench 4050.72354 ms [run 4]
+       Bench 3935.385088 ms [run 5]
+       Bench 3936.593421 ms [run 6]
+       Bench 3985.666077 ms [run 7]
+       Bench 3993.383239 ms [run 8]
+       Bench 3913.483273 ms [run 9]
+       Bench 3971.900425 ms [run 10]
+     Average 3966.6052354000003 +/- 68.620133 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=9, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3963.210755 ms [run 1]
+       Bench 4032.946415 ms [run 2]
+       Bench 4109.404268 ms [run 3]
+       Bench 4453.700879 ms [run 4]
+       Bench 3976.37731 ms [run 5]
+       Bench 3907.415707 ms [run 6]
+       Bench 4532.24509 ms [run 7]
+       Bench 4008.883228 ms [run 8]
+       Bench 4047.240422 ms [run 9]
+       Bench 4254.6355 ms [run 10]
+     Average 4128.6059574 +/- 312.414691 ms
+OMP Proc Bind := SPREAD
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=9, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 4034.883331 ms [run 1]
+       Bench 3961.527358 ms [run 2]
+       Bench 3908.214311 ms [run 3]
+       Bench 3913.727959 ms [run 4]
+       Bench 3924.043742 ms [run 5]
+       Bench 4002.936962 ms [run 6]
+       Bench 4164.193101 ms [run 7]
+       Bench 4001.774931 ms [run 8]
+       Bench 3932.946761 ms [run 9]
+       Bench 3967.335346 ms [run 10]
+     Average 3981.1583802 +/- 127.989395 ms
+┌────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=9] (rust, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 3523.457133 ms [run 1]
+       Bench 3590.550045 ms [run 2]
+       Bench 3981.171137 ms [run 3]
+       Bench 3507.196147 ms [run 4]
+       Bench 3494.685339 ms [run 5]
+       Bench 3605.088105 ms [run 6]
+       Bench 3972.074167 ms [run 7]
+       Bench 3555.771717 ms [run 8]
+       Bench 3441.937729 ms [run 9]
+       Bench 3579.052679 ms [run 10]
+     Average 3625.0984198 +/- 269.616704 ms
+  Threads := 10
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=10, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3607.401077 ms [run 1]
+       Bench 4035.086806 ms [run 2]
+       Bench 3507.204403 ms [run 3]
+       Bench 3529.678592 ms [run 4]
+       Bench 3477.991083 ms [run 5]
+       Bench 3520.299226 ms [run 6]
+       Bench 3865.910419 ms [run 7]
+       Bench 3435.889064 ms [run 8]
+       Bench 3520.836759 ms [run 9]
+       Bench 3487.843601 ms [run 10]
+     Average 3598.814103 +/- 299.598871 ms
+OMP Proc Bind := SPREAD
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=10, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3781.309024 ms [run 1]
+       Bench 3650.870698 ms [run 2]
+       Bench 3695.790502 ms [run 3]
+       Bench 3685.113352 ms [run 4]
+       Bench 3673.559904 ms [run 5]
+       Bench 3734.481182 ms [run 6]
+       Bench 4160.868944 ms [run 7]
+       Bench 3691.530207 ms [run 8]
+       Bench 3691.589993 ms [run 9]
+       Bench 3641.16378 ms [run 10]
+     Average 3740.6277586 +/- 259.852582 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=10, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 7451.138062 ms [run 1]
+       Bench 7344.987977 ms [run 2]
+       Bench 7275.662497 ms [run 3]
+       Bench 7246.986019 ms [run 4]
+       Bench 7383.432748 ms [run 5]
+       Bench 7318.330756 ms [run 6]
+       Bench 7366.7067 ms [run 7]
+       Bench 7470.667087 ms [run 8]
+       Bench 7394.845295 ms [run 9]
+       Bench 7384.237101 ms [run 10]
+     Average 7363.6994242 +/- 111.840534 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=10, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3760.1375 ms [run 1]
+       Bench 3793.363993 ms [run 2]
+       Bench 3710.584105 ms [run 3]
+       Bench 3667.634234 ms [run 4]
+       Bench 3818.501118 ms [run 5]
+       Bench 3662.558373 ms [run 6]
+       Bench 3661.740286 ms [run 7]
+       Bench 3982.290877 ms [run 8]
+       Bench 3681.786673 ms [run 9]
+       Bench 3727.304394 ms [run 10]
+     Average 3746.5901553000003 +/- 160.275295 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=10, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3697.867284 ms [run 1]
+       Bench 3551.432496 ms [run 2]
+       Bench 3554.046028 ms [run 3]
+       Bench 3545.5005 ms [run 4]
+       Bench 3735.432121 ms [run 5]
+       Bench 3725.920853 ms [run 6]
+       Bench 3784.680685 ms [run 7]
+       Bench 3597.165695 ms [run 8]
+       Bench 3610.993259 ms [run 9]
+       Bench 3554.405273 ms [run 10]
+     Average 3635.7444194 +/- 119.590092 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=10, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3931.146063 ms [run 1]
+       Bench 3571.794484 ms [run 2]
+       Bench 3717.976397 ms [run 3]
+       Bench 3594.12528 ms [run 4]
+       Bench 3714.517771 ms [run 5]
+       Bench 3748.497349 ms [run 6]
+       Bench 3725.811329 ms [run 7]
+       Bench 3596.211911 ms [run 8]
+       Bench 3597.66032 ms [run 9]
+       Bench 3782.33193 ms [run 10]
+     Average 3698.0072834000002 +/- 179.675789 ms
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=10] (rust, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 3534.744551 ms [run 1]
+       Bench 3291.537836 ms [run 2]
+       Bench 3258.978375 ms [run 3]
+       Bench 3175.940956 ms [run 4]
+       Bench 3284.20115 ms [run 5]
+       Bench 3372.620316 ms [run 6]
+       Bench 3237.516529 ms [run 7]
+       Bench 3236.42133 ms [run 8]
+       Bench 3333.300422 ms [run 9]
+       Bench 3167.177372 ms [run 10]
+     Average 3289.2438837 +/- 183.783589 ms
+  Threads := 11
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=11, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3690.059806 ms [run 1]
+       Bench 3236.471273 ms [run 2]
+       Bench 3298.677854 ms [run 3]
+       Bench 3305.029627 ms [run 4]
+       Bench 3342.865836 ms [run 5]
+       Bench 3331.80711 ms [run 6]
+       Bench 3272.749614 ms [run 7]
+       Bench 3210.444188 ms [run 8]
+       Bench 3269.190462 ms [run 9]
+       Bench 3289.594094 ms [run 10]
+     Average 3324.6889864 +/- 239.807809 ms
+OMP Proc Bind := SPREAD
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=11, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3430.885922 ms [run 1]
+       Bench 3543.154741 ms [run 2]
+       Bench 3415.176483 ms [run 3]
+       Bench 3389.157004 ms [run 4]
+       Bench 3461.739618 ms [run 5]
+       Bench 3525.486084 ms [run 6]
+       Bench 3390.847251 ms [run 7]
+       Bench 3523.767649 ms [run 8]
+       Bench 3429.079791 ms [run 9]
+       Bench 3524.670112 ms [run 10]
+     Average 3463.3964655 +/- 76.998868 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=11, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 6770.668363 ms [run 1]
+       Bench 6969.371214 ms [run 2]
+       Bench 6846.125233 ms [run 3]
+       Bench 6867.754965 ms [run 4]
+       Bench 6986.595084 ms [run 5]
+       Bench 7057.147893 ms [run 6]
+       Bench 7145.903647 ms [run 7]
+       Bench 7013.198972 ms [run 8]
+       Bench 7054.871694 ms [run 9]
+       Bench 7002.004474 ms [run 10]
+     Average 6971.3641539 +/- 187.617642 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=11, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3621.321537 ms [run 1]
+       Bench 3535.278215 ms [run 2]
+       Bench 3506.471866 ms [run 3]
+       Bench 3437.552484 ms [run 4]
+       Bench 3436.02515 ms [run 5]
+       Bench 3501.204758 ms [run 6]
+       Bench 3683.777704 ms [run 7]
+       Bench 3482.757014 ms [run 8]
+       Bench 3492.734822 ms [run 9]
+       Bench 3462.67083 ms [run 10]
+     Average 3515.979438 +/- 123.876277 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=11, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3448.375574 ms [run 1]
+       Bench 3413.004733 ms [run 2]
+       Bench 3340.078698 ms [run 3]
+       Bench 3367.972982 ms [run 4]
+       Bench 3821.496759 ms [run 5]
+       Bench 3279.95078 ms [run 6]
+       Bench 3328.161221 ms [run 7]
+       Bench 3524.011581 ms [run 8]
+       Bench 3326.380855 ms [run 9]
+       Bench 3346.124162 ms [run 10]
+     Average 3419.5557345 +/- 270.772989 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=11, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3311.28952 ms [run 1]
+       Bench 3429.810656 ms [run 2]
+       Bench 3350.190297 ms [run 3]
+       Bench 3436.070799 ms [run 4]
+       Bench 3385.520561 ms [run 5]
+       Bench 3349.502789 ms [run 6]
+       Bench 3301.649296 ms [run 7]
+       Bench 3453.691327 ms [run 8]
+       Bench 3433.982034 ms [run 9]
+       Bench 3418.496329 ms [run 10]
+     Average 3387.0203608 +/- 76.021015 ms
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=11] (rust, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 3002.895478 ms [run 1]
+       Bench 2987.978201 ms [run 2]
+       Bench 3076.350436 ms [run 3]
+       Bench 2995.115562 ms [run 4]
+       Bench 3063.339808 ms [run 5]
+       Bench 3070.91204 ms [run 6]
+       Bench 2999.43593 ms [run 7]
+       Bench 3031.025639 ms [run 8]
+       Bench 3016.116385 ms [run 9]
+       Bench 2988.998706 ms [run 10]
+     Average 3023.2168185 +/- 44.186117 ms
+  Threads := 12
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=12, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3851.149113 ms [run 1]
+       Bench 3174.0889 ms [run 2]
+       Bench 3114.036747 ms [run 3]
+       Bench 3379.76975 ms [run 4]
+       Bench 3280.586747 ms [run 5]
+       Bench 3078.110495 ms [run 6]
+       Bench 3126.149276 ms [run 7]
+       Bench 3065.235194 ms [run 8]
+       Bench 3089.563219 ms [run 9]
+       Bench 3116.560777 ms [run 10]
+     Average 3227.5250218 +/- 392.956959 ms
+OMP Proc Bind := SPREAD
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=12, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3393.278195 ms [run 1]
+       Bench 3412.602635 ms [run 2]
+       Bench 3182.526089 ms [run 3]
+       Bench 3251.404234 ms [run 4]
+       Bench 3205.215977 ms [run 5]
+       Bench 3163.36796 ms [run 6]
+       Bench 3199.17858 ms [run 7]
+       Bench 3350.067753 ms [run 8]
+       Bench 3749.785728 ms [run 9]
+       Bench 3180.691868 ms [run 10]
+     Average 3308.8119019 +/- 293.208884 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=12, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 6246.937628 ms [run 1]
+       Bench 6317.821886 ms [run 2]
+       Bench 6284.439629 ms [run 3]
+       Bench 6404.679383 ms [run 4]
+       Bench 6382.990301 ms [run 5]
+       Bench 6409.34963 ms [run 6]
+       Bench 6247.066773 ms [run 7]
+       Bench 6192.560305 ms [run 8]
+       Bench 6245.284193 ms [run 9]
+       Bench 6278.609924 ms [run 10]
+     Average 6300.9739652 +/- 108.394662 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=12, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3751.661745 ms [run 1]
+       Bench 3436.102265 ms [run 2]
+       Bench 3232.115982 ms [run 3]
+       Bench 4099.867014 ms [run 4]
+       Bench 3601.577517 ms [run 5]
+       Bench 3250.743342 ms [run 6]
+       Bench 3213.63925 ms [run 7]
+       Bench 3227.100755 ms [run 8]
+       Bench 3224.366737 ms [run 9]
+       Bench 3216.276139 ms [run 10]
+     Average 3425.3450746 +/- 443.113882 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=12, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3380.173087 ms [run 1]
+       Bench 3214.08595 ms [run 2]
+       Bench 3152.56237 ms [run 3]
+       Bench 3151.356481 ms [run 4]
+       Bench 3534.331371 ms [run 5]
+       Bench 3257.914692 ms [run 6]
+       Bench 3357.754077 ms [run 7]
+       Bench 3474.028702 ms [run 8]
+       Bench 3222.108156 ms [run 9]
+       Bench 3315.591439 ms [run 10]
+     Average 3305.9906325 +/- 191.487445 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=12, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3177.992335 ms [run 1]
+       Bench 3251.952465 ms [run 2]
+       Bench 3174.851363 ms [run 3]
+       Bench 3223.212423 ms [run 4]
+       Bench 3134.369448 ms [run 5]
+       Bench 3166.262452 ms [run 6]
+       Bench 3483.000577 ms [run 7]
+       Bench 3393.84818 ms [run 8]
+       Bench 3108.541166 ms [run 9]
+       Bench 3152.173941 ms [run 10]
+     Average 3226.620435 +/- 187.229705 ms
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=12] (rust, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 2890.905869 ms [run 1]
+       Bench 2824.844497 ms [run 2]
+       Bench 2865.83844 ms [run 3]
+       Bench 2859.355555 ms [run 4]
+       Bench 2819.442412 ms [run 5]
+       Bench 2832.867253 ms [run 6]
+       Bench 2849.25546 ms [run 7]
+       Bench 2832.670494 ms [run 8]
+       Bench 3183.487379 ms [run 9]
+       Bench 2944.4641 ms [run 10]
+     Average 2890.3131459 +/- 182.022483 ms
+  Threads := 13
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=13, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3055.249072 ms [run 1]
+       Bench 2959.413565 ms [run 2]
+       Bench 3191.242475 ms [run 3]
+       Bench 3333.524105 ms [run 4]
+       Bench 2866.330815 ms [run 5]
+       Bench 3146.193207 ms [run 6]
+       Bench 3109.003515 ms [run 7]
+       Bench 2884.646696 ms [run 8]
+       Bench 2949.210012 ms [run 9]
+       Bench 3245.34444 ms [run 10]
+     Average 3074.0157901999996 +/- 233.596645 ms
+OMP Proc Bind := SPREAD
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=13, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3351.777164 ms [run 1]
+       Bench 2986.300858 ms [run 2]
+       Bench 3018.615513 ms [run 3]
+       Bench 2990.142166 ms [run 4]
+       Bench 2999.266632 ms [run 5]
+       Bench 3011.611881 ms [run 6]
+       Bench 3170.892982 ms [run 7]
+       Bench 3218.28408 ms [run 8]
+       Bench 3057.817933 ms [run 9]
+       Bench 3012.230699 ms [run 10]
+     Average 3081.6939908000004 +/- 182.738153 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=13, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 5852.706793 ms [run 1]
+       Bench 5839.47907 ms [run 2]
+       Bench 5847.466149 ms [run 3]
+       Bench 5808.735773 ms [run 4]
+       Bench 5829.767444 ms [run 5]
+       Bench 5892.425099 ms [run 6]
+       Bench 5979.064992 ms [run 7]
+       Bench 5868.060131 ms [run 8]
+       Bench 5863.690071 ms [run 9]
+       Bench 5797.72595 ms [run 10]
+     Average 5857.9121472 +/- 90.669521 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=13, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3270.943386 ms [run 1]
+       Bench 3044.785445 ms [run 2]
+       Bench 3184.508055 ms [run 3]
+       Bench 3128.321306 ms [run 4]
+       Bench 3219.843209 ms [run 5]
+       Bench 3091.014246 ms [run 6]
+       Bench 3186.982787 ms [run 7]
+       Bench 4295.689873 ms [run 8]
+       Bench 2992.258979 ms [run 9]
+       Bench 3029.204751 ms [run 10]
+     Average 3244.3552037 +/- 651.715447 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=13, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3042.898602 ms [run 1]
+       Bench 3022.102617 ms [run 2]
+       Bench 2996.047695 ms [run 3]
+       Bench 3132.543585 ms [run 4]
+       Bench 3210.030426 ms [run 5]
+       Bench 3004.325479 ms [run 6]
+       Bench 3196.278732 ms [run 7]
+       Bench 3102.253113 ms [run 8]
+       Bench 2987.81931 ms [run 9]
+       Bench 2927.901146 ms [run 10]
+     Average 3062.2200705 +/- 141.06464 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=13, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2952.268099 ms [run 1]
+       Bench 2905.30927 ms [run 2]
+       Bench 3184.705014 ms [run 3]
+       Bench 3097.18714 ms [run 4]
+       Bench 2911.299455 ms [run 5]
+       Bench 2912.758694 ms [run 6]
+       Bench 2917.920854 ms [run 7]
+       Bench 2940.792559 ms [run 8]
+       Bench 2950.225255 ms [run 9]
+       Bench 3108.878726 ms [run 10]
+     Average 2988.1345066 +/- 139.697872 ms
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=13] (rust, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 2663.147536 ms [run 1]
+       Bench 2709.11778 ms [run 2]
+       Bench 2675.293304 ms [run 3]
+       Bench 2700.697994 ms [run 4]
+       Bench 2418.655092 ms [run 5]
+       Bench 2638.274023 ms [run 6]
+       Bench 2743.447311 ms [run 7]
+       Bench 2671.955448 ms [run 8]
+       Bench 2686.570779 ms [run 9]
+       Bench 2738.16194 ms [run 10]
+     Average 2664.5321206999997 +/- 162.396109 ms
+  Threads := 14
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=14, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3460.427219 ms [run 1]
+       Bench 2933.440981 ms [run 2]
+       Bench 2672.660528 ms [run 3]
+       Bench 2874.950377 ms [run 4]
+       Bench 2771.876447 ms [run 5]
+       Bench 2795.285664 ms [run 6]
+       Bench 2709.605921 ms [run 7]
+       Bench 2846.287464 ms [run 8]
+       Bench 3318.651868 ms [run 9]
+       Bench 2729.002596 ms [run 10]
+     Average 2911.2189065 +/- 393.883345 ms
+OMP Proc Bind := SPREAD
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=14, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2932.305292 ms [run 1]
+       Bench 2770.38464 ms [run 2]
+       Bench 2817.365413 ms [run 3]
+       Bench 2797.475652 ms [run 4]
+       Bench 3226.096616 ms [run 5]
+       Bench 3155.995952 ms [run 6]
+       Bench 2731.242529 ms [run 7]
+       Bench 2774.557675 ms [run 8]
+       Bench 2782.800098 ms [run 9]
+       Bench 2773.871317 ms [run 10]
+     Average 2876.2095184 +/- 247.427043 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=14, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 5425.90062 ms [run 1]
+       Bench 5586.091321 ms [run 2]
+       Bench 5534.367224 ms [run 3]
+       Bench 5480.033326 ms [run 4]
+       Bench 5451.096462 ms [run 5]
+       Bench 5421.347744 ms [run 6]
+       Bench 5323.422407 ms [run 7]
+       Bench 5431.91758 ms [run 8]
+       Bench 5396.741726 ms [run 9]
+       Bench 5368.861061 ms [run 10]
+     Average 5441.9779471 +/- 131.334457 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=14, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3143.796386 ms [run 1]
+       Bench 3147.252825 ms [run 2]
+       Bench 2885.340732 ms [run 3]
+       Bench 2858.541442 ms [run 4]
+       Bench 2830.472536 ms [run 5]
+       Bench 2801.595602 ms [run 6]
+       Bench 2808.255795 ms [run 7]
+       Bench 2790.306948 ms [run 8]
+       Bench 2780.424092 ms [run 9]
+       Bench 2786.306584 ms [run 10]
+     Average 2883.2292942 +/- 183.414366 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=14, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2989.651204 ms [run 1]
+       Bench 2873.361788 ms [run 2]
+       Bench 2797.188987 ms [run 3]
+       Bench 2824.9898 ms [run 4]
+       Bench 2887.448798 ms [run 5]
+       Bench 2812.339692 ms [run 6]
+       Bench 2770.034647 ms [run 7]
+       Bench 2766.795877 ms [run 8]
+       Bench 2779.007256 ms [run 9]
+       Bench 2830.437591 ms [run 10]
+     Average 2833.125564 +/- 111.427663 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=14, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2686.205278 ms [run 1]
+       Bench 2749.330839 ms [run 2]
+       Bench 2702.148886 ms [run 3]
+       Bench 2871.152495 ms [run 4]
+       Bench 2790.737716 ms [run 5]
+       Bench 2868.588667 ms [run 6]
+       Bench 2875.271828 ms [run 7]
+       Bench 2805.015247 ms [run 8]
+       Bench 2936.528791 ms [run 9]
+       Bench 2902.388635 ms [run 10]
+     Average 2818.7368382 +/- 125.161756 ms
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=14] (rust, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 2531.800083 ms [run 1]
+       Bench 2476.451353 ms [run 2]
+       Bench 2432.184637 ms [run 3]
+       Bench 2372.950757 ms [run 4]
+       Bench 2521.241639 ms [run 5]
+       Bench 2517.820633 ms [run 6]
+       Bench 2419.763221 ms [run 7]
+       Bench 2536.533484 ms [run 8]
+       Bench 2426.620191 ms [run 9]
+       Bench 2407.883009 ms [run 10]
+     Average 2464.3249007 +/- 81.791363 ms
+  Threads := 15
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=15, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3219.606757 ms [run 1]
+       Bench 2775.71729 ms [run 2]
+       Bench 2619.171111 ms [run 3]
+       Bench 2576.971231 ms [run 4]
+       Bench 2617.620436 ms [run 5]
+       Bench 2549.878209 ms [run 6]
+       Bench 2549.257556 ms [run 7]
+       Bench 2660.902551 ms [run 8]
+       Bench 2773.594379 ms [run 9]
+       Bench 2593.685331 ms [run 10]
+     Average 2693.6404850999998 +/- 335.1746 ms
+OMP Proc Bind := SPREAD
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=15, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2810.413012 ms [run 1]
+       Bench 2741.566381 ms [run 2]
+       Bench 2693.252602 ms [run 3]
+       Bench 2736.443257 ms [run 4]
+       Bench 2700.859834 ms [run 5]
+       Bench 2626.069087 ms [run 6]
+       Bench 2640.507258 ms [run 7]
+       Bench 2644.466067 ms [run 8]
+       Bench 2620.049583 ms [run 9]
+       Bench 3069.480424 ms [run 10]
+     Average 2728.3107505 +/- 224.71542 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=15, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 5178.183297 ms [run 1]
+       Bench 5157.758716 ms [run 2]
+       Bench 5172.709224 ms [run 3]
+       Bench 5154.139317 ms [run 4]
+       Bench 5266.613218 ms [run 5]
+       Bench 5278.223018 ms [run 6]
+       Bench 5168.711474 ms [run 7]
+       Bench 5199.798309 ms [run 8]
+       Bench 5215.459514 ms [run 9]
+       Bench 5108.313008 ms [run 10]
+     Average 5189.9909095 +/- 84.955005 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=15, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2762.339644 ms [run 1]
+       Bench 2696.943074 ms [run 2]
+       Bench 2749.959841 ms [run 3]
+       Bench 2808.736192 ms [run 4]
+       Bench 2645.795296 ms [run 5]
+       Bench 2678.471044 ms [run 6]
+       Bench 2808.090903 ms [run 7]
+       Bench 2730.407598 ms [run 8]
+       Bench 2703.528277 ms [run 9]
+       Bench 2685.757193 ms [run 10]
+     Average 2727.0029062 +/- 81.470448 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=15, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2891.560518 ms [run 1]
+       Bench 2666.207488 ms [run 2]
+       Bench 3762.808281 ms [run 3]
+       Bench 2675.053333 ms [run 4]
+       Bench 2711.432524 ms [run 5]
+       Bench 2677.663052 ms [run 6]
+       Bench 2567.642446 ms [run 7]
+       Bench 2672.834241 ms [run 8]
+       Bench 2630.697646 ms [run 9]
+       Bench 2657.576983 ms [run 10]
+     Average 2791.3476511999997 +/- 597.582917 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=15, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2761.81726 ms [run 1]
+       Bench 2714.073494 ms [run 2]
+       Bench 2808.874167 ms [run 3]
+       Bench 2762.831735 ms [run 4]
+       Bench 2626.213351 ms [run 5]
+       Bench 3031.826875 ms [run 6]
+       Bench 2599.822342 ms [run 7]
+       Bench 2779.814387 ms [run 8]
+       Bench 2722.28522 ms [run 9]
+       Bench 2579.173026 ms [run 10]
+     Average 2738.6731857 +/- 226.326924 ms
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=15] (rust, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 2329.403361 ms [run 1]
+       Bench 2347.427334 ms [run 2]
+       Bench 2354.989237 ms [run 3]
+       Bench 2407.621675 ms [run 4]
+       Bench 2334.812318 ms [run 5]
+       Bench 2324.540911 ms [run 6]
+       Bench 2360.440818 ms [run 7]
+       Bench 2228.220718 ms [run 8]
+       Bench 2234.858601 ms [run 9]
+       Bench 2227.277366 ms [run 10]
+     Average 2314.9592339 +/- 90.172154 ms
+  Threads := 16
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=16, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3999.396832 ms [run 1]
+       Bench 3904.294481 ms [run 2]
+       Bench 3294.568807 ms [run 3]
+       Bench 2790.284174 ms [run 4]
+       Bench 2648.495364 ms [run 5]
+       Bench 2949.12736 ms [run 6]
+       Bench 2790.497409 ms [run 7]
+       Bench 2726.58433 ms [run 8]
+       Bench 2504.360493 ms [run 9]
+       Bench 2526.637923 ms [run 10]
+     Average 3013.4247173000003 +/- 747.518169 ms
+OMP Proc Bind := SPREAD
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=16, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3199.33556 ms [run 1]
+       Bench 2556.324443 ms [run 2]
+       Bench 2496.779792 ms [run 3]
+       Bench 2514.523681 ms [run 4]
+       Bench 2535.411404 ms [run 5]
+       Bench 2494.420488 ms [run 6]
+       Bench 2485.055596 ms [run 7]
+       Bench 2523.908496 ms [run 8]
+       Bench 2477.400767 ms [run 9]
+       Bench 2703.574381 ms [run 10]
+     Average 2598.6734608 +/- 360.967396 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=16, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 4847.100641 ms [run 1]
+       Bench 4839.209379 ms [run 2]
+       Bench 4796.793593 ms [run 3]
+       Bench 4884.516435 ms [run 4]
+       Bench 4931.412271 ms [run 5]
+       Bench 4783.030805 ms [run 6]
+       Bench 4855.862295 ms [run 7]
+       Bench 4880.320487 ms [run 8]
+       Bench 4932.584361 ms [run 9]
+       Bench 4838.110019 ms [run 10]
+     Average 4858.894028600001 +/- 74.776778 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=16, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3137.883328 ms [run 1]
+       Bench 2553.653965 ms [run 2]
+       Bench 2616.93995 ms [run 3]
+       Bench 2595.972679 ms [run 4]
+       Bench 2524.09372 ms [run 5]
+       Bench 2538.726275 ms [run 6]
+       Bench 2530.566196 ms [run 7]
+       Bench 2544.860588 ms [run 8]
+       Bench 2613.549474 ms [run 9]
+       Bench 3050.211264 ms [run 10]
+     Average 2670.6457439 +/- 306.894804 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=16, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2570.529614 ms [run 1]
+       Bench 2586.448173 ms [run 2]
+       Bench 2610.74773 ms [run 3]
+       Bench 2624.499391 ms [run 4]
+       Bench 2550.142633 ms [run 5]
+       Bench 2570.441555 ms [run 6]
+       Bench 2670.244253 ms [run 7]
+       Bench 2447.958624 ms [run 8]
+       Bench 2738.19904 ms [run 9]
+       Bench 2895.112128 ms [run 10]
+     Average 2626.4323141 +/- 223.576752 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=16, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2784.678868 ms [run 1]
+       Bench 2690.215997 ms [run 2]
+       Bench 2634.182121 ms [run 3]
+       Bench 2589.727003 ms [run 4]
+       Bench 2493.005214 ms [run 5]
+       Bench 2599.210514 ms [run 6]
+       Bench 2745.640086 ms [run 7]
+       Bench 2576.396349 ms [run 8]
+       Bench 2557.42744 ms [run 9]
+       Bench 2676.318785 ms [run 10]
+     Average 2634.6802377 +/- 145.836827 ms
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=16] (rust, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 2253.527155 ms [run 1]
+       Bench 2297.675491 ms [run 2]
+       Bench 2302.082191 ms [run 3]
+       Bench 2268.810004 ms [run 4]
+       Bench 2198.451306 ms [run 5]
+       Bench 2217.711704 ms [run 6]
+       Bench 2318.491019 ms [run 7]
+       Bench 2307.76561 ms [run 8]
+       Bench 2294.764956 ms [run 9]
+       Bench 2270.706327 ms [run 10]
+     Average 2272.9985763 +/- 60.019856 ms
+  Threads := 17
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=17, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3470.443705 ms [run 1]
+       Bench 3092.441778 ms [run 2]
+       Bench 2970.04335 ms [run 3]
+       Bench 2989.563233 ms [run 4]
+       Bench 3569.391292 ms [run 5]
+       Bench 3149.96379 ms [run 6]
+       Bench 3426.243761 ms [run 7]
+       Bench 3442.497923 ms [run 8]
+       Bench 3462.488259 ms [run 9]
+       Bench 3101.226226 ms [run 10]
+     Average 3267.4303317 +/- 299.673971 ms
+OMP Proc Bind := SPREAD
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=17, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2995.827409 ms [run 1]
+       Bench 2575.716751 ms [run 2]
+       Bench 2521.507086 ms [run 3]
+       Bench 2376.128289 ms [run 4]
+       Bench 2378.0458 ms [run 5]
+       Bench 2496.016279 ms [run 6]
+       Bench 2421.028024 ms [run 7]
+       Bench 2429.951541 ms [run 8]
+       Bench 2393.204053 ms [run 9]
+       Bench 2420.466685 ms [run 10]
+     Average 2500.7891916999997 +/- 309.84956 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=17, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 4593.273184 ms [run 1]
+       Bench 4640.087 ms [run 2]
+       Bench 4547.238821 ms [run 3]
+       Bench 4575.498884 ms [run 4]
+       Bench 4579.229018 ms [run 5]
+       Bench 4617.500874 ms [run 6]
+       Bench 4476.732244 ms [run 7]
+       Bench 4607.800108 ms [run 8]
+       Bench 4646.388819 ms [run 9]
+       Bench 4560.645102 ms [run 10]
+     Average 4584.4394053999995 +/- 84.828287 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=17, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2409.658766 ms [run 1]
+       Bench 2609.202156 ms [run 2]
+       Bench 2394.025022 ms [run 3]
+       Bench 2510.505272 ms [run 4]
+       Bench 2434.522072 ms [run 5]
+       Bench 2410.956244 ms [run 6]
+       Bench 2448.120119 ms [run 7]
+       Bench 2453.398089 ms [run 8]
+       Bench 2405.564093 ms [run 9]
+       Bench 2427.544643 ms [run 10]
+     Average 2450.3496476 +/- 107.588567 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=17, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2524.339078 ms [run 1]
+       Bench 2506.235495 ms [run 2]
+       Bench 2451.627064 ms [run 3]
+       Bench 2581.599202 ms [run 4]
+       Bench 2384.665821 ms [run 5]
+       Bench 2667.541462 ms [run 6]
+       Bench 2449.634737 ms [run 7]
+       Bench 2792.146274 ms [run 8]
+       Bench 2439.379734 ms [run 9]
+       Bench 2490.792138 ms [run 10]
+     Average 2528.7961005 +/- 203.740226 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=17, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2592.633302 ms [run 1]
+       Bench 2695.032646 ms [run 2]
+       Bench 2599.071661 ms [run 3]
+       Bench 2754.532858 ms [run 4]
+       Bench 2333.350506 ms [run 5]
+       Bench 2386.834816 ms [run 6]
+       Bench 2429.50189 ms [run 7]
+       Bench 2501.163969 ms [run 8]
+       Bench 2482.188441 ms [run 9]
+       Bench 2428.729196 ms [run 10]
+     Average 2520.3039285 +/- 210.591176 ms
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=17] (rust, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 2207.456502 ms [run 1]
+       Bench 2149.948314 ms [run 2]
+       Bench 2208.181652 ms [run 3]
+       Bench 2221.614066 ms [run 4]
+       Bench 2134.651921 ms [run 5]
+       Bench 2197.285648 ms [run 6]
+       Bench 2205.148175 ms [run 7]
+       Bench 2141.625847 ms [run 8]
+       Bench 2210.748761 ms [run 9]
+       Bench 2112.106213 ms [run 10]
+     Average 2178.8767099 +/- 54.753926 ms
+  Threads := 18
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=18, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 4202.371891 ms [run 1]
+       Bench 3404.864812 ms [run 2]
+       Bench 3069.26312 ms [run 3]
+       Bench 2937.201288 ms [run 4]
+       Bench 3283.746621 ms [run 5]
+       Bench 3347.597231 ms [run 6]
+       Bench 3241.89808 ms [run 7]
+       Bench 3092.077343 ms [run 8]
+       Bench 3020.658131 ms [run 9]
+       Bench 3354.297399 ms [run 10]
+     Average 3295.3975916 +/- 632.585301 ms
+OMP Proc Bind := SPREAD
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=18, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3027.646742 ms [run 1]
+       Bench 2410.632381 ms [run 2]
+       Bench 2277.459366 ms [run 3]
+       Bench 2348.608154 ms [run 4]
+       Bench 2313.399432 ms [run 5]
+       Bench 2276.725818 ms [run 6]
+       Bench 2358.225833 ms [run 7]
+       Bench 2247.362196 ms [run 8]
+       Bench 2309.887614 ms [run 9]
+       Bench 2415.633635 ms [run 10]
+     Average 2398.5581171 +/- 390.142273 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=18, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 4385.098397 ms [run 1]
+       Bench 4339.490039 ms [run 2]
+       Bench 4357.832372 ms [run 3]
+       Bench 4480.662333 ms [run 4]
+       Bench 4404.167085 ms [run 5]
+       Bench 4567.217508 ms [run 6]
+       Bench 4412.941935 ms [run 7]
+       Bench 4417.906037 ms [run 8]
+       Bench 4542.860697 ms [run 9]
+       Bench 4374.755984 ms [run 10]
+     Average 4428.2932387 +/- 113.863734 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=18, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2816.963584 ms [run 1]
+       Bench 2388.11669 ms [run 2]
+       Bench 2546.153238 ms [run 3]
+       Bench 2318.185189 ms [run 4]
+       Bench 2359.004402 ms [run 5]
+       Bench 2366.763656 ms [run 6]
+       Bench 2306.479224 ms [run 7]
+       Bench 2282.19741 ms [run 8]
+       Bench 2302.749885 ms [run 9]
+       Bench 2389.276438 ms [run 10]
+     Average 2407.5889715999997 +/- 267.383087 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=18, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2349.663343 ms [run 1]
+       Bench 2433.306778 ms [run 2]
+       Bench 2605.631769 ms [run 3]
+       Bench 2352.198758 ms [run 4]
+       Bench 2378.985648 ms [run 5]
+       Bench 2424.347284 ms [run 6]
+       Bench 2444.005562 ms [run 7]
+       Bench 2268.084061 ms [run 8]
+       Bench 2237.853413 ms [run 9]
+       Bench 2408.459648 ms [run 10]
+     Average 2390.2536264 +/- 183.889178 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=18, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2378.190429 ms [run 1]
+       Bench 2415.625802 ms [run 2]
+       Bench 2285.975547 ms [run 3]
+       Bench 2458.855618 ms [run 4]
+       Bench 2359.276374 ms [run 5]
+       Bench 2443.39553 ms [run 6]
+       Bench 2320.512664 ms [run 7]
+       Bench 2240.108195 ms [run 8]
+       Bench 2320.535207 ms [run 9]
+       Bench 2303.364535 ms [run 10]
+     Average 2352.5839901 +/- 109.373711 ms
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=18] (rust, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 2056.592218 ms [run 1]
+       Bench 2131.7079 ms [run 2]
+       Bench 2093.350626 ms [run 3]
+       Bench 2061.01851 ms [run 4]
+       Bench 2093.201097 ms [run 5]
+       Bench 2028.630601 ms [run 6]
+       Bench 2082.871557 ms [run 7]
+       Bench 2073.236108 ms [run 8]
+       Bench 2109.840925 ms [run 9]
+       Bench 2071.84947 ms [run 10]
+     Average 2080.2299012 +/- 51.538649 ms
+  Threads := 19
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=19, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3822.969365 ms [run 1]
+       Bench 3824.285059 ms [run 2]
+       Bench 3408.779397 ms [run 3]
+       Bench 3171.064134 ms [run 4]
+       Bench 3807.05363 ms [run 5]
+       Bench 3826.709793 ms [run 6]
+       Bench 3205.361704 ms [run 7]
+       Bench 3189.144473 ms [run 8]
+       Bench 3101.160761 ms [run 9]
+       Bench 2539.109551 ms [run 10]
+     Average 3389.5637866999996 +/- 643.800121 ms
+OMP Proc Bind := SPREAD
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=19, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2343.392695 ms [run 1]
+       Bench 2210.232183 ms [run 2]
+       Bench 2199.785773 ms [run 3]
+       Bench 2291.722908 ms [run 4]
+       Bench 2250.896862 ms [run 5]
+       Bench 2192.745581 ms [run 6]
+       Bench 2190.346027 ms [run 7]
+       Bench 2230.895551 ms [run 8]
+       Bench 2203.376376 ms [run 9]
+       Bench 2256.618387 ms [run 10]
+     Average 2237.0012343000003 +/- 76.523334 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=19, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 4160.762153 ms [run 1]
+       Bench 4016.077455 ms [run 2]
+       Bench 4141.426658 ms [run 3]
+       Bench 4115.919213 ms [run 4]
+       Bench 4243.721128 ms [run 5]
+       Bench 4137.652408 ms [run 6]
+       Bench 4169.646599 ms [run 7]
+       Bench 4095.61486 ms [run 8]
+       Bench 4204.378716 ms [run 9]
+       Bench 4141.361232 ms [run 10]
+     Average 4142.6560422 +/- 113.821836 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=19, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2438.825439 ms [run 1]
+       Bench 2421.410666 ms [run 2]
+       Bench 2296.898538 ms [run 3]
+       Bench 2283.25901 ms [run 4]
+       Bench 2303.855442 ms [run 5]
+       Bench 2218.091805 ms [run 6]
+       Bench 2251.647188 ms [run 7]
+       Bench 2278.630542 ms [run 8]
+       Bench 2246.218281 ms [run 9]
+       Bench 2436.156108 ms [run 10]
+     Average 2317.4993019000003 +/- 110.366817 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=19, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2273.240672 ms [run 1]
+       Bench 2206.617606 ms [run 2]
+       Bench 2285.813999 ms [run 3]
+       Bench 2290.232913 ms [run 4]
+       Bench 2357.298505 ms [run 5]
+       Bench 2321.326332 ms [run 6]
+       Bench 2341.295399 ms [run 7]
+       Bench 2241.393771 ms [run 8]
+       Bench 2269.102372 ms [run 9]
+       Bench 2207.99819 ms [run 10]
+     Average 2279.4319759 +/- 75.340449 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=19, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2690.120676 ms [run 1]
+       Bench 2245.592237 ms [run 2]
+       Bench 2333.079362 ms [run 3]
+       Bench 2165.998075 ms [run 4]
+       Bench 2252.512763 ms [run 5]
+       Bench 2488.033681 ms [run 6]
+       Bench 2754.764546 ms [run 7]
+       Bench 2244.043923 ms [run 8]
+       Bench 2229.827166 ms [run 9]
+       Bench 2226.347922 ms [run 10]
+     Average 2363.0320351 +/- 294.383235 ms
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=19] (rust, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 1986.084045 ms [run 1]
+       Bench 2037.88722 ms [run 2]
+       Bench 2095.577493 ms [run 3]
+       Bench 2032.851693 ms [run 4]
+       Bench 1972.602038 ms [run 5]
+       Bench 2060.477405 ms [run 6]
+       Bench 2058.453387 ms [run 7]
+       Bench 2038.804068 ms [run 8]
+       Bench 1997.314858 ms [run 9]
+       Bench 1932.801957 ms [run 10]
+     Average 2021.2854164 +/- 81.387768 ms
+       Threads := 20
+OMP Places := cores
+OMP Proc Bind := CLOSE
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=20, omp_place=cores, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3668.516636 ms [run 1]
+       Bench 3641.1718 ms [run 2]
+       Bench 3638.834992 ms [run 3]
+       Bench 3637.048124 ms [run 4]
+       Bench 3635.792387 ms [run 5]
+       Bench 3616.874834 ms [run 6]
+       Bench 3657.864732 ms [run 7]
+       Bench 3672.736007 ms [run 8]
+       Bench 3619.653595 ms [run 9]
+       Bench 3621.589003 ms [run 10]
+     Average 3641.008211 +/- 27.930586 ms
+OMP Proc Bind := SPREAD
+┌───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=20, omp_place=cores, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2471.730116 ms [run 1]
+       Bench 2247.081539 ms [run 2]
+       Bench 2393.14372 ms [run 3]
+       Bench 2248.095285 ms [run 4]
+       Bench 2241.782202 ms [run 5]
+       Bench 2455.987139 ms [run 6]
+       Bench 2152.590595 ms [run 7]
+       Bench 2174.472314 ms [run 8]
+       Bench 2331.787584 ms [run 9]
+       Bench 2339.793168 ms [run 10]
+     Average 2305.6463661999996 +/- 159.56976 ms
+OMP Places := threads
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=20, omp_place=threads, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3997.697578 ms [run 1]
+       Bench 4049.545859 ms [run 2]
+       Bench 4096.982826 ms [run 3]
+       Bench 3992.06168 ms [run 4]
+       Bench 4135.914774 ms [run 5]
+       Bench 4002.328716 ms [run 6]
+       Bench 4104.435407 ms [run 7]
+       Bench 4159.608358 ms [run 8]
+       Bench 3954.122071 ms [run 9]
+       Bench 3997.540868 ms [run 10]
+     Average 4049.0238136999997 +/- 102.743143 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=20, omp_place=threads, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 3021.698745 ms [run 1]
+       Bench 2463.404501 ms [run 2]
+       Bench 2432.418459 ms [run 3]
+       Bench 2749.111329 ms [run 4]
+       Bench 2753.100554 ms [run 5]
+       Bench 2803.815889 ms [run 6]
+       Bench 2143.492366 ms [run 7]
+       Bench 2197.028222 ms [run 8]
+       Bench 2171.792854 ms [run 9]
+       Bench 2128.96591 ms [run 10]
+     Average 2486.4828829000003 +/- 446.366417 ms
+OMP Places := sockets
+OMP Proc Bind := CLOSE
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=20, omp_place=sockets, omp_proc_bind=CLOSE] (cpp, 500 steps)  │
+└────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2557.321184 ms [run 1]
+       Bench 2265.234404 ms [run 2]
+       Bench 2321.615303 ms [run 3]
+       Bench 2881.471733 ms [run 4]
+       Bench 2241.168581 ms [run 5]
+       Bench 2289.61798 ms [run 6]
+       Bench 2132.937422 ms [run 7]
+       Bench 2208.049454 ms [run 8]
+       Bench 2204.338867 ms [run 9]
+       Bench 2169.722044 ms [run 10]
+     Average 2327.1476971999996 +/- 374.267155 ms
+OMP Proc Bind := SPREAD
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=20, omp_place=sockets, omp_proc_bind=SPREAD] (cpp, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/cpp/MolSim input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/cpp/two-bodies-collision-0001-parallel.xyz`
+       Bench 2186.344957 ms [run 1]
+       Bench 2499.19579 ms [run 2]
+       Bench 2422.102277 ms [run 3]
+       Bench 2266.335401 ms [run 4]
+       Bench 2494.500214 ms [run 5]
+       Bench 2196.06349 ms [run 6]
+       Bench 2157.886528 ms [run 7]
+       Bench 2190.433986 ms [run 8]
+       Bench 2331.730006 ms [run 9]
+       Bench 2148.936182 ms [run 10]
+     Average 2289.3528831 +/- 175.129804 ms
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  two-bodies-collision [direct-sum, parallel, threads=20] (rust, 500 steps)  │
+└─────────────────────────────────────────────────────────────────────────────┘
+     Running `./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 0.35 -d 0.0007 -s 0 -o output/rs/two-bodies-collision-0001-parallel.xyz`
+       Bench 1993.269904 ms [run 1]
+       Bench 1976.907511 ms [run 2]
+       Bench 1953.62968 ms [run 3]
+       Bench 1930.589538 ms [run 4]
+       Bench 1936.03305 ms [run 5]
+       Bench 1983.621965 ms [run 6]
+       Bench 1915.955038 ms [run 7]
+       Bench 1982.135172 ms [run 8]
+       Bench 1961.046251 ms [run 9]
+       Bench 1956.625569 ms [run 10]
+     Average 1958.9813678 +/- 38.657433 ms

@@ -466,7 +466,21 @@ Rayon is a parallelization library similar to OMP. Instead of pragmas, Rayon use
 
 \chapter{Application with Molecular Dynamics}
 
-talk briefly about the physics
+In this chapter we will explain the molecular dynamics algorithms from a mathematical and theoretical perspective and the next chapter will dive into a more detailed technical explanation about the implementation.
+
+We define force as the equation $F_X = -\frac{U_X}{r}$, with $r$ being the scalar distance between two particles and we call $U_X$ the potential. We mostly work with Lennard-Jones interactions $F_\text{LJ}$ in this thesis, however as an artefact from a legacy project we also support the Newtonian force calculation $F_\text{N}$. In other words, the algorithm sees the force $F$ as an abstract interface. The formulas for the Newton potential $U_\text{N}$ and the Lennard Jones Potential $U_\text{LJ}$ are given as follows.
+
+\begin{align}
+U_\text{N} := - G \cdot \frac{M}{r}
+\end{align}\label{potential-newton}
+
+\begin{align}
+U_\text{LJ} := 4 \cdot \epsilon \cdot \left[{{\left(\frac{\sigma}{r}\right)}^{12}} - {{\left(\frac{\sigma}{r}\right)}^6}\right]
+\end{align}\label{potential-lennard-jones}
+
+For the Newton potential, $G = 1$ is the gravitational constant and $M$ the product of the particle masses. For the Lennard Jones potential it is enough to say that $\epsilon = 5$ and $\sigma = 1$ are arbitrary constants. We will not get to an intuitive understanding of what these constants represent.
+
+At the core of the hot loop are 
 
 \chapter{Methods and Implementation}
 
@@ -1673,6 +1687,218 @@ The example above will not compile, as \texttt{foobar()} is ambiguous. The solut
 For the \texttt{LinkedCells} benchmark, one could argue that ``since the benchmarks do not measure the collision point, the comparison to \texttt{DirectSum} is unfair, since the amount of computation increases as the average particle density grows per cell''. Figure~\ref{fig:benchmark-linked-cells-collision} adjusts the benchmarks to cover the collision point of the dataset. The evaluation is, that the collision has at most minimal performance impact and is neglectable for this comparison.
 
 % In~\ref{fig:benchmark-sequential} you can see all the sequential benchmarks in one graph.
+
+\section{CoolMUC Parallel}
+
+The parallel benchmarks have also been computed on the supercomputer CoolMUC\cite{coolmuc-stats}, which runs on a Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz. This is for two reasons, to test if the in the thesis discussed artefacts with OpenMP happen on a computer with more evenly distributed processing powers contrary to toe high end PC with cores of different types. The second reason is, that the insights could be interesting or relevant to the thesis. Since we are in the Appendix, the results were not really usable in the thesis narrative, but they are still interesting insights.
+
+\begin{figure}[!htb]
+\begin{tikzpicture}
+    \begin{axis}[
+        width=0.7\textwidth,  
+        height=0.3\textheight,
+        xlabel={Threads},
+        ylabel={Average Time (ms)},
+        xtick={1, 5, 10, 15, 20},
+        ytick={0, 5000, 10000, 20000, 30000},
+        scaled x ticks=false,  
+        scaled y ticks=false,
+        ymajorgrids=true, 
+        grid style=dashed,  
+        % ymin=-10,
+        % xmin=-5,
+        x tick label style={/pgf/number format/.cd, 1000 sep={}},
+        legend style={at={(0.54,0.98)},anchor=north west},
+    ]
+
+    \addplot[
+        color=blue,
+        % mark=square,
+        % mark repeat={10},
+        % mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (1, 31630.6707618)
+            (2, 16754.8465642)
+            (3, 10681.3491895)
+            (4, 8032.4653227)
+            (5, 6559.7117572)
+            (6, 5555.9298636)
+            (7, 4741.6621813)
+            (8, 4255.4316545)
+            (9, 3866.5830394)
+            (10, 3598.814103)
+            (11, 3324.6889864)
+            (12, 3227.5250218)
+            (13, 3074.0157901999996)
+            (14, 2911.2189065)
+            (15, 2693.6404850999998)
+            (16, 3013.4247173000003)
+            (17, 3267.4303317)
+            (18, 3295.3975916)
+            (19, 3389.5637866999996)
+            (20, 3641.008211)
+        };
+
+    \addplot[
+        color=blue!20,
+        % mark=square,
+        % mark repeat={10},
+        % mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (1, 32084.5657672)
+            (2, 16181.8311792)
+            (3, 11186.0986223)
+            (4, 8605.6536148)
+            (5, 6900.0083207)
+            (6, 5744.1215631000005)
+            (7, 5117.6109981)
+            (8, 4545.589182199999)
+            (9, 4058.212847)
+            (10, 3740.6277586)
+            (11, 3463.3964655)
+            (12, 3308.8119019)
+            (13, 3081.6939908000004)
+            (14, 2876.2095184)
+            (15, 2728.3107505)
+            (16, 2598.6734608)
+            (17, 2500.7891916999997)
+            (18, 2398.5581171)
+            (19, 2237.0012343000003)
+            (20, 2305.6463661999996)
+        };
+
+    \addplot[
+        color=violet,
+        % mark=square,
+        % mark repeat={10},
+        % mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (1, 31601.0678805)
+            (2, 34803.8908459)
+            (3, 23225.8163313)
+            (4, 17703.203231400003)
+            (5, 14067.514536)
+            (6, 11789.333079)
+            (7, 10099.7747035)
+            (8, 8909.626302)
+            (9, 7915.4317133)
+            (10, 7363.6994242)
+            (11, 6971.3641539)
+            (12, 6300.9739652)
+            (13, 5857.9121472)
+            (14, 5441.9779471)
+            (15, 5189.9909095)
+            (16, 4858.894028600001)
+            (17, 4584.4394053999995)
+            (18, 4428.2932387)
+            (19, 4142.6560422)
+            (20, 4049.0238136999997)
+        };
+
+    \addplot[
+        color=violet!40,
+        % mark=square,
+        % mark repeat={10},
+        % mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (1, 31072.155118799998)
+            (2, 15885.568014299999)
+            (3, 11187.3940735)
+            (4, 8580.4370899)
+            (5, 6941.9921341)
+            (6, 5717.8032065)
+            (7, 4999.494142)
+            (8, 4554.430856399999)
+            (9, 3966.6052354000003)
+            (10, 3746.5901553000003)
+            (11, 3515.979438)
+            (12, 3425.3450746)
+            (13, 3244.3552037)
+            (14, 2883.2292942)
+            (15, 2727.0029062)
+            (16, 2670.6457439)
+            (17, 2450.3496476)
+            (18, 2407.5889715999997)
+            (19, 2317.4993019000003)
+            (20, 2486.4828829000003)
+        };
+
+    \addplot[
+        color=cyan,
+        % mark=square,
+        % mark repeat={10},
+        % mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (1, 29525.4590226)
+            (2, 15400.5185986)
+            (3, 10858.1293195)
+            (4, 8375.2284645)
+            (5, 6899.367446)
+            (6, 5676.454586)
+            (7, 4914.70893)
+            (8, 4397.595390699999)
+            (9, 4128.6059574)
+            (10, 3635.7444194)
+            (11, 3419.5557345)
+            (12, 3305.9906325)
+            (13, 3062.2200705)
+            (14, 2833.125564)
+            (15, 2791.3476511999997)
+            (16, 2626.4323141)
+            (17, 2528.7961005)
+            (18, 2390.2536264)
+            (19, 2279.4319759)
+            (20, 2327.1476971999996)
+        };
+
+    \addplot[
+        color=cyan!40,
+        % mark=square,
+        % mark repeat={10},
+        % mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (1, 29561.099620099998)
+            (2, 15655.3660384)
+            (3, 10900.7191303)
+            (4, 8357.4223929)
+            (5, 6844.5432585)
+            (6, 5702.015592600001)
+            (7, 4925.9114201)
+            (8, 4390.0481942)
+            (9, 3981.1583802)
+            (10, 3698.0072834000002)
+            (11, 3387.0203608)
+            (12, 3226.620435)
+            (13, 2988.1345066)
+            (14, 2818.7368382)
+            (15, 2738.6731857)
+            (16, 2634.6802377)
+            (17, 2520.3039285)
+            (18, 2352.5839901)
+            (19, 2363.0320351)
+            (20, 2289.3528831)
+        };
+
+    \legend{Close Cores, Spread Cores, Close Threads, Spread Threads, Close Sockets, Spread Sockets}
+    \end{axis}
+\end{tikzpicture}
+\caption{CoolMUC Benchmark Results for OpenMP with different configurations.}
+\label{fig:benchmark-parallel-omp-modi-coolmuc}
+\end{figure}
+
+On CoolMUC4, sequential code performs slower than on a high-end consumer PC, with the supercomputer CPU operating on a lower frequency. 
 
 \listoffigures
 
