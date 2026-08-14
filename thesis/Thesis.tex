@@ -1582,15 +1582,6 @@ The example above will not compile, as \texttt{foobar()} is ambiguous. The solut
 
 \chapter{Benchmarks}
 
-\section{Hwloc Metrics}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{../hwloc_diagram.pdf}
-    \caption{The output of the \texttt{lstopo} command on the computer used for benchmarking.}
-    \label{fig:hwloc}
-\end{figure}
-
 \section{Linked Cells around Collision Point}
 
 \begin{figure}[h]
@@ -2047,6 +2038,19 @@ We can see the strong scaling diagrams for Rust (Rayon) and C++ (OpenMP with Spr
 On CoolMUC4, sequential code performs slower than on a high-end consumer CPU, as the supercomputer operates on a lower frequency. The strength of CoolMUC comes from the evenly distributed workload, generally preventing artefacts as seen in~\autoref{fig:benchmark-parallel}.
 
 However as it turns out, The Close Threads configuration performs poorly even on CoolMUC. This is because the CPU used on the supercomputer also makes use of Intel(R) Hyper-Threading Technology, with a pair of cache-sharing threads per core.
+
+\chapter{Other}
+
+\section{Hardware Topology}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{../hwloc_diagram.pdf}
+    \caption{The output of the \texttt{lstopo} command on the computer used for benchmarking.}
+    \label{fig:hwloc}
+\end{figure}
+
+This figure shows the hardware topology for the Intel(R) Core(TM) i7-12700K. It highlights that two threads on a performance core share the same L2 cache, which could lead to performance decline if the L2 cache is constantly overwritten.
 
 \listoffigures
 
