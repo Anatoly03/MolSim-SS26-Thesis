@@ -18,6 +18,7 @@
 \usepackage{tikz}
 \usetikzlibrary{automata,positioning}
 \usepackage[dvipsnames]{xcolor}
+\usepackage{graphicx}
 
 \lstdefinestyle{eclipse-rust} {
     captionpos=b,
@@ -174,7 +175,7 @@ In the past decades, Rust has gained more admiration as a low-level, performant,
 
 Both languages implement three different approaches of particle management and computation patterns, with DirectSum computing over all particle pairs in the hot loop, LinkedCells introducing a three-dimensional chunk system to reduce the overall workload, and DirectSumParallel using multi-threaded paradigms to accelerate computation.
 
-This thesis aims to inform the decision of adopting Rust in emerging software for performance-critical applications with high memory-safety requirements.
+This thesis aims to inform the decision of adopting Rust in emerging software for performance-critical applications with high memory-safety requirements, showing that the Rust slightly outperforms C++ in competitive environment.
 
 \cleardoublepage
 
@@ -190,7 +191,7 @@ In den letzten Jahrzehnten kriegt Rust zunehmend Anerkennung als eine systemnahe
 
 Beide Sprachen implementieren jeweils drei unterschiedliche Ansätze zur Partikelverwaltung einer Simulation: DirectSum berechnet Interaktionen über alle Partikelpaare in der Hot-Loop, LinkedCells fügt ein dreidimensionales Zellsystem zur Reduzierungen des gesamten Arbeitsaufwandes und DirectSumParallel nutzt Multithreading zur Beschleunigung der Berechnungen.
 
-Ziel dieser Arbeit ist es, die Entscheidung für den Einsatz von Rust in neuer, performanten Software mit sicherheitskritischen Anforderungen.
+Ziel dieser Arbeit ist es, die Entscheidung für den Einsatz von Rust in neuer, performanten Software mit sicherheitskritischen Anforderungen, ...
 
 
 \cleardoublepage
@@ -1580,6 +1581,15 @@ fn main() {
 The example above will not compile, as \texttt{foobar()} is ambiguous. The solution is to rewrite the last line into \texttt{Foo::fobar(x)} if we want to print `Foo'. By using the path notation, the ambiguity is resolved. Intuitively, this makes the method static with a clear, unique name.
 
 \chapter{Benchmarks}
+
+\section{Hwloc Metrics}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{../hwloc_diagram.pdf}
+    \caption{The output of the \texttt{lstopo} command on the computer used for benchmarking.}
+    \label{fig:hwloc}
+\end{figure}
 
 \section{Linked Cells around Collision Point}
 
