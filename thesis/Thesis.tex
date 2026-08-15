@@ -149,7 +149,7 @@ I acknowlege everyone who has been with me on this journey and major milestone o
 
 My Family, who has been always with me, sponsored my education and gave me the opportunity to become who I am today.
 
-My Friends, who were always there for me, who gave me the energy and motivation to continue to study. I especially credit Faid Rihan, Niklas Feurstein, Anna Lena Müller, Samhitha Girish Jois, Roman Danylchuk, Kirill Tikhomirov, Kameswara Siddharth Sishta, Kacper Darowski, Lucy Yang, Joana Arguirova, Junguo (Ryan) Xu, Melisa Aslan, Jongtae (Jerry) Park, Patrick Dirks.
+My Friends, who were always there for me, who gave me the energy and motivation to continue to study. I especially credit Faid Rihan, Niklas Feurstein, Anna Lena Müller, Samhitha Girish Jois, Roman Danylchuk, Kirill Tikhomirov, Kameswara Siddharth Sishta, Kacper Darowski, Lucy Yang, Joana Arguirova, Junguo (Ryan) Xu, Emily Weigand, Jonas Feld, Melisa Aslan, Jongtae (Jerry) Park and Patrick Dirks.
 
 My advisor, Markus Mühlhäußer, who is an amazing teacher and a great mentor. Without him I would not be able to organize my thesis into smaller scopes and probably would have moved most of the workload into the deadline week.
 
@@ -171,9 +171,9 @@ My bestie Kasane Teto, who has not said a word but always morally supported me w
 \end{center}
 \vspace{1cm}
 
-In the past decades, Rust has gained more admiration as a low-level, performant, memory-safe programming language, while C++ remains the dominant choice for high-performance computing in the academic field. This thesis presents empirical results by writing six molecular dynamics implementations for both Rust and C++.
+In the past decades, Rust has gained more admiration as a low-level, performant and memory-safe programming language, while C++ remains the dominant choice for high-performance computing in the academic field. This thesis presents empirical results by writing six molecular dynamics implementations in both Rust and C++.
 
-Both languages implement three different approaches of particle management and computation patterns, with DirectSum computing over all particle pairs in the hot loop, LinkedCells introducing a three-dimensional chunk system to reduce the overall workload, and DirectSumParallel using multi-threaded paradigms to accelerate computation.
+Both languages implement three different approaches in particle management and computation patterns, with DirectSum computing over all particle pairs in the hot loop, LinkedCells introducing a three-dimensional chunk system to reduce the overall workload, and DirectSumParallel using multi-threaded paradigms to accelerate computation.
 
 This thesis aims to inform the decision of adopting Rust in emerging software for performance-critical applications with high memory-safety requirements, showing that the Rust slightly outperforms C++ in competitive environment.
 
@@ -187,11 +187,11 @@ This thesis aims to inform the decision of adopting Rust in emerging software fo
 \end{center}
 \vspace{1cm}
 
-In den letzten Jahrzehnten kriegt Rust zunehmend Anerkennung als eine systemnahe, performante, speichersichere Programmiersprache, während C++ im akademischen Bereich weiterhin die dominierte Sprache für Hochleistungsrechnungen ist. Diese Arbeit präsentiert empirische Ergebnisse, die auf der Implementierung von sechs Verfahren der Molekulardynamik in Rust und C++ basiert.
+In den letzten Jahrzehnten kriegt Rust zunehmend Anerkennung als eine systemnahe, performante und speichersichere Programmiersprache, während C++ im akademischen Bereich weiterhin die dominante Sprache für Hochleistungsrechnungen ist. Diese Arbeit präsentiert empirische Ergebnisse, die auf der Implementierung von sechs Verfahren der Molekulardynamik in Rust und C++ basieren.
 
-Beide Sprachen implementieren jeweils drei unterschiedliche Ansätze zur Partikelverwaltung einer Simulation: DirectSum berechnet Interaktionen über alle Partikelpaare in der Hot-Loop, LinkedCells fügt ein dreidimensionales Zellsystem zur Reduzierungen des gesamten Arbeitsaufwandes und DirectSumParallel nutzt Multithreading zur Beschleunigung der Berechnungen.
+Beide Sprachen implementieren jeweils drei unterschiedliche Ansätze zur Partikelverwaltung einer Simulation: DirectSum berechnet Interaktionen über alle Partikelpaare in der Hot-Loop, LinkedCells fügt ein dreidimensionales Zellsystem zur Reduzierung des gesamten Arbeitsaufwandes hinzu und DirectSumParallel nutzt Multithreading zur Beschleunigung der Berechnungen.
 
-Ziel dieser Arbeit ist es, die Entscheidung für den Einsatz von Rust in neuer, performanten Software mit sicherheitskritischen Anforderungen, ...
+Ziel dieser Arbeit ist es, die Entscheidung für den Einsatz von Rust in neuer, performanten Software mit sicherheitskritischen Anforderungen. Es wird gezeigt, dass Rust bisschen schneller als C++ ist.
 
 
 \cleardoublepage
@@ -214,7 +214,7 @@ Ziel dieser Arbeit ist es, die Entscheidung für den Einsatz von Rust in neuer, 
 % labels can be put almost anywhere and can be referencef from anywhere.
 \label{sec:intro}
 
-In 2025 the StackOverflow's developer survey has ranked Rust as the most admired programming language, holding the title consecutively for nine years\cite{stackoverflow-developer-survey}.
+In 2025, StackOverflow's developer survey ranked Rust as the most admired programming language, holding the title consecutively for nine years\cite{stackoverflow-developer-survey}.
 
 % https://survey.stackoverflow.co/
 % https://survey.stackoverflow.co/2025/technology#admired-and-desired
@@ -293,9 +293,9 @@ In 2025 the StackOverflow's developer survey has ranked Rust as the most admired
 \label{fig:stackoverflow-most-admired}
 \end{figure}
 
-In 2020, the social platform Discord had already published several blogposts explaining that they are rewritting software components in Rust\cite{discord-moves-to-rust}. Their main reasoning behind this decision was explained to be mostly about reaching high performance demands but also went into detail about Rusts' type system.
+In 2020, the social platform Discord had already published several blogposts explaining that they are rewritting software components in Rust\cite{discord-moves-to-rust}. Their main reasoning behind this decision was mostly about reaching high performance demands but also went into detail about the type system of Rust.
 
-Specifically the blogpost mentions issuesses with the garbage collector of the Go Programming Language, which was rescanning the entire LRU cache for memory which can be freed, causing to latency spikes every 2 minutes.
+Specifically, the blogpost mentions issues with the garbage collector of the Go Programming Language, which was rescanning the entire LRU cache for memory to be freed, causing latency spikes every 2 minutes.
 
 % The same year on 18th November, the technology company Cloudflare ``began experiencing significant failures to deliver core network traffic''\cite{cloudflare-outage}, with Rust being featured as part of the error in the blogpost, creating a lot online discussions about the languages' relevance.
 
@@ -305,7 +305,7 @@ Specifically the blogpost mentions issuesses with the garbage collector of the G
 
 In 2024, Google has published a security blogpost with the topic on making their software memory safe, in which they mentioned a new migration approach called ``interoperability'' which offers an incremental approach to adopting memory safety in software\cite{google-eliminating-memory-safety-vulnerabilities}. This allows working on a multi-lingual codebase where new code is written in Rust, allowing the team to define their own pace of migrating to Rust.
 
-This paper takes the goal of diving deeper into a more direct and technical comparison between Rust and C++ by writing a molecular dynamics simulation program in both programming languages and analyze the differences in usability and benchmark performance.
+This paper takes the goal of diving deeper into a more direct and technical comparison between Rust and C++ by writing a molecular dynamics simulation program in both programming languages, analyzing the differences in usability and benchmark performance.
 
 \chapter{Comparing Rust against C++}
 \section{The Rust Ecosystem}
@@ -318,14 +318,14 @@ Since Cargo can install dependencies it was also designed to be extensible, mean
     \item[cargo run] Equivalent to \texttt{make run}, Cargo will invoke the Rust compiler on the codebase and execute the resulting binary.
     \item[cargo build] Equivalent to \texttt{make}, Cargo will invoke the Rust compiler on the codebase and compile a binary but not execute it.
     \item[cargo test] Equivalent to \texttt{ctest} or GoogleTest, Cargo has an integrated testing tool which will compile the codebase and run all functions annotated with \texttt{\#[test]} as an individual, isolated test case.
-    \item[cargo doc] Equivalent to \texttt{Doxygen} or other documentation libraries, Cargo provides an in-built way of generating documentation for the codebase.
-    \item[cargo fmt] Equivalent to \texttt{clang-format}, Cargo provides an in-built way to format the entire codebase.
-    \item[cargo clippy] Equivalent to \texttt{clang-tidy}, Cargo provides an in-built way to lint and statically analyze the codebase. This command is also often used in CI/CD to ensure the codebase quality.
+    \item[cargo doc] Equivalent to \texttt{Doxygen} or other documentation libraries, Cargo provides a built-in way of generating documentation for the codebase.
+    \item[cargo fmt] Equivalent to \texttt{clang-format}, Cargo provides a built-in way to format the entire codebase.
+    \item[cargo clippy] Equivalent to \texttt{clang-tidy}, Cargo provides a built-in way to lint and statically analyze the codebase. This command is also often used in CI/CD to ensure the codebase quality.
 \end{description}
 
-The first difference observation in terms of usability is that the C++ infrastructure is fragmented, whereas for Rust it is centralized via its package manager. This smoothes down the learning curve of Rust tools, as new users only have to get comfortable with one tool, which incorporates 
+The first observation in terms of differences in usability is that the C++ infrastructure is fragmented, whereas for Rust it is centralized via its package manager. This smoothes down the learning curve of Rust tools, as new users only have to get comfortable with Cargo, which provies access to dependency management, compilation, linting, and further community-written subcommands.
 
-It's noteworthy to mention that there's no equivalent to GDB in the Rust ecosystem because the type system and ownership model of Rust guaranteee safety over memory and thread.
+It is noteworthy to mention that there is no equivalent to GDB in the Rust ecosystem because the type system and ownership model of Rust guaranteee safety over memory and thread.
 
 \section{The Rust Programming Language}
 
@@ -343,7 +343,7 @@ It's noteworthy to mention that there's no equivalent to GDB in the Rust ecosyst
 
 \subsection{Structs and Traits}
 
-Structs in Rust are almost entirely equivalent to C++ structs. A struct is a type which defines a collection of fields. Unlike in C++ however, Rust has no concept of struct inheritance. Instead of abstract classes, Rust provides traits\cite{rust-book-traits}, an abstract interface that types can implement explicitly. This introduces the concept of composability in Rust, giving one type the feature to express multiple traits.
+Structs in Rust are almost entirely equivalent to C++ structs. A struct is a type which defines a collection of fields. However, unlike in C++, Rust has no concept of struct inheritance. Instead of abstract classes, Rust provides traits\cite{rust-book-traits}, an abstract interface that types can implement explicitly. This introduces the concept of composability in Rust, giving one type the feature to express multiple traits.
 
 \vspace{0.5em}
 % \setlength{\columnsep}{2em}
@@ -357,7 +357,7 @@ Structs in Rust are almost entirely equivalent to C++ structs. A struct is a typ
 % \vfill\null
 % \columnbreak
 
-\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=A Trait definition in Rust (Note: A comparison wether position difference is zero is omitted for code flow simplicity), label=code:rust-trait]
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=A Trait definition in Rust (Note: A comparison whether position difference is zero is omitted for code flow simplicity), label=code:rust-trait]
 pub trait Force {
     fn potential(&self, particle: &Particle, other: &Particle)
         -> f64;
@@ -373,7 +373,7 @@ pub trait Force {
 A trait is, more comparable to the concept in Java, an abstract interface, defining the interface name and a collection of methods. Some methods can have a default definition and thus do not need to be redefined. Traits are explicitly implemented for types with an implementation block.
 
 \vspace{0.5em}
-\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=An implementation of the Force trait in Rust (Note: A comparison wether distance is zero is omitted for code flow simplicity), label=code:rust-trait-implement]
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=An implementation of the Force trait in Rust (Note: A comparison whether distance is zero is omitted for code flow simplicity), label=code:rust-trait-implement]
 impl Force for NewtonForce {
     fn potential(&self, particle: &Particle, other: &Particle)
     -> f64 {
@@ -387,11 +387,11 @@ impl Force for NewtonForce {
 
 Similar to C++ operator overloads, Rust backes some operators by traits, providing similar syntactic sugar to overload certain operators.
 
-For example the infix notation of the $+$ operator can be defined with the trait \texttt{Add<Rhs>}, where the self type acts as left hand side and a generic type defines the type of the right hand side. This way string buffers can be concated over the same operator as integers are being summed over. In listing~\ref{code:rust-trait} we overload the $*$ operator to allow multiplication of the custom vector type implementation with a scalar.
+For example, the infix notation of the $+$ operator can be defined with the trait \texttt{Add<Rhs>}, where the self type acts as left-hand side and a generic type defines the type of the right-hand side. This way, string buffers can be concated over the same operator as integers are being summed over. In~\autoref{code:rust-trait}, we overload the $*$ operator to allow multiplication of the custom vector type implementation with a scalar.
 
 This `atomicity' of an implementation block is good for two reasons: Firstly, it allows for code readability, differentiating between ``type methods'' and ``trait implementation''. Secondly, this prevents a collision between traits using the same identifier for a method.
 
-As the second argument can cause some confusion with how Rust resolves the ambiguity with overlapping trait method names, appendix note~\ref{section:rust-trait-same-identifier} offers some clarification. However this is mostly irrelevant to the thesis and skipped here.
+As the second argument can cause some confusion with how Rust resolves the ambiguity with overlapping trait method names, appendix note~\ref{section:rust-trait-same-identifier} offers some clarification. However, this is mostly irrelevant to the thesis and skipped here.
 
 \subsection{Ownership Model}
 
@@ -401,7 +401,7 @@ Todo!
 
 Both the C++ and Rust implementations use dynamic dispatch to convert a type into an interface at runtime. This is not a zero-cost abstraction, but allows for a fair comparison and code writing simplicity.
 
-For example, the types \texttt{NewtonForce} and \texttt{LennardJonesForce} both implement (or inherit for the C++ codebase) the \texttt{Force} trait. For the simulation run we convert both force implementations into a dynamic \texttt{Force} object. At the cost of losing all information on the underlying type, we get a black box of a model, capable of yielding the potential and force interaction for any two particles.
+For example, the types \texttt{NewtonForce} and \texttt{LennardJonesForce} both implement (or inherit, for the C++ codebase) the \texttt{Force} trait. For the simulation run, we convert both force implementations into a dynamic \texttt{Force} object. At the cost of losing all information on the underlying type, we get a black box of a model, capable of yielding the potential and force interaction for any two particles.
 
 \subsection{Error Handling}
 
@@ -409,20 +409,20 @@ Option, Result and Panic
 
 \subsection{Unsafe Rust}
 
-What we have learned so far has been `Safe Rust', which can be statically analyzed for memory safety and bugs that would cause segmentation fault in C++ are caught in the compilation stage.
+What we have learned so far has been `Safe Rust', which can be statically analyzed for memory safety, and bugs that would cause segmentation fault in C++ are caught in the compilation stage.
 
-However sometimes because of performance reasons or communicating with an external library, code has to be written using of raw pointer arithmetics. This mode is commonly referred to as `Unsafe Rust'.
+However, occasionally, because of performance optimizations using pointer arithmetics or linking external binaries, code has to be written in a way which the compiler can not statically analyze. This mode is commonly referred to as `Unsafe Rust'.
 
 An unsafe functionality is a scope, function or trait implementation annotated with the \texttt{unsafe} keyword. In an unsafe block, Rust gives you access to a few operations which can not be statically verified and could cause undefined behaviour. The operations are the following.
 
 \begin{enumerate}
     \item Dereferencing a pointer.
-    \item Using other unsafe functionalities like invoking an unsafe function or implementing an unsafe trait.
+    \item Using other unsafe functionalities, like invoking an unsafe function or implementing an unsafe trait.
     \item Read or write to a mutable static variable.
     \item Accessing fields of a \texttt{union}, a special element which is syntactically similar to a struct with the exception of all fields sharing the same storage.
 \end{enumerate}
 
-To get a bit of intuition on what kind of operations are unsafe consier this example: For a struct to be shared accross threads, it needs to implement the \texttt{Sync} trait, which is unsafe. If the struct also contains a pointer which you would like to interpret at index $2$, adding $2$ to the pointer and dereferencing it is also unsafe behaviour.
+To get a bit of intuition on what kind of operations are unsafe consider this example: For a struct to be shared across threads, it needs to implement the \texttt{Sync} trait, which is unsafe. If the struct also contains a pointer which you would like to interpret at index $2$, adding $2$ to the pointer and dereferencing it is also unsafe behaviour.
 
 \subsection{Macros}
 
@@ -436,7 +436,7 @@ mention how rusts' compiler error messages differ from C++
 
 \section{Major Dependencies in Rust}
 
-Below are few creditworthy libraries which are utilized in the Rust project and severely improve the programming workflow. They utilize procedural macros to generate code from a struct.
+Below are few creditworthy libraries which are utilized in the Rust project and significantly improve the programming workflow. They utilize procedural macros to generate code from a struct.
 
 \subsection{Clap}
 
@@ -462,13 +462,13 @@ struct Args {
 
 The above figure shows a struct definition annotated with macros and attributes from the Clap crate. The line \texttt{let args = Args::parse()} can then be used in the main function to invoke the command line parser and retrieve all arguments. This moves the input validation completely to a depenency and is a huge improvement in comparison to \texttt{getopt}.
 
-To make for a fair comparison to C++, it is crucial to add that there are CLI parser alternatives in the C++ ecosystem which are more modern, feature-rich and provide better error handling like CLI11\cite{cpp-cli11}.
+To make a fair comparison to C++, it is crucial to add that there are CLI parser alternatives in the C++ ecosystem which are more modern, feature-rich and provide better error handling, like CLI11\cite{cpp-cli11}.
 
 \subsection{Serde}
 
 Serde is the standard of serialization and deserialization across the Rust package ecosystem, having reached over 1 billion all-time downloads\cite{rust-crates-serde}. It provides the traits \texttt{Serialize} and \texttt{Deserialize} that map Rust types into and from an internal data format. Various data formats like JSON, YAML or VTU can then implement the traits \texttt{Serializer} and \texttt{Deserializer} to communicate with Serde's internal data format.
 
-The derive macros \texttt{\#[derive(Serialize, Deserialize)]} can be used to automatically generate the proper mapping. In the project this is extremely helpful for the structs \texttt{FileDefinition} and \texttt{Particle}. This way most of the input validation is once again moved to a dependency and there is no need implement checks for missing fields yourself.
+The derive macros \texttt{\#[derive(Serialize, Deserialize)]} can be used to automatically generate the proper mapping. In the project, this is extremely helpful for the structs \texttt{FileDefinition} and \texttt{Particle}. This way, most of the input validation is once again moved to a dependency and there is no need implement checks for missing fields yourself.
 
 \subsection{Rayon}
 
@@ -476,9 +476,9 @@ Rayon is a parallelization library similar to OMP. Instead of pragmas, Rayon use
 
 \chapter{Application with Molecular Dynamics}
 
-In this chapter we will explain the molecular dynamics algorithms from a mathematical and theoretical perspective and the next chapter will dive into a more detailed technical explanation about the implementation.
+In this chapter, we will explain the molecular dynamics algorithms from a mathematical and theoretical perspective, and the next chapter will dive into a more detailed technical explanation of the implementation.
 
-We define force as the equation $F_X = -\frac{U_X}{r}$, with $r$ being the scalar distance between two particles and we call $U_X$ the potential. We mostly work with Lennard-Jones interactions $F_\text{LJ}$ in this thesis, however as an artefact from a legacy project we also support the Newtonian force calculation $F_\text{N}$. In other words, the algorithm sees the force $F$ as an abstract interface. The formulas for the Newton potential $U_\text{N}$ and the Lennard Jones Potential $U_\text{LJ}$ are given as follows.
+We define force as the equation $F_X = -\frac{U_X}{r}$, with $r$ being the scalar distance between two particles, and we call $U_X$ the potential. We mostly work with Lennard-Jones interactions $F_\text{LJ}$ in this thesis, however, as an artefact from a legacy project we also support the Newtonian force calculation $F_\text{N}$. In other words, the algorithm sees the force $F$ as an abstract interface. The formulas for the Newton potential $U_\text{N}$ and the Lennard-Jones Potential $U_\text{LJ}$ are given as follows:
 
 \begin{align}
 U_\text{N} := - G \cdot \frac{M}{r}
@@ -488,7 +488,7 @@ U_\text{N} := - G \cdot \frac{M}{r}
 U_\text{LJ} := 4 \cdot \epsilon \cdot \left[{{\left(\frac{\sigma}{r}\right)}^{12}} - {{\left(\frac{\sigma}{r}\right)}^6}\right]
 \end{align}\label{potential-lennard-jones}
 
-For the Newton potential, $G = 1$ is the gravitational constant and $M$ the product of the particle masses. For the Lennard Jones potential it is enough to say that $\epsilon = 5$ and $\sigma = 1$ are arbitrary constants. We will not get to an intuitive understanding of what these constants represent.
+For the Newton potential, $G = 1$ is the gravitational constant and $M$ the product of the particle masses. For the Lennard-Jones potential, it is enough to say that $\epsilon = 5$ and $\sigma = 1$ are arbitrary constants. We will not get to an intuitive understanding of what these constants represent.
 
 At the core of the hot loop are 
 
@@ -524,7 +524,7 @@ talk about perf
 
 \chapter{Benchmarking}
 
-All following benchmarks are executed on mars, a high end, personal computer with a 64-bit 12th Gen Intel(R) Core(TM) i7-12700K and $2 \times 16$GB DDR5 RAM. The processor has 12 cores, of which 8 are performance cores with a pair of threads using Intel(R) Hyper-Threading Technology and 4 efficiency cores, each having their own thread, making for a total of 20 threads\cite{cpu-intel-core-i7-12700k}. The hardware topology for the described processor can be seen visually below. 
+All following benchmarks are executed on mars, a high end, personal computer with a 64-bit 12th Gen Intel(R) Core(TM) i7-12700K and $2 \times 16$GB DDR5 RAM. The processor has 12 cores, of which 8 are performance cores with a pair of threads using Intel(R) Hyper-Threading Technology, and 4 are efficiency cores, each having their own thread, making for a total of 20 threads\cite{cpu-intel-core-i7-12700k}. The hardware topology for the described processor can be seen visually below. 
 
 \begin{figure}[htbp]
     \centering
@@ -536,11 +536,11 @@ All following benchmarks are executed on mars, a high end, personal computer wit
 
 % \cite{cpu-benchmark-intel-core-i7-12700k}, the particle dataset \texttt{two-bodies-collision} is used for benchmarking, which moves a $20 \times 20$ matrix of particles against a $100 \times 20$ wall of particles, creating a dataset of $2,400$ particles. The statistics below were measured as ``the average of 20 runs'' of the x-axis value.
 
-The benchmarks below run on the \texttt{two-bodies-collision} dataset which is a particle layout of two two-dimensional grids of size $100 \times 20$ and $20 \times 20$, with the smaller grid moving into the larger body. The statistics below were measured as ``the average of 20 runs'' of the x-axis value.
+The benchmarks below run on the \texttt{two-bodies-collision} dataset which is a particle layout of two two-dimensional grids of sizes $100 \times 20$ and $20 \times 20$, with the smaller grid moving into the larger body. The statistics below were measured as ``the average of 20 runs'' of the x-axis value.
 
 Despite being two-dimensional input, the computational complexity of the algorithms remains identical, with \texttt{DirectSum} iterating over all particle pairs and \texttt{LinkedCells} only over neighbouring cells. The measured performance should also not change much because most of the performance is dominated by loop structure and adding the z-axis to \texttt{LinkedCells} is a minimal change in comparison.
 
-For interested readers we will provide some further benchmarks (including 3D benchmarks) in the Appendix but not cover it in this section.
+For interested readers, we will provide some further benchmarks (including 3D benchmarks) in the Appendix but not cover them in this section.
 
 \newpage
 \section{Sequential}
@@ -814,11 +814,11 @@ For interested readers we will provide some further benchmarks (including 3D ben
 
 % We will first bench the performance of different sequential implementations to ensure the the credibility of the measured data as seen in~\autoref{fig:benchmark-sequential}. The graph can only hint at general performance hierarchy. 
 
-For the DirectSum implementation, when measuring sequential performance against simulation steps $S$ and other configuration data fixed, we observe linear runtime $\mathcal{O}(S)$. This is because, despite having to compute all particle pairs, the amount of particles $N$ and hence the workload per simulation step is constant in this graph.
+For the DirectSum implementation, when measuring sequential performance against simulation steps $S$ and other configuration data fixed, we observe linear runtime $\mathcal{O}(S)$. This is because despite having to compute all particle pairs, the amount of particles $N$ and hence the workload per simulation step is constant in this graph.
 
-To ensure the credibility of the computed average, the fluctuations between minimal and maximal run duration have also been recorded.
+To ensure the credibility of the computed average, the fluctuations between minimal and maximal run duration were also recorded.
 % The biggest relative outlier occured with Rust at 210 steps with a fluctuation of $20.9\%$.
-A massive absolute outlier occured with Rust at the 310 steps benchmark, with a measured fluctuation of $435.6$ms or $7.4\%$. Fluctuations can be perceived in the graph as small `bumps'. At 500 steps, the recorded fluctuation in measured performance for both Rust and C++ are below $0.4\%$.
+A large absolute outlier occured with Rust at the 310 steps benchmark, with a measured fluctuation of $435.6$ms or $7.4\%$. Fluctuations can be perceived in the graph as small `bumps'. At 500 steps, the recorded fluctuation in measured performance for both Rust and C++ is below $0.4\%$.
 
 We can therefore derive the following claim in regards to the sequential performance ratio: Rust DirectSum completes in $86.6\%$ of the time taken by the C++ DirectSum implementation, with a speedup of $15.5\%$.
 
@@ -968,11 +968,11 @@ We can therefore derive the following claim in regards to the sequential perform
 \label{fig:benchmark-linked-cells}
 \end{figure}
 
-In figure~\ref{fig:benchmark-linked-cells} we can see the performance of specifically the LinkedCells implementation. The first thing that can be noticed is that the fluctuations are ``more noticable''. This is because as the graph is downscaled roughly 10 times on the y axis compared to figure~\ref{fig:benchmark-sequential}, a fluctuation of even 1ms is perceived ten times stronger.
+In~\autoref{fig:benchmark-linked-cells} we can see the performance of specifically the LinkedCells implementation. The first thing that can be observed is that the fluctuations are ``more noticable''. This is because as the graph is downscaled roughly 10 times on the y axis compared to~\autoref{fig:benchmark-sequential}, a fluctuation of even 1ms is perceived ten times stronger.
 
 We can derive the following further claims in regards to the sequential performance ratio: Rust LinkedCells completes in $78.6\%$ of the time taken by the C++ LinkedCells implementation, with a speedup of $27.2\%$.
 
-Within the languages, we can derive the following claims in regards to choice of algorithm: Rust LinkedCells completes in $9.2\%$ of Rust DirectSum with a speedup of $1084.7\%$. C++ LinkedCells completes in $10.2\%$ of C++ DirectSum, with a speedup of $984.6\%$.
+Within the languages, we can derive the following claims in regards to choice of algorithm for this specific dataset: Rust LinkedCells completes in $9.2\%$ of Rust DirectSum with a speedup of $1084.7\%$. C++ LinkedCells completes in $10.2\%$ of C++ DirectSum, with a speedup of $984.6\%$.
 
 \newpage
 \section{Parallel}
@@ -1108,13 +1108,13 @@ Within the languages, we can derive the following claims in regards to choice of
 
 % Todo! x = thread, y = runtime (absolute [strong scaling] or relative [strong scaling speedup])
 
-In the parallelized DirectSum implementation for both Rust and C++ we only parallelize the code segment which performs operations for every particle pair, by parallelizing the `outer' iteration and keeping the `inner' iteration sequential. We should also note here, that we don't really compare the capacities of the programming languages here, but of two specific parallelization libraries.
+In the parallelized DirectSum implementation for both Rust and C++, we only parallelize the code segment which performs operations for every particle pair by parallelizing the `outer' iteration and keeping the `inner' iteration sequential. We should also note here that we do not really compare the capacities of the programming languages here, but of two specific parallelization libraries.
 
 For Rust, we use Rayon as the parallelization library, and for C++ we use OMP. The thread count was set with environment variables \texttt{RAYON\_NUM\_THREADS} and \texttt{OMP\_NUM\_THREADS}.
 
-The first artefact we observe is that there are specific thread counts, where OMP performance drops. On the machine where the benchmarks were run, there was a 1066ms drop between thread counts 8 and 9, and a 1508ms drop between thread counts 20 and 21.
+The first artefact we observe is that there are specific thread counts where OMP performance drops. On the machine where the benchmarks were run, there was a 1066ms drop between thread counts 8 and 9, and a 1508ms drop between thread counts 20 and 21.
 
-The artefacts can generally be explained with OMP giving the developer more low-level control over thread to hardware assignments, and Rayon taking a more high-level approach. The performance decline at 21 threads can be explained with operating system overhead: When there are more threads requested than resources available, the scheduling overhead of dispatching threads starts to affect measurements.
+The artefacts can generally be explained with OMP giving the developer more low-level control over thread-to-hardware assignments, and Rayon taking a more high-level approach. The performance decline at 21 threads can be explained with operating system overhead: When there are more threads requested than resources available, the scheduling overhead of dispatching threads starts to affect measurements.
 
 To understand the artefact at 8 to 9 threads, we will measure OMP performance with different thread-to-hardware mappings in the next figure.
 
@@ -1130,7 +1130,7 @@ To understand the artefact at 8 to 9 threads, we will measure OMP performance wi
 
 % At 2 threads, Rust parallel DirectSum completes in $88.5\%$ of the time taken by the C++ parallel DirectSum implementation, with a speedup of $22.6\%$. At 8 threads, Rust parallel DirectSum completes in $81.6\%$ of the time taken by the C++ parallel DirectSum implementation, with a speedup of $13\%$.
 
-\newpage
+% \newpage
 \begin{figure}[!htb]
 \begin{tikzpicture}
     \begin{axis}[
@@ -1281,56 +1281,58 @@ To understand the artefact at 8 to 9 threads, we will measure OMP performance wi
 \label{fig:benchmark-parallel-omp-modi}
 \end{figure}
 
-In~\autoref{fig:benchmark-parallel-omp-modi} we see OMP tested with different modi in a more controlled environment to understand the artifacts seen previously in~\autoref{fig:benchmark-parallel}. `Close' and `Spread' defines the value of the environment variable \texttt{OMP\_PROC\_BIND} and `Cores' and `Threads' defines the value of the environment variable \texttt{OMP\_PLACES}.
+In~\autoref{fig:benchmark-parallel-omp-modi} we see OMP tested with different modi in a more controlled environment to understand the artifacts seen previously in~\autoref{fig:benchmark-parallel}. `Close' and `Spread' defines the value of the environment variable \texttt{OMP\_PROC\_BIND}, and `Cores' and `Threads' defines the value of the environment variable \texttt{OMP\_PLACES}.
 
-Intuitively, `Close' means we claim resources in close proximity, and `Spread' means we use distant resources, with `Cores' and `Threads' selecting what to count as a resource. For example `Close Threads' means we use nearby threads, even if the share the same core and cache, while `Close Cores' will try to use different nearby cores, even if it skips some threads.
+Intuitively, `Close' means we claim resources in close proximity, and `Spread' means we use distant resources, with `Cores' and `Threads' selecting what to count as a resource. For example, `Close Threads' means we use nearby threads, even if they share the same core and cache, while `Close Cores' will try to use different nearby cores, even if it skips some threads.
 
-We define the two ``curves'' seen in ~\autoref{fig:benchmark-parallel-omp-modi} as following: The ``efficient'' curve follows ``Close Threads'' from threads 2 to 20. The ``performant'' curve follows ``Close Cores'' from threads 1 to 8.
+We define the two ``curves'' seen in ~\autoref{fig:benchmark-parallel-omp-modi} as follows: The ``efficient'' curve follows ``Close Threads'' from threads 2 to 20. The ``performant'' curve follows ``Close Cores'' from threads 1 to 8.
 
-According to the product specification of the CPU used for benchmarking\cite{cpu-intel-core-i7-12700k}, we have 8 performance cores running at a base frequency of 3.60 GHz, each having two threads using Intel(R) Hyper-Threading Technology, and several further efficiency cores running at 2.70 GHz. With this information in mind we will give an individual explanation for the artefacts seen above.
+Recall that according to the product specification of the CPU used for benchmarking\cite{cpu-intel-core-i7-12700k}, we have 8 dual-threaded performance cores which run at a base frequency of 3.60 GHz, and 4 efficiency cores running at 2.70 GHz. With this information in mind we will give an individual explanation for the artefacts seen above.
 
 \begin{description}
-    \item[Close Threads] We don't really see a performance decline for this configuration, however at threads 1 to 2 we can see a visual jump to the efficient curve as we start using two threads within the same core. One explanation here could be NUMA effects, which lead to rewrites in the cores' cache.
+    \item[Close Threads] We do not see a performance decline for this configuration, however at threads 1 to 2 we can see a visual jump to the efficient curve as we start using two threads within the same core using Intel(R) Hyper-Threading Technology.
+
+    Since the two threads share the same L1 and L2 caches, frequent cache rewrites from different threads occur, reducing the overall performance speedup due to cache misses.
 
     \item[Spread Cores] The performance decline occurs at 2 to 3 threads. Since we are unlikely to use threads in close proximity, the most likely explanation is that we use efficiency cores, which run at a lower base frequency and lead to overall slower performance.
 
     \item[Spread Threads] The performance decline occurs at 4 to 5 threads respectively. The explanation is analogous to Spread Cores.
-    
+
     \item[Close Cores] The performance decline occurs at 8 to 9 threads, as we run out of performance cores, we either have to use an efficiency core or share the cores cache, both leading to undesired performance loss.
 \end{description}
 
 \chapter{Discussion and Conclusion}
 
-The results presented in this thesis show that Rust is at least as competitive with C++ in terms of performance but also outperforms C++ in memory safet models, overall developer experience, ecosystem and tooling.
+The results presented in this thesis show that Rust is at least as competitive with C++ in terms of performance, but also outperforms C++ in memory safety models, overall developer experience, ecosystem and tooling.
 
-However it is important to highlight that the results are subject to implementation bias with non-zero cost abstractions used in the hot loop of the physics implementation. In this work, we compare Rusts' \texttt{HashMap} against C++ \texttt{unordered\_map}, we use dynamic dispatch and minor difference in memory layout and compiler optimizations can contribute to observed performance differences. Since the hot loop is subject to these paradigms, a small relative performance difference is instantly upscaled in the benchmarks.
+However, it is important to highlight that the results are subject to implementation bias with non-zero cost abstractions used in the hot loop of the physics implementation. In this work, we compare Rusts' \texttt{HashMap} against C++ \texttt{unordered\_map}, we use dynamic dispatch and minor differences in memory layout and compiler optimizations can contribute to the observed performance differences. Since the hot loop is subject to these paradigms, a small relative performance difference is instantly upscaled in the benchmarks.
 
 The Rust compiler \texttt{rustc} uses LLVM and the C++ code was compiled with the CMake default (which is GCC), which make different trade-offs in inling, loop-unrolling and link-time optimizations.
 
-The parallelization implementations are also not directly comparable due to different threading models, with Rayon being more high-level and memory safe and OMP giving more hardware control at the cost of relying on unsafe memory models.
+The parallelization implementations are also not directly comparable due to different threading models, with Rayon being more high-level and memory safe, and OMP giving more hardware control at the cost of relying on unsafe memory models.
 
 The conclusion of the thesis suggests that Rust offers the following.
 
 \begin{description}
-    \item[Competitive Performance] The sequential benchmarks show that Rust is in general a bit faster with some exceptional implementations outperforming C++ up to $25\%$ faster.
+    \item[Competitive Performance] The sequential benchmarks show that Rust is in general a bit faster, with some exceptional implementations outperforming C++ by up to $25\%$.
 
     \item[Memory Safety] The type system and ownership model of Rust is a significant advantage, with guarantees on memory safety reducing the cognitive overhead in comparison to C++, where 
 
-    \item[Ecosystem and Tooling] Rust provides a good set of tools with its' package manager and community-written dependencies, which enhance productivity and developer experience. The integrated compiler, documentation generator, linter and error messages reduce the  
+    \item[Ecosystem and Tooling] Rust provides a good set of tools with its package manager and community-written dependencies, which enhance productivity and developer experience. The integrated compiler, documentation generator, linter and error messages reduce the  
 \end{description}
 
-However, this does not mean that everyone should write all new or rewrite existing applications in Rust, because of the following reasons.
+However, this does not mean that everyone should write all new or rewrite existing applications in Rust, because of the following reasons:
 
 \begin{description}
     \item[Technical Debt] The attempt to rewrite large C++ codebases introduces technical debt. Incremental adoption with interoperability, as practiced by Google, is a more realistic approach to code migration.
-    \item[Learning Curve] Rust has a higher learning curve than C++ because it does not use Java-style OOP concepts like abstract classes and inheritance. Instead it relies on traits and patterns from functional programming. This requires to relearn most concepts from scratch in Rust.
-    \item[Dependencies] Rusts' ecosystem, despite growing rapidly is still lacking some field-specific libraries, requiring additional effort to either bind C++ code or rewrite entire components in Rust. One such example is the LLVM project, which the Rust compiler relies on, but is written in C++.
+    \item[Learning Curve] Rust has a higher learning curve than C++ because it does not use Java-style OOP concepts like abstract classes and inheritance. Instead, it relies on traits and patterns from functional programming. This requires to relearn most concepts from scratch in Rust.
+    \item[Dependencies] Rust's ecosystem, despite growing rapidly, is still lacking some field-specific libraries, requiring additional effort to either bind C++ code or rewrite entire components in Rust. One such example is the LLVM project, which the Rust compiler relies on, but is written in C++.
     \item[Well-optimized Projects] For projects that are already well optimized and understood in C++, the rewrite in Rust may not yield much better performance.
 \end{description}
 
-In conclusion, Rust is good alternative to C++ for new projects that involve security and maintainability, as Rust offers better tooling to start applications and immediately start coding, reduces configuration overhead, offers strong performance and introduces memory safety without garbage collection.
+In conclusion, Rust is a good alternative to C++ for new projects that involve security and maintainability, as Rust offers better tooling to start applications and immediately start coding, reduces configuration overhead, offers strong performance and introduces memory safety without garbage collection.
 
-However the decision to adopt Rust (or any other programming language) for a project should be assesed based on project requirements, team expertise and existing infrastructure.
+However, the decision to adopt Rust (or any other programming language) for a project should be assessed based on project requirements, team expertise and existing infrastructure.
 
 This thesis contributes data and insights to inform that decision, demonstrating that Rust is a safe and performant language.
 
@@ -1526,7 +1528,7 @@ This thesis contributes data and insights to inform that decision, demonstrating
 
 This section aims to provide some understanding on how Rust determines which function is executed when a type implements multiple traits that share a common method identifier.
 
-Generally, trait methods are not seen in a scope even if the struct implements them. In Rust, you have to explicitly include the trait in the scope where you wish to use it. Consider the following code to be in \texttt{foobar.rs}
+Generally, trait methods are not seen in a scope even if the struct implements them. In Rust, you have to explicitly include the trait in the scope where you wish to use it. Consider the following code to be in \texttt{foobar.rs}:
 
 \vspace{0.5em}
 \begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small]
@@ -1741,13 +1743,13 @@ The example above will not compile, as \texttt{foobar()} is ambiguous. The solut
 \label{fig:benchmark-linked-cells-collision}
 \end{figure}
 
-For the \texttt{LinkedCells} benchmark, one could argue that ``since the benchmarks do not measure the collision point, the comparison to \texttt{DirectSum} is unfair, since the amount of computation increases as the average particle density grows per cell''. Figure~\ref{fig:benchmark-linked-cells-collision} adjusts the benchmarks to cover the collision point of the dataset. The evaluation is, that the collision has at most minimal performance impact and is neglectable for this comparison.
+For the \texttt{LinkedCells} benchmark, one could argue that ``since the benchmarks do not measure the collision point, the comparison to \texttt{DirectSum} is unfair, since the amount of computation increases as the average particle density grows per cell''. Figure~\ref{fig:benchmark-linked-cells-collision} adjusts the benchmarks to cover the collision point of the dataset. The evaluation is that the collision has at most minimal performance impact and is neglectable for this comparison.
 
 % In~\ref{fig:benchmark-sequential} you can see all the sequential benchmarks in one graph.
 
 \section{CoolMUC Parallel}
 
-The parallel benchmarks have also been computed on the supercomputer CoolMUC\cite{coolmuc-stats}, which runs on a Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz~\cite{cpu-intel-xeon-platinum-8380}. This is for two reasons, to test if the in the thesis discussed artefacts with OpenMP happen on a computer with more evenly distributed processing powers contrary to toe high end PC with cores of different types. The second reason is, that the insights could be interesting or relevant to the thesis. Since we are in the Appendix, the results were not really usable in the thesis narrative, but they are still interesting insights.
+The parallel benchmarks have also been computed on the supercomputer CoolMUC\cite{coolmuc-stats}, which runs on an Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz~\cite{cpu-intel-xeon-platinum-8380}. This is for two reasons, to test if the artefacts with OpenMP discussed in the thesis happen on a computer with more evenly distributed processing powers, contrary to the high-end PC with cores of different types. The second reason is that the insights could be interesting or relevant to the thesis. Since we are in the Appendix, the results were not really usable in the thesis narrative, but these are still interesting insights.
 
 \newpage
 \begin{figure}[!htb]
@@ -1836,7 +1838,7 @@ The parallel benchmarks have also been computed on the supercomputer CoolMUC\cit
 \label{fig:benchmark-parallel-omp-modi-coolmuc}
 \end{figure}
 
-We can see the strong scaling diagrams for Rust (Rayon) and C++ (OpenMP with Spread Sockets). There is not much particularly interesting about this graph. We have previously determined that the Rust implementation is faster. The purpose of this graph is to strengthen the benchmark results, having measured the performance on two different devices.
+We can see the strong scaling diagrams for Rust (Rayon) and C++ (OpenMP with Spread Sockets). There is not much particularly interesting about this graph. We have previously determined that the Rust implementation is faster. The purpose of this graph is to strengthen the benchmarking results, having measured the performance on two different devices.
 
 \begin{figure}[!htb]
 \begin{tikzpicture}
@@ -2046,7 +2048,7 @@ We can see the strong scaling diagrams for Rust (Rayon) and C++ (OpenMP with Spr
 
 On CoolMUC4, sequential code performs slower than on a high-end consumer CPU, as the supercomputer operates on a lower frequency. The strength of CoolMUC comes from the evenly distributed workload, generally preventing artefacts as seen in~\autoref{fig:benchmark-parallel}.
 
-However as it turns out, The Close Threads configuration performs poorly even on CoolMUC. This is because the CPU used on the supercomputer also makes use of Intel(R) Hyper-Threading Technology, with a pair of cache-sharing threads per core.
+However as it turns out, the Close Threads configuration performs poorly even on CoolMUC. This is because the CPU used on the supercomputer also makes use of Intel(R) Hyper-Threading Technology, with a pair of cache-sharing threads per core.
 
 \chapter{Other}
 
