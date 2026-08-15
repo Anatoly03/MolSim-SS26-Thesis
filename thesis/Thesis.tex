@@ -524,7 +524,15 @@ talk about perf
 
 \chapter{Benchmarking}
 
-All following benchmarks are executed on a 64-bit 12th Gen Intel(R) Core(TM) i7-12700K. It has 12 cores, of which 8 are performance cores with a pair of threads using Intel(R) Hyper-Threading Technology and 4 efficiency cores, each having their own thread, making for a total of 20 threads.\cite{cpu-intel-core-i7-12700k}
+All following benchmarks are executed on mars, a high end, personal computer with a 64-bit 12th Gen Intel(R) Core(TM) i7-12700K and $2 \times 16$GB DDR5 RAM. The processor has 12 cores, of which 8 are performance cores with a pair of threads using Intel(R) Hyper-Threading Technology and 4 efficiency cores, each having their own thread, making for a total of 20 threads\cite{cpu-intel-core-i7-12700k}. The hardware topology for the described processor can be seen visually below. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{../hwloc_diagram.pdf}
+    \caption{The output of the \texttt{lstopo} command on the computer used for benchmarking.}
+    \label{fig:hwloc}
+\end{figure}
+
 
 % \cite{cpu-benchmark-intel-core-i7-12700k}, the particle dataset \texttt{two-bodies-collision} is used for benchmarking, which moves a $20 \times 20$ matrix of particles against a $100 \times 20$ wall of particles, creating a dataset of $2,400$ particles. The statistics below were measured as ``the average of 20 runs'' of the x-axis value.
 
@@ -534,6 +542,7 @@ Despite being two-dimensional input, the computational complexity of the algorit
 
 For interested readers we will provide some further benchmarks (including 3D benchmarks) in the Appendix but not cover it in this section.
 
+\newpage
 \section{Sequential}
 
 \vspace{1.5em}
@@ -2041,20 +2050,13 @@ However as it turns out, The Close Threads configuration performs poorly even on
 
 \chapter{Other}
 
-\section{Hardware Topology}
+% \section{Hardware Topology}
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{../hwloc_diagram.pdf}
-    \caption{The output of the \texttt{lstopo} command on the computer used for benchmarking.}
-    \label{fig:hwloc}
-\end{figure}
-
-This figure shows the hardware topology for the Intel(R) Core(TM) i7-12700K. It highlights that two threads on a performance core share the same L2 cache, which could lead to performance decline if the L2 cache is constantly overwritten.
+% This figure shows the hardware topology for the Intel(R) Core(TM) i7-12700K. It highlights that two threads on a performance core share the same L2 cache, which could lead to performance decline if the L2 cache is constantly overwritten.
 
 \listoffigures
 
-% \listoftables
+% \listoftablesf
 
 \bibliographystyle{alpha}
 \bibliography{literature}
