@@ -475,7 +475,19 @@ The erroneous Rust code examples above would compile in C which means that by en
 
 Both the C++ and Rust implementations use dynamic dispatch to convert a type into an interface at runtime. This is not a zero-cost abstraction, but allows for a fair comparison and code writing simplicity.
 
-For example, the types \texttt{NewtonForce} and \texttt{LennardJonesForce} both implement (or inherit, for the C++ codebase) the \texttt{Force} trait. For the simulation run, we convert both force implementations into a dynamic \texttt{Force} object. At the cost of losing all information on the underlying type, we get a black box of a model, capable of yielding the potential and force interaction for any two particles.
+For example, the types \texttt{NewtonForce} and \texttt{LennardJonesForce} both implement (or inherit, for the C++ codebase) the \texttt{Force} trait. For the simulation run, we convert both force implementations into a dynamic \texttt{Force} object. At the cost of losing all information on the underlying type, we get a black box of a model, capable of yielding the potential and force interaction for any two particles. The equivalent in C++ is achieved through inheritance and virtual functions.
+
+The in-language implementation of both paradigms is also a bit different: In C++ an object of a polymorphic type comes with ``vtable pointers'', a table of every virtual method and the mapping to the correct implementation, which is resolved at runtime. In Rust, a reference can be coerced into a smart pointer with the \texttt{dyn} keyword.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=Dynamic Coercion in Rust, label=code:rust-dyn]
+let newton = NewtonForce { factor: 5.0 };
+let force: &dyn Force = &newton;
+
+println!("Potential: {}", force.potential(...))
+\end{lstlisting}
+
+\autoref{code:rust-dyn} shows a minimal example of how such a cast looks like syntactically.
 
 \subsection{Error Handling}
 
