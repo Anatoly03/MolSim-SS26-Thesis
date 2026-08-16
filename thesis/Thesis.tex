@@ -395,7 +395,81 @@ As the second argument can cause some confusion with how Rust resolves the ambig
 
 \subsection{Ownership Model}
 
-Todo!
+One of the most distinctive features of Rust is the ownership model, which enables zero-cost memory safety by hinting the compiler where an element is ``alive'' and when it needs to be ``removed''. This is fundamentally different to the approach in C where the developer is directly involved in memory allocation and freeing.
+
+C++ resolves this, unlike pure C, with lifetimes and destructors but these are a runtime-feature\cite{cpp-lifetimes} and the compiler does not enforce lifetimes leaking out of scope, leading to undefined behaviour. In both C and C++ the developer is directly responsible for memory safety.
+
+According to the Rust Programming Language book, a value in Rust must follow three rules: (R1) The value has an owner, (R2) and only one owner at any time. (R3) When the owner leaves the scope, without passing on ownership, the value will be dropped~\cite{rust-book-ownership-rules}. This way, ownership of a value can be moved into a function call, and ownership of a value can be returned from a function.
+
+The second rule makes it difficult to read a value multiple times without consuming it. This is where references get introduced, which is also referred to as ``borrowing''. This concept follows two additional rules: (R4) At any given time, an item can either have one mutable reference or multiple immutable references, (R5) and any reference must be valid~\cite{rust-book-borrowing}.
+
+Before evolving an intuition to these rules consider the following examples:
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=Code breaks Rule 5, label=code:rust-err1]
+let a = String::from("Hello, World!");
+{
+    let b = a;      // a is moved here as 'b'
+}                   // b is destroyed here
+println!("{}", &a); // error: invalid reference (R5)
+\end{lstlisting}
+
+In~\autoref{code:rust-err1} we encounter a compilation problem: As the variable \texttt{a} gets moved into an inner scope by being assigned to \texttt{b}, it gets destroyed at the end of the inner scope (R3). This means that when we try to print the string contents of \texttt{a}, we disobey Rule 5: The reference is invalid.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=Code breaks Rule 4, label=code:rust-err2]
+let a = String::from("Hello, World!");
+let b = &mut a;     // we borrow 'a' mutably to 'b'
+println!("{}", &a); // error: invalid borrow (R4)
+\end{lstlisting}
+
+In~\autoref{code:rust-err2} we encounter a similar problem, but this time the reasoning is a bit different. Since we borrow \texttt{a} mutably to \texttt{b}, we are prevented from creating immutable borrows of \texttt{a} due to Rule 4: Either one mutable borrow or multiple immutable borrows. This prevents a lot of actions automatically: Reading \texttt{a} requires immutable borrow, which breaks Rule 4, and modifying \texttt{a} requires a mutable borrow, which breaks the same rule.
+
+Intuitively, when a value is borrowed mutably, the owner is prevented from exercising most actions on it: Only the borrower can read and write the value during the borrow.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=Code breaks Rule 1 and 5, label=code:rust-err3]
+fn return_hello() -> &String {
+    let a = String::from("Hello, World!");
+    return &a; // borrow of 'a' is returned
+               // 'a' is dropped here -> &a is invalid here
+}
+\end{lstlisting}
+
+In~\autoref{code:rust-err3} we encounter what is generally called a ``dangling reference''. Since the local variable \texttt{a} is removed at the end of the function, returning a reference to this local variable would cause undefined behaviour. The equivalent C++ code would be the following:
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-cpp, basicstyle=\ttfamily\small, caption=C++ code breaks Rule 1 and 5 but compiles with a warning, label=code:cpp-err3]
+#include <string>
+
+std::string* return_hello() {
+    std::string a = "Hello, World!";
+    return &a; // reference of 'a' is returned
+               // 'a' is dropped here -> &a is invalid here
+}
+\end{lstlisting}
+
+The erroneous Rust code examples above would compile in C which means that by enforcing the ownership and reference rules, Rust eliminates an entire class of bugs, which would cause mutation side effects and undefined behaviour in C++.
+
+% Before understanding the details of borrowing consider this intuitive example from daily life:
+
+% Assume you have a book. You are the owner of this book, which means you can read it, write it or throw it into the bin. When you borrow the book to someone, it is assumed that they can only read the book. But they could also borrow it to a 3rd person with the same read-only right, creating a chain of borrows. However while the book is borrowed, you yourself can not write the book.
+
+% The logic with Rust references is the same, yielding the following permissions for the three types of a value:
+
+% \begin{description}
+%     \item[Owned Value] The variable \texttt{a: T} is owned, which means \texttt{a} can be read, borrowed, or destroyed. Any variable created in the current scope is owned in the current scope. If we do not destroy \texttt{a} manually, it is automatically destroyed when it leaves the scope.
+
+%     Note, that mutation in Rust is explicit. We can only write or borrow the value mutably if it is explicitly labeled so (\texttt{mut a: T}).
+
+%     Also note that a value can either have multiple immutable borrows, or one mutable borrows. Both are mutually exclusive.
+
+%     \item[Borrowed Immutably] A value which is borrowed immutably can be read, or borrowed further immutably. We denote this as a reference \texttt{a: \&T}.
+    
+%     \item[Borrowed Mutably] The variable \texttt{a: \&mut T} is mutably borrowed. We can read and write this variable, and we can create further mutable or immutable borrows.
+% \end{description}
+
+% Another intuitive example to compare borrowing with is the behaviour of a mutex: A lock a value to either have multiple readers or one writer at runtime.
 
 \subsection{Dynamic Dispatch}
 
