@@ -357,7 +357,7 @@ Structs in Rust are almost entirely equivalent to C++ structs. A struct is a typ
 % \vfill\null
 % \columnbreak
 
-\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=A Trait definition in Rust (Note: A comparison whether position difference is zero is omitted for code flow simplicity), label=code:rust-trait]
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={A Trait definition in Rust (Note: A comparison whether position difference is zero is omitted for code flow simplicity; Do not be confused that there is no \texttt{return} keyword: The last line is considered the return value if it is not followed by a semicolon)}, label=code:rust-trait]
 pub trait Force {
     fn potential(&self, particle: &Particle, other: &Particle)
         -> f64;
@@ -489,9 +489,55 @@ println!("Potential: {}", force.potential(...))
 
 \autoref{code:rust-dyn} shows a minimal example of how such a cast looks like syntactically.
 
+\subsection{Enums}
+
+Rust enums are a special branched type, which do not have a direct equivalent in C++, as it is derived from the more functional language OCaml. Consider the following enum implementation.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=Optionality in Rust, label=code:rust-option]
+pub enum Option<T> {
+    Some(T),
+    None
+}
+\end{lstlisting}
+
+This type defines a generic optionality of a type, it can be either present (\texttt{Some}) or it is not (\texttt{None}). The power of enums comes from the pattern matching keyword \texttt{match}, which allows to run code conditionally based on the enum branch.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={Optionality in Rust}, label=code:rust-option]
+impl<T> Option<T> {
+    pub fn is_some(&self) -> bool {
+        match self {
+            Some(_) => true,
+            None => false,
+        }
+    }
+}
+\end{lstlisting}
+
+We will now destruct the above example to understand the Rust programming language better: The first line \texttt{impl<T> Option<T>} defines an implementation block with the generic \texttt{T} for an option with the specified generic. This means that all constants and functions in this scope are member of \texttt{Option}.
+
+The second line defines the method \texttt{Option<T>::is\_some}, which is non-static, since it has the special argument \texttt{\&self} -- from earlier sections we also know that this method borrows the value immutably.
+
+The third line defines the \texttt{match} block and also the return value of the function: If the value is matched \texttt{Some}, return \texttt{true}, otherwise \texttt{false}.
+
 \subsection{Error Handling}
 
-Option, Result and Panic
+Since enums are powerful in control flow, they also become the basis of Rusts' error handling. Consider the following simplified implementation of a result type:
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={The result type in Rust (Note: The \texttt{: Error} syntax is a trait bound requiring the generic type to implement the \texttt{Error} trait).}, label=code:rust-result]
+pub enum Result<T, E: Error> {
+    Ok(T),
+    Err(E)
+}
+\end{lstlisting}
+
+Instead of working with \texttt{throw} and \texttt{catch}, like is often the case with C++ error handling, Rust enforces errors to be encoded in the type, eliminating problems with underdocumented dependencies which can throw various unknown errors and forcing the developer to be aware of the error they are handling.
+
+% Error handling with \texttt{Result} can be matched for, and handled. 
+
+Rust provides another way to raise errors, which is called \texttt{panic}. While a \texttt{Result} is for recoverable errors, panic is for unrecoverable program states, in which the stack is unwinded and only the destructors are invoked. This is comparable to a \texttt{throw} without a \texttt{catch}.
 
 \subsection{Unsafe Rust}
 
@@ -510,13 +556,13 @@ An unsafe functionality is a scope, function or trait implementation annotated w
 
 To get a bit of intuition on what kind of operations are unsafe consider this example: For a struct to be shared across threads, it needs to implement the \texttt{Sync} trait, which is unsafe. If the struct also contains a pointer which you would like to interpret at index $2$, adding $2$ to the pointer and dereferencing it is also unsafe behaviour.
 
-\subsection{Macros}
+% \subsection{Macros}
 
-rust macros vs c++ templates
+% rust macros vs c++ templates
 
-\section{Compiler Error Messages}
+% \section{Compiler Error Messages}
 
-mention how rusts' compiler error messages differ from C++
+% mention how rusts' compiler error messages differ from C++
 
 % \chapter{Rust Project Quickstart}
 
