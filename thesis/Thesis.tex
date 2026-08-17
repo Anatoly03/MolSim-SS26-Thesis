@@ -612,7 +612,9 @@ The derive macros \texttt{\#[derive(Serialize, Deserialize)]} can be used to aut
 
 Rayon is a parallelization library similar in usage to OpenMP (OMP). Instead of pragmas (macros), Rayon uses Rust Traits to implement parallelization behaviour for iterators. The comparison is fair since both libraries are highly popular within their language, but at the same time unfair due to the following technical reason:
 
-OpenMP provides the developer with a low-level interface to map the program threads to the hardware directly, while Rayon is a high-level parallelism library which implements optimizations like work stealing~\cite{rust-rayon-work-stealing}.
+OpenMP provides the developer with a low-level interface to map the program threads to the hardware directly, while Rayon is a high-level parallelism library which implements optimizations like work stealing~\cite{rust-rayon-work-stealing}. Rayon is capable of dynamically deciding how to balance the workload to make multithreading ``profitable''. This is completely opposite to OpenMP's approach of giving the developer more tools and freedom.
+
+There's been some studies in this particular field 7 years ago when Rayon was less mature than today~\cite{rust-rayon-carnegie-mellon-university} which had multiple different insights. One insight was that for matrix multiplication, OpenMP performed best at 8 threads and had a performance decline afterwards, while Rayon performed better for higher thread counts. We will observe similar artefacts later in this thesis.
 
 \chapter{Application with Molecular Dynamics}
 
@@ -1319,7 +1321,7 @@ In the parallelized DirectSum implementation for both Rust and C++, we only para
 
 For Rust, we use Rayon as the parallelization library, and for C++ we use OMP. The thread count was set with environment variables \texttt{RAYON\_NUM\_THREADS} and \texttt{OMP\_NUM\_THREADS}.
 
-The first artefact we observe is that there are specific thread counts where OMP performance drops. On the machine where the benchmarks were run, there was a 1066ms drop between thread counts 8 and 9, and a 1508ms drop between thread counts 20 and 21.
+The first artefact we observe is that there are specific thread counts where OMP performance drops. On the machine where the benchmarks were run, there was a 1066ms drop between thread counts 8 and 9, and a 1508ms drop between thread counts 20 and 21. A similar artefact has also been observed by other studies~\cite{rust-rayon-carnegie-mellon-university}.
 
 The artefacts can generally be explained with OMP giving the developer more low-level control over thread-to-hardware assignments, and Rayon taking a more high-level approach. The performance decline at 21 threads can be explained with operating system overhead: When there are more threads requested than resources available, the scheduling overhead of dispatching threads starts to affect measurements.
 
@@ -1418,7 +1420,7 @@ To understand the artefact at 8 to 9 threads, we will measure OMP performance wi
         };
 
     \addplot[
-        color=violet,
+        color=brown,
         % mark=square,
         % mark repeat={10},
         % mark phase={10},
@@ -1448,7 +1450,7 @@ To understand the artefact at 8 to 9 threads, we will measure OMP performance wi
         };
 
     \addplot[
-        color=violet!40,
+        color=brown!40,
         % mark=square,
         % mark repeat={10},
         % mark phase={10},
@@ -1484,7 +1486,7 @@ To understand the artefact at 8 to 9 threads, we will measure OMP performance wi
     \legend{Close Cores, Spread Cores, Close Threads, Spread Threads}
     \end{axis}
 \end{tikzpicture}
-\caption{todo}
+\caption{Different OpenMP operating modi to analyze the performance artefacts seen in~\autoref{fig:benchmark-parallel}}
 \label{fig:benchmark-parallel-omp-modi}
 \end{figure}
 
@@ -2275,7 +2277,7 @@ We can see the strong scaling diagrams for Rust (Rayon) and C++ (OpenMP with Spr
         };
 
     \addplot[
-        color=violet,
+        color=brown,
         % mark=square,
         % mark repeat={10},
         % mark phase={10},
@@ -2305,7 +2307,7 @@ We can see the strong scaling diagrams for Rust (Rayon) and C++ (OpenMP with Spr
         };
 
     \addplot[
-        color=violet!40,
+        color=brown!40,
         % mark=square,
         % mark repeat={10},
         % mark phase={10},
@@ -2335,7 +2337,7 @@ We can see the strong scaling diagrams for Rust (Rayon) and C++ (OpenMP with Spr
         };
 
     \addplot[
-        color=cyan,
+        color=ForestGreen,
         % mark=square,
         % mark repeat={10},
         % mark phase={10},
@@ -2365,7 +2367,7 @@ We can see the strong scaling diagrams for Rust (Rayon) and C++ (OpenMP with Spr
         };
 
     \addplot[
-        color=cyan!40,
+        color=ForestGreen!40,
         % mark=square,
         % mark repeat={10},
         % mark phase={10},
@@ -2405,7 +2407,7 @@ On CoolMUC4, sequential code performs slower than on a high-end consumer CPU, as
 
 However as it turns out, the Close Threads configuration performs poorly even on CoolMUC. This is because the CPU used on the supercomputer also makes use of Intel(R) Hyper-Threading Technology, with a pair of cache-sharing threads per core.
 
-\chapter{Other}
+% \chapter{Other}
 
 % \section{Hardware Topology}
 
