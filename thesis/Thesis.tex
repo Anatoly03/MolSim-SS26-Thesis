@@ -1207,9 +1207,9 @@ Within the languages, we can derive the following claims in regards to choice of
 
     \addplot[
         color=blue,
-        mark=square,
-        mark repeat={10},
-        mark phase={10},
+        % mark=square,
+        % mark repeat={10},
+        % mark phase={10},
         line width=1pt,
         ]
         coordinates {
@@ -1362,8 +1362,8 @@ To understand the artefact at 8 to 9 threads, we will measure OMP performance wi
     \addplot[
         color=blue,
         % mark=square,
-        % mark repeat={10},
-        % mark phase={10},
+        % mark repeat={5},
+        % mark phase={5},
         line width=1pt,
         ]
         coordinates {
@@ -1510,6 +1510,161 @@ Recall that according to the product specification of the CPU used for benchmark
     \item[Close Cores] The performance decline occurs at 8 to 9 threads, as we run out of performance cores, we either have to use an efficiency core or share the cores cache, both leading to undesired performance loss.
 \end{description}
 
+Since this specific processor can be considered ``unstable'' for benchmarking, we have also benchmarked the implementations on the CoolMUC4 supercluster~\cite{coolmuc-stats}, which runs on an Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz~\cite{cpu-intel-xeon-platinum-8380}. This computer has more evenly distributed processing power, contrary to consumer CPUs, which means the artefacts seen in~\autoref{fig:benchmark-parallel-omp-modi} should not happen on such a large scale.
+
+The results comparing Rayon and OpenMP with the Close Cores configuration on the supercluster can be seen below.
+
+\begin{figure}[!htb]
+\begin{tikzpicture}
+    \begin{axis}[
+        width=0.7\textwidth,  
+        height=0.3\textheight,
+        xlabel={Threads},
+        ylabel={Average Time (ms)},
+        xtick={1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50},
+        ytick={0, 5000, 10000, 20000, 30000},
+        scaled x ticks=false,  
+        scaled y ticks=false,
+        ymajorgrids=true, 
+        grid style=dashed,  
+        % ymin=-10,
+        % xmin=-5,
+        x tick label style={/pgf/number format/.cd, 1000 sep={}},
+        legend style={at={(0.54,0.98)},anchor=north west},
+    ]
+
+    \addplot[
+        color=blue,
+        % mark=square,
+        % mark repeat={10},
+        % mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (1, 13425.672799200001)
+            (2, 7034.6839787)
+            (3, 4844.9483129)
+            (4, 3774.5938616)
+            (5, 3249.2982004)
+            (6, 2812.3093775)
+            (7, 2392.4670311)
+            (8, 2164.31544)
+            (9, 2053.1635998)
+            (10, 1828.5429732999999)
+            (11, 1750.8792173)
+            (12, 1674.0708989000002)
+            (13, 1617.8227607000001)
+            (14, 1569.2232935999998)
+            (15, 1766.634308)
+            (16, 1449.1998526)
+            (17, 1512.0131551)
+            (18, 1258.4233966)
+            (19, 1442.2110962000002)
+            (20, 1598.5652562999999)
+            (21, 1583.1422562999999)
+            (22, 1542.2815818)
+            (23, 1541.6771827999999)
+            (24, 1471.806677)
+            (25, 1446.9715864000002)
+            (26, 1443.6229380999998)
+            (27, 1374.0940407)
+            (28, 1310.43283)
+            (29, 1298.6067865)
+            (30, 1307.7247138)
+            (31, 1240.0514814)
+            (32, 1240.7565235)
+            (33, 1227.2677263)
+            (34, 1189.4595444000001)
+            (35, 1162.1068534)
+            (36, 1147.7585795999998)
+            (37, 1102.4131797)
+            (38, 1081.9487092)
+            (39, 1086.2546063)
+            (40, 1078.6872185999998)
+            (41, 1050.5861437)
+            (42, 1042.8500787)
+            (43, 1020.7516511)
+            (44, 998.1856703)
+            (45, 984.8835952999999)
+            (46, 969.4272746)
+            (47, 963.0503559)
+            (48, 1010.9760791)
+            (49, 927.518807)
+            (50, 940.458122)
+        };
+
+    \addplot[
+        color=Dandelion,
+        % mark=triangle,
+        % mark repeat={10},
+        % mark phase={10},
+        line width=1pt,
+        ]
+        coordinates {
+            (1, 13126.9900866)
+            (2, 6956.8335481)
+            (3, 5444.7835344)
+            (4, 4122.7243184)
+            (5, 3320.4654511999997)
+            (6, 2899.433084)
+            (7, 2626.301639)
+            (8, 2395.0016119)
+            (9, 2304.3158381999997)
+            (10, 2147.6523565)
+            (11, 1981.5979676)
+            (12, 1760.8822602)
+            (13, 2036.3254857)
+            (14, 1741.8312989)
+            (15, 1757.1796485999998)
+            (16, 1745.9586909000002)
+            (17, 1828.1608116)
+            (18, 1746.0657904000002)
+            (19, 1726.0758609000002)
+            (20, 1605.6061617)
+            (21, 1521.8977839000001)
+            (22, 1528.0916497)
+            (23, 1558.1568987)
+            (24, 1585.0291087)
+            (25, 1437.8486694)
+            (26, 1362.0971075999998)
+            (27, 1340.9091382000001)
+            (28, 1394.5036589000001)
+            (29, 1291.951804)
+            (30, 1311.1052264)
+            (31, 1162.8568192999999)
+            (32, 1360.3232194000002)
+            (33, 1437.2031067)
+            (34, 1430.8800580999998)
+            (35, 1222.5695621)
+            (36, 1341.9797082)
+            (37, 1323.9310564)
+            (38, 1302.7964967999999)
+            (39, 1213.9852830999998)
+            (40, 1196.0717703)
+            (41, 1220.9208787)
+            (42, 1273.0652542999999)
+            (43, 1224.0270466)
+            (44, 1173.7135263)
+            (45, 1224.6056300999999)
+            (46, 1268.7242528)
+            (47, 1237.9188979)
+            (48, 1282.5135757)
+            (49, 1256.263048)
+            (50, 1203.0204662)
+
+        };
+
+    \legend{C++ [OMP], Rust [Rayon]}
+    \end{axis}
+\end{tikzpicture}
+\caption{CoolMUC Benchmark Results comparing Rust and C++}
+\label{fig:benchmark-parallel-omp-modi-coolmuc}
+\end{figure}
+
+The results in~\autoref{fig:benchmark-parallel-omp-modi-coolmuc} (Intel(R) Core(TM) series processor) differ from what we measured in~\autoref{fig:benchmark-parallel} (Intel(R) Xeon(R) platinum series processor).
+
+While Rust seems to outperform C++ for very few threads and occasionally between 21 and 32 threads, overall C++ seems to win the performance contest. For interested readers, we will some more CoolMUC benchmarks in appendix~\ref{section:coolmuc-parallel}.
+
 \chapter{Discussion and Conclusion}
 
 The results presented in this thesis show that Rust is at least as competitive with C++ in terms of performance, but also outperforms C++ in memory safety models, overall developer experience, ecosystem and tooling.
@@ -1518,12 +1673,12 @@ However, it is important to highlight that the results are subject to implementa
 
 The Rust compiler \texttt{rustc} uses LLVM and the C++ code was compiled with the CMake default (which is GCC), which make different trade-offs in inling, loop-unrolling and link-time optimizations.
 
-The parallelization implementations are also not directly comparable due to different threading models, with Rayon being more high-level and memory safe, and OMP giving more hardware control at the cost of relying on unsafe memory models.
+The parallelization implementations are also not comparable due to different threading models, with Rayon being more high-level and memory safe, and OMP giving more hardware control at the cost of relying on unsafe memory models.
 
 The conclusion of the thesis suggests that Rust offers the following.
 
 \begin{description}
-    \item[Competitive Performance] The sequential benchmarks show that Rust is in general a bit faster, with some exceptional implementations outperforming C++ by up to $25\%$.
+    \item[Competitive Performance] The sequential benchmarks show that Rust is in general a bit faster, with some exceptional implementations outperforming C++ by up to $25\%$. The parallel performance seems to be processor-dependent.
 
     \item[Memory Safety] The type system and ownership model of Rust is a significant advantage, with guarantees on memory safety reducing the cognitive overhead in comparison to C++, where 
 
@@ -2104,98 +2259,8 @@ For the \texttt{LinkedCells} benchmark, one could argue that ``since the benchma
 
 % In~\ref{fig:benchmark-sequential} you can see all the sequential benchmarks in one graph.
 
-\section{CoolMUC Parallel}
-
-The parallel benchmarks have also been computed on the supercomputer CoolMUC\cite{coolmuc-stats}, which runs on an Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz~\cite{cpu-intel-xeon-platinum-8380}. This is for two reasons, to test if the artefacts with OpenMP discussed in the thesis happen on a computer with more evenly distributed processing powers, contrary to the high-end PC with cores of different types. The second reason is that the insights could be interesting or relevant to the thesis. Since we are in the Appendix, the results were not really usable in the thesis narrative, but these are still interesting insights.
-
 \newpage
-\begin{figure}[!htb]
-\begin{tikzpicture}
-    \begin{axis}[
-        width=0.7\textwidth,  
-        height=0.3\textheight,
-        xlabel={Threads},
-        ylabel={Average Time (ms)},
-        xtick={1, 5, 10, 15, 20},
-        ytick={0, 5000, 10000, 20000, 30000},
-        scaled x ticks=false,  
-        scaled y ticks=false,
-        ymajorgrids=true, 
-        grid style=dashed,  
-        % ymin=-10,
-        % xmin=-5,
-        x tick label style={/pgf/number format/.cd, 1000 sep={}},
-        legend style={at={(0.54,0.98)},anchor=north west},
-    ]
-
-    \addplot[
-        color=cyan!40,
-        % mark=square,
-        % mark repeat={10},
-        % mark phase={10},
-        line width=1pt,
-        ]
-        coordinates {
-            (1, 29561.099620099998)
-            (2, 15655.3660384)
-            (3, 10900.7191303)
-            (4, 8357.4223929)
-            (5, 6844.5432585)
-            (6, 5702.015592600001)
-            (7, 4925.9114201)
-            (8, 4390.0481942)
-            (9, 3981.1583802)
-            (10, 3698.0072834000002)
-            (11, 3387.0203608)
-            (12, 3226.620435)
-            (13, 2988.1345066)
-            (14, 2818.7368382)
-            (15, 2738.6731857)
-            (16, 2634.6802377)
-            (17, 2520.3039285)
-            (18, 2352.5839901)
-            (19, 2363.0320351)
-            (20, 2289.3528831)
-        };
-
-    \addplot[
-        color=Dandelion,
-        mark=triangle,
-        mark repeat={10},
-        mark phase={10},
-        line width=1pt,
-        ]
-        coordinates {
-            (1, 26057.8932452)
-            (2, 13759.1239734)
-            (3, 9484.3187945)
-            (4, 7025.6493946)
-            (5, 5921.3357046)
-            (6, 4981.6138813)
-            (7, 4290.4569158)
-            (8, 3823.9243384)
-            (9, 3625.0984198)
-            (10, 3289.2438837)
-            (11, 3023.2168185)
-            (12, 2890.3131459)
-            (13, 2664.5321206999997)
-            (14, 2464.3249007)
-            (15, 2314.9592339)
-            (16, 2272.9985763)
-            (17, 2178.8767099)
-            (18, 2080.2299012)
-            (19, 2021.2854164)
-            (20, 1958.9813678)
-        };
-
-    \legend{C++ [OMP], Rust [Rayon]}
-    \end{axis}
-\end{tikzpicture}
-\caption{CoolMUC Benchmark Results comparing Rust and C++}
-\label{fig:benchmark-parallel-omp-modi-coolmuc}
-\end{figure}
-
-We can see the strong scaling diagrams for Rust (Rayon) and C++ (OpenMP with Spread Sockets). There is not much particularly interesting about this graph. We have previously determined that the Rust implementation is faster. The purpose of this graph is to strengthen the benchmarking results, having measured the performance on two different devices.
+\section{CoolMUC Parallel}\label{section:coolmuc-parallel}
 
 \begin{figure}[!htb]
 \begin{tikzpicture}
@@ -2205,7 +2270,7 @@ We can see the strong scaling diagrams for Rust (Rayon) and C++ (OpenMP with Spr
         xlabel={Threads},
         ylabel={Average Time (ms)},
         xtick={1, 5, 10, 15, 20},
-        ytick={0, 5000, 10000, 20000, 30000},
+        ytick={0, 5000, 10000},
         scaled x ticks=false,  
         scaled y ticks=false,
         ymajorgrids=true, 
@@ -2224,26 +2289,56 @@ We can see the strong scaling diagrams for Rust (Rayon) and C++ (OpenMP with Spr
         line width=1pt,
         ]
         coordinates {
-            (1, 31630.6707618)
-            (2, 16754.8465642)
-            (3, 10681.3491895)
-            (4, 8032.4653227)
-            (5, 6559.7117572)
-            (6, 5555.9298636)
-            (7, 4741.6621813)
-            (8, 4255.4316545)
-            (9, 3866.5830394)
-            (10, 3598.814103)
-            (11, 3324.6889864)
-            (12, 3227.5250218)
-            (13, 3074.0157901999996)
-            (14, 2911.2189065)
-            (15, 2693.6404850999998)
-            (16, 3013.4247173000003)
-            (17, 3267.4303317)
-            (18, 3295.3975916)
-            (19, 3389.5637866999996)
-            (20, 3641.008211)
+            (1, 13425.672799200001)
+            (2, 7034.6839787)
+            (3, 4844.9483129)
+            (4, 3774.5938616)
+            (5, 3249.2982004)
+            (6, 2812.3093775)
+            (7, 2392.4670311)
+            (8, 2164.31544)
+            (9, 2053.1635998)
+            (10, 1828.5429732999999)
+            (11, 1750.8792173)
+            (12, 1674.0708989000002)
+            (13, 1617.8227607000001)
+            (14, 1569.2232935999998)
+            (15, 1766.634308)
+            (16, 1449.1998526)
+            (17, 1512.0131551)
+            (18, 1258.4233966)
+            (19, 1442.2110962000002)
+            (20, 1598.5652562999999)
+            (21, 1583.1422562999999)
+            (22, 1542.2815818)
+            (23, 1541.6771827999999)
+            (24, 1471.806677)
+            (25, 1446.9715864000002)
+            (26, 1443.6229380999998)
+            (27, 1374.0940407)
+            (28, 1310.43283)
+            (29, 1298.6067865)
+            (30, 1307.7247138)
+            (31, 1240.0514814)
+            (32, 1240.7565235)
+            (33, 1227.2677263)
+            (34, 1189.4595444000001)
+            (35, 1162.1068534)
+            (36, 1147.7585795999998)
+            (37, 1102.4131797)
+            (38, 1081.9487092)
+            (39, 1086.2546063)
+            (40, 1078.6872185999998)
+            (41, 1050.5861437)
+            (42, 1042.8500787)
+            (43, 1020.7516511)
+            (44, 998.1856703)
+            (45, 984.8835952999999)
+            (46, 969.4272746)
+            (47, 963.0503559)
+            (48, 1010.9760791)
+            (49, 927.518807)
+            (50, 940.458122)
         };
 
     \addplot[
@@ -2254,26 +2349,56 @@ We can see the strong scaling diagrams for Rust (Rayon) and C++ (OpenMP with Spr
         line width=1pt,
         ]
         coordinates {
-            (1, 32084.5657672)
-            (2, 16181.8311792)
-            (3, 11186.0986223)
-            (4, 8605.6536148)
-            (5, 6900.0083207)
-            (6, 5744.1215631000005)
-            (7, 5117.6109981)
-            (8, 4545.589182199999)
-            (9, 4058.212847)
-            (10, 3740.6277586)
-            (11, 3463.3964655)
-            (12, 3308.8119019)
-            (13, 3081.6939908000004)
-            (14, 2876.2095184)
-            (15, 2728.3107505)
-            (16, 2598.6734608)
-            (17, 2500.7891916999997)
-            (18, 2398.5581171)
-            (19, 2237.0012343000003)
-            (20, 2305.6463661999996)
+            (1, 13205.0392804)
+            (2, 7374.3131246)
+            (3, 5108.0049815)
+            (4, 4062.472433)
+            (5, 3473.6294224000003)
+            (6, 2979.6826684000002)
+            (7, 2675.9821757)
+            (8, 2407.7412466)
+            (9, 2186.9048161)
+            (10, 2156.6685312)
+            (11, 1950.8012660999998)
+            (12, 1854.0975474000002)
+            (13, 1834.3927974)
+            (14, 1661.3818619)
+            (15, 1705.6590334)
+            (16, 1520.0602981)
+            (17, 1549.4233461)
+            (18, 1544.921332)
+            (19, 1440.759037)
+            (20, 1534.1837172)
+            (21, 1698.276361)
+            (22, 1361.0692522)
+            (23, 1504.9763637)
+            (24, 1653.2508143)
+            (25, 1982.9703725)
+            (26, 1552.8289307999999)
+            (27, 1521.7217147000001)
+            (28, 1526.5140088)
+            (29, 1440.6495909)
+            (30, 1451.0948743)
+            (31, 1437.8318939)
+            (32, 1400.6574699)
+            (33, 1375.8555513)
+            (34, 1374.9836432)
+            (35, 1365.4247650999998)
+            (36, 1319.6900750999998)
+            (37, 1292.602616)
+            (38, 1281.4972465)
+            (39, 1242.8399327)
+            (40, 1238.3684909)
+            (41, 1222.4666729)
+            (42, 1219.3673474000002)
+            (43, 1188.1786648)
+            (44, 1161.1166902999998)
+            (45, 1196.1291289)
+            (46, 1161.2183427999998)
+            (47, 1135.4988337)
+            (48, 1132.163726)
+            (49, 1108.1900889)
+            (50, 1104.267983)
         };
 
     \addplot[
@@ -2284,26 +2409,56 @@ We can see the strong scaling diagrams for Rust (Rayon) and C++ (OpenMP with Spr
         line width=1pt,
         ]
         coordinates {
-            (1, 31601.0678805)
-            (2, 34803.8908459)
-            (3, 23225.8163313)
-            (4, 17703.203231400003)
-            (5, 14067.514536)
-            (6, 11789.333079)
-            (7, 10099.7747035)
-            (8, 8909.626302)
-            (9, 7915.4317133)
-            (10, 7363.6994242)
-            (11, 6971.3641539)
-            (12, 6300.9739652)
-            (13, 5857.9121472)
-            (14, 5441.9779471)
-            (15, 5189.9909095)
-            (16, 4858.894028600001)
-            (17, 4584.4394053999995)
-            (18, 4428.2932387)
-            (19, 4142.6560422)
-            (20, 4049.0238136999997)
+            (1, 13277.566078700002)
+            (2, 12363.246137200002)
+            (3, 8432.4413256)
+            (4, 6511.2125133)
+            (5, 5287.945446600001)
+            (6, 4494.5034236)
+            (7, 3885.292896)
+            (8, 3576.1711210999997)
+            (9, 3255.9329511)
+            (10, 2837.0351896999996)
+            (11, 2661.8026562)
+            (12, 2436.7997429)
+            (13, 2288.2000276999997)
+            (14, 2295.4506338)
+            (15, 2037.7827561)
+            (16, 1982.402127)
+            (17, 1887.3099550999998)
+            (18, 1811.5175644)
+            (19, 1921.0578663)
+            (20, 1732.9287778)
+            (21, 1600.5195064000002)
+            (22, 1683.7506359000001)
+            (23, 1664.0332540999998)
+            (24, 1593.7581202000001)
+            (25, 2242.0130546) % outlier `Bench 8262.594343 ms [run 1]'
+            (26, 1535.4602264)
+            (27, 1579.3836296)
+            (28, 1587.1724584)
+            (29, 1897.6169456)
+            (30, 1575.2316392)
+            (31, 1798.6428459)
+            (32, 1781.5303085)
+            (33, 1763.6668794000002)
+            (34, 1710.8876387999999)
+            (35, 1689.1464523)
+            (36, 1623.3585977)
+            (37, 1607.209016)
+            (38, 1604.9484893)
+            (39, 1557.9330337000001)
+            (40, 1541.5765524)
+            (41, 1501.0595295)
+            (42, 1504.7468298)
+            (43, 1476.7044075)
+            (44, 1457.9201753)
+            (45, 1432.4089591)
+            (46, 1397.7663455999998)
+            (47, 1373.6088287)
+            (48, 1364.6692922)
+            (49, 1337.0863243)
+            (50, 1321.6815305999999)
         };
 
     \addplot[
@@ -2314,98 +2469,98 @@ We can see the strong scaling diagrams for Rust (Rayon) and C++ (OpenMP with Spr
         line width=1pt,
         ]
         coordinates {
-            (1, 31072.155118799998)
-            (2, 15885.568014299999)
-            (3, 11187.3940735)
-            (4, 8580.4370899)
-            (5, 6941.9921341)
-            (6, 5717.8032065)
-            (7, 4999.494142)
-            (8, 4554.430856399999)
-            (9, 3966.6052354000003)
-            (10, 3746.5901553000003)
-            (11, 3515.979438)
-            (12, 3425.3450746)
-            (13, 3244.3552037)
-            (14, 2883.2292942)
-            (15, 2727.0029062)
-            (16, 2670.6457439)
-            (17, 2450.3496476)
-            (18, 2407.5889715999997)
-            (19, 2317.4993019000003)
-            (20, 2486.4828829000003)
+            (1, 13286.3699792)
+            (2, 7426.454062600001)
+            (3, 5237.4821489)
+            (4, 4173.4051538)
+            (5, 3814.3111898)
+            (6, 3206.376655)
+            (7, 2774.6914355999997)
+            (8, 2498.1508455)
+            (9, 2313.0248502)
+            (10, 2129.9842215)
+            (11, 2028.2995406)
+            (12, 1926.1344802)
+            (13, 1950.3703597)
+            (14, 1795.2854037)
+            (15, 1794.5859358)
+            (16, 1620.6845259000002)
+            (17, 1757.6202372)
+            (18, 1581.4106794000002)
+            (19, 1624.4825873)
+            (20, 1656.496284)
+            (21, 1508.965661)
+            (22, 1759.9173047000002)
+            (23, 1633.7799407999998)
+            (24, 1684.0917269000001)
+            (25, 1615.6405662)
+            (26, 1550.8779958)
+            (27, 1607.7365876)
+            (28, 1560.6892280999998)
+            (29, 1580.4393517)
+            (30, 1519.8162937)
+            (31, 1510.9985262999999)
+            (32, 1499.4616005999999)
+            (33, 1482.5932835)
+            (34, 1477.0940152)
+            (35, 1427.9539499)
+            (36, 1427.9658365)
+            (37, 1443.3047597)
+            (38, 1411.3570465999999)
+            (39, 1378.8562748)
+            (40, 1368.0146432000001)
+            (41, 1369.6893614)
+            (42, 1329.0082972)
+            (43, 1336.6233452000001)
+            (44, 1292.8370055)
+            (45, 1263.9831235)
+            (46, 1253.7798341)
+            (47, 1281.0283079)
+            (48, 1225.6849954000002)
+            (49, 1206.8364190999998)
+            (50, 1191.6574182)
         };
 
-    \addplot[
-        color=ForestGreen,
-        % mark=square,
-        % mark repeat={10},
-        % mark phase={10},
-        line width=1pt,
-        ]
-        coordinates {
-            (1, 29525.4590226)
-            (2, 15400.5185986)
-            (3, 10858.1293195)
-            (4, 8375.2284645)
-            (5, 6899.367446)
-            (6, 5676.454586)
-            (7, 4914.70893)
-            (8, 4397.595390699999)
-            (9, 4128.6059574)
-            (10, 3635.7444194)
-            (11, 3419.5557345)
-            (12, 3305.9906325)
-            (13, 3062.2200705)
-            (14, 2833.125564)
-            (15, 2791.3476511999997)
-            (16, 2626.4323141)
-            (17, 2528.7961005)
-            (18, 2390.2536264)
-            (19, 2279.4319759)
-            (20, 2327.1476971999996)
-        };
+    % \addplot[
+    %     color=ForestGreen,
+    %     % mark=square,
+    %     % mark repeat={10},
+    %     % mark phase={10},
+    %     line width=1pt,
+    %     ]
+    %     coordinates {
+    %         (1, 13997.4733904)
+    %         (2, 8534.3412822)
+    %         (3, 5977.2610763)
+    %         (4, 5286.4063686)
+    %         (5, 4594.497917899999)
+    %         (6, 3828.7132053)
+    %     };
 
-    \addplot[
-        color=ForestGreen!40,
-        % mark=square,
-        % mark repeat={10},
-        % mark phase={10},
-        line width=1pt,
-        ]
-        coordinates {
-            (1, 29561.099620099998)
-            (2, 15655.3660384)
-            (3, 10900.7191303)
-            (4, 8357.4223929)
-            (5, 6844.5432585)
-            (6, 5702.015592600001)
-            (7, 4925.9114201)
-            (8, 4390.0481942)
-            (9, 3981.1583802)
-            (10, 3698.0072834000002)
-            (11, 3387.0203608)
-            (12, 3226.620435)
-            (13, 2988.1345066)
-            (14, 2818.7368382)
-            (15, 2738.6731857)
-            (16, 2634.6802377)
-            (17, 2520.3039285)
-            (18, 2352.5839901)
-            (19, 2363.0320351)
-            (20, 2289.3528831)
-        };
+    % \addplot[
+    %     color=ForestGreen!40,
+    %     % mark=square,
+    %     % mark repeat={10},
+    %     % mark phase={10},
+    %     line width=1pt,
+    %     ]
+    %     coordinates {
+    %         (1, 29561.099620099998)
+    %     };
 
-    \legend{Close Cores, Spread Cores, Close Threads, Spread Threads, Close Sockets, Spread Sockets}
+    % \legend{Close Cores, Spread Cores, Close Threads, Spread Threads, Close Sockets, Spread Sockets}
+    \legend{Close Cores, Spread Cores, Close Threads, Spread Threads}
     \end{axis}
 \end{tikzpicture}
 \caption{CoolMUC Benchmark Results for OpenMP with different configurations.}
 \label{fig:benchmark-parallel-omp-modi-coolmuc}
 \end{figure}
 
-On CoolMUC4, sequential code performs slower than on a high-end consumer CPU, as the supercomputer operates on a lower frequency. The strength of CoolMUC comes from the evenly distributed workload, generally preventing artefacts as seen in~\autoref{fig:benchmark-parallel}.
+On CoolMUC4, sequential code performs slower than on a high-end consumer CPU, as the supercomputer operates on a lower frequency. The strength of CoolMUC comes from the evenly distributed workload, preventing artefacts as seen in~\autoref{fig:benchmark-parallel}.
 
 However as it turns out, the Close Threads configuration performs poorly even on CoolMUC. This is because the CPU used on the supercomputer also makes use of Intel(R) Hyper-Threading Technology, with a pair of cache-sharing threads per core.
+
+% Not seen in the graph, but still benchmarked were Close- and Spread Sockets. Spread sockets (computing on different processors) performed 
 
 % \chapter{Other}
 
