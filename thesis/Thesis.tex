@@ -45,6 +45,10 @@
     morestring=[b]',
 }
 
+\lstdefinelanguage{Shell}{
+    morekeywords={./target/release/moldyn-cli, -t, -d, --output}
+}
+
 % -------------------------------------------------------------------------------
 % --------------------------------- Thesis Info ---------------------------------
 % -------------------------------------------------------------------------------
@@ -471,6 +475,8 @@ The erroneous Rust code examples above would compile in C which means that by en
 
 % Another intuitive example to compare borrowing with is the behaviour of a mutex: A lock a value to either have multiple readers or one writer at runtime.
 
+Some further details to understand ownership and references is given in appendix note~\ref{section:rust-ownership-appendix} for readers seeking additional clarity.
+
 \subsection{Dynamic Dispatch}
 
 Both the C++ and Rust implementations use dynamic dispatch to convert a type into an interface at runtime. This is not a zero-cost abstraction, but allows for a fair comparison and code writing simplicity.
@@ -572,7 +578,7 @@ Below are few creditworthy libraries which are utilized in the Rust project and 
 
 \subsection{Clap}
 
-Clap is used in the program frame, it provides a macro capable of parsing a struct and generating the command line parser, mapping console input to values in the struct. This helps keep the code quality much cleaner and removes the need of \texttt{getopt}'s seemingly magic syntax. The command line parser is generate with \texttt{\#[derive(Parser)]}
+Clap is used in the program frame, it provides a macro capable of parsing a struct and generating the command line parser, mapping console input to values in the struct. This helps keep the code quality much cleaner and removes the need of \texttt{getopt}'s seemingly magic syntax. The command line parser is generated with \texttt{\#[derive(Parser)]}
 
 \vspace{0.5em}
 \begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=An example of using clap in Rust, label=code:rust-clap]
@@ -604,7 +610,9 @@ The derive macros \texttt{\#[derive(Serialize, Deserialize)]} can be used to aut
 
 \subsection{Rayon}
 
-Rayon is a parallelization library similar to OMP. Instead of pragmas, Rayon uses Rust Traits to implement parallelization behaviour for iterators.
+Rayon is a parallelization library similar in usage to OpenMP (OMP). Instead of pragmas (macros), Rayon uses Rust Traits to implement parallelization behaviour for iterators. The comparison is fair since both libraries are highly popular within their language, but at the same time unfair due to the following technical reason:
+
+OpenMP provides the developer with a low-level interface to map the program threads to the hardware directly, while Rayon is a high-level parallelism library which implements optimizations like work stealing~\cite{rust-rayon-work-stealing}.
 
 \chapter{Application with Molecular Dynamics}
 
@@ -622,35 +630,102 @@ U_\text{LJ} := 4 \cdot \epsilon \cdot \left[{{\left(\frac{\sigma}{r}\right)}^{12
 
 For the Newton potential, $G = 1$ is the gravitational constant and $M$ the product of the particle masses. For the Lennard-Jones potential, it is enough to say that $\epsilon = 5$ and $\sigma = 1$ are arbitrary constants. We will not get to an intuitive understanding of what these constants represent.
 
-At the core of the hot loop are 
+At the core of the hot loop is a pipeline of updating particle positions, force and velocity every time step. The following Equations~\ref{pipeline-update-position} and~\ref{pipeline-update-velocity} update the position and velocity of a particle with $t$ representing the time step, $\delta$ the delta time constant, $x_t$ the position of a particle (at timestep $t$), $v_t$ the velocity of a particle, $F_t$ the summed force of a particle at time step $t$.
+
+% self.position += self.velocity * delta_time + self.force * (delta_time.powi(2) / (2.0 * self.mass));
+\begin{align}
+x_{t+1} := v_t \delta + U_t \frac{\delta^2}{2m}
+\end{align}\label{pipeline-update-position}
+
+% self.velocity += (self.force + self.old_force) * (delta_time / (2.0 * self.mass));
+\begin{align}
+v_{t+1} := (F_t + F_{t-1}) \cdot (\frac{\delta}{2m})
+\end{align}\label{pipeline-update-velocity}
+
+% \begin{align}
+% F_{t+1} := \sum_{p\ \in\text{ Particles}} U
+% \end{align}\label{pipeline-update-force}
+
+The forces are computed as the pairwise sum of all individual force interactions between particles.
+
+Consider $F_{i \rightarrow j}$ to be the force which the particle $i$ exercises on particle $j$. Then for all particle pairs, Newtons' Third Law must hold:
+
+\begin{align}
+F_{i \rightarrow j} = - F_{j \rightarrow i}
+\end{align}\label{newton-three}
 
 \chapter{Methods and Implementation}
 
-talk about project infrastructure
+Expanding the physical theory explained in the previous chapter, this chapter aims to provide technical and implementation insights on how the mathematical formulas were translated into simulation code. The core principles in mind were naivity, similarity, readability and maintainability (extensibility).
+
+For the principle of naivity the idea was, as the word says, to write naive code which allows for more fair cross-language comparisons. It would be unfair to compare simple C++ code with hyper-optimized Rust, or vice-versa. This means that neither of the implementations use SIMD or tricky patterns to reduce workload. We do one exception with Newtons' Third Law, but this optimization is applied in both implementations.
+
+The principle of similarity ensures the thesis insights are ``fair''. We do not give an objective definition on what a fair comparison is -- it is not objective. The insights in this thesis are based on the comparison of two different technologies, with similarity in patterns being sought for, but not always objectively justifiable. We will later mention this again in the evaluation as ``implementation bias''.
+
+The other principles revolve mostly around comparing developer experience with one question: How easy and how intuitive is it to write maintable code in both languages?
 
 \section{Molecular Dynamics Simulation}
 
+The molecular dynamics codebase is organised into three primary modules (in Rust they are called ``crates''): the program frame (binary entry point), the core library, and the I/O library. This modularity allows the core simulation methods to be tested.
+
 \subsection{Program Frame}
 
-talk about core implementation: core, io, cli
+The program frame serves the entry point for the command line invocation and parses the console arguments, invoking the I/O library, setting up the simulation and then running the simulation loop the rest of the program lifetime.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Shell, basicstyle=\ttfamily\small, caption=Console usage example, label=code:cli-example]
+./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 35 -d 0.0014 --output output/two-bodies.vtk
+\end{lstlisting}
+
 
 \subsection{Core Library}
 
-talk about core implementation: core, io, cli
+The core library exposes a lot of reused items, like the particle struct, the custom vector implementation, the particle container- and simulation traits and their implementing types.
 
 \subsection{I/O Library}
 
-talk about core implementation: core, io, cli
+The I/O library relies on the dependency serde~\cite{rust-crates-serde} for serialization and deserialization. Wrapping serde into an abstract layer: The \texttt{Writer} trait and the \texttt{FileDefinition} struct. The file definition defines the structure of a configuration file (particle positions, global data, algorithm used, delta-time) and is capable of serializing and deserializing.
+
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={An example of how the \texttt{FileDefinition} deserialization is implemented. (Note: This example is highly simplified to the point where this will not compile: The types do not match)}, label=code:rust-try-from-serde]
+impl TryFrom<PathBuf> for FileDefinition {
+    type Error = std::io::Error;
+
+    fn try_from(path: PathBuf) -> Result<Self, Self::Error> {
+        let ext = /* file extension */;
+        let content = /* file content */;
+
+        match ext { // returns
+            "json" => serde_json::from_string(content),
+            "yaml => serde_yaml::from_string(content),
+            _ => Err(Error::new(ErrorKind::InvalidInput, ...))
+        }
+    }
+}
+\end{lstlisting}
+
+The simplicity in~\autoref{code:rust-try-from-serde} is amazing, as entire new data formats can be included in the project by adding only one a few lines of code. The data formats section~\cite{rust-serde-data-formats} of the serde documentation lists around 20 different data formats which could be inserted, which include TOML and binary formats.
+
+For writing data we could in theory use the same approach in reverse, with \texttt{to\_string} methods and file writing, however due to a requirement from a legacy project, we needed custom comments in the written output, as well as more sophisticated control around file writing. That's why we implemented a \texttt{Writer} trait and a static method which selects the appropriate file writer.
+
+The writer selection is done through the \texttt{--output} variable in the console line arguments. The extension of the input is parsed, and a similar approach like in~\autoref{code:rust-try-from-serde} is used to select the correct writer. The writer then borrows the simulation data immutably for every write and also tracks the ``output counter'' to generate the new filename and output. For example the console input \texttt{--output out/hello.vtk} will create the files \texttt{out/hello-0.vtu}, \texttt{out/hello-1.vtu}, and so on.
 
 \subsection{Parallelization in Rust}
 
+Parallelization is only applied to the pairwise loop, which accounts for the majority of the total runtime (whose exact percentage depends on the amount of particles, with higher particle counts it reaches over $90\%$ of the runtime). In C++ this is done with the OpenMP pragma invocation \texttt{omp parallel for} on the ``outer loop'' of the pairwise iteration, at the cost of removing Newtons' Third Law optimization. This means that the sequential implementation should outperform the parallel implementation at 1 thread.
+
 \section{Benchmarking CI}
 
-talk about automatic equality tester and benchmark CI script 
+To ensure that performance does not decline severely inbetween two commits, and that the simulation remains numerically correct and equal across changes, we implemented a Continuous Integration (CI) pipeline using GitHub Actions, which runs on push.
+
+In the past, this workflows helped narrow down performance-critical errors, such as building in debug mode, allocating unused variables on the heap or even passing one-element vectors as a function argument, when just passing the item was also viable. We always attempted to improve the worse-performing language, and in some early benchmarks C++ outperformed Rust. By now both languages approached their performance limits in the scope of optimal, naive implementations.
+
+The same script was used to generate the results presented in the later chapter on evaluation.
 
 \section{External Tools}
 
-talk about perf
+Beyond the built-in automatic benchmark mechanisms, external tools like Perf were used to navigate performance leaks, and compare code distribution. While some performance leaks could be detected, like memory allocation on the heap in the hot loop, the code distribution insights were not meaningful due to the Rust and C++ compilers using different inlining approaches.
 
 \part{Evaluation}
 
@@ -1722,6 +1797,154 @@ fn main() {
 \end{lstlisting}
 
 The example above will not compile, as \texttt{foobar()} is ambiguous. The solution is to rewrite the last line into \texttt{Foo::fobar(x)} if we want to print `Foo'. By using the path notation, the ambiguity is resolved. Intuitively, this makes the method static with a clear, unique name.
+
+\section{More Depth to Ownership}\label{section:rust-ownership-appendix}
+
+Since ownership and references are best understood intuitively instead of theoretically, this sections aims to provide some more Rust examples to get familiarity with the core of Rusts' type system.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, label=code:rust-ownership-appendix-example1]
+fn main() {
+    let mut text = String::from("Hello");    // String
+    let names = ["Teto", "Yuki", "Flower"];  // slice of &str
+
+    for name in names {
+        text += ", ";
+        text += name;
+    }
+
+    println!("{}", text);
+}
+\end{lstlisting}
+
+In the example above, we iterate over all names in an array to greet them.
+
+We have an owned value \texttt{text}, which manages text content on the heap. This string can be cleared, extended and modified in any other way. We add the \texttt{mut} modifier to use the mutable features of the string manager.
+
+The variable \texttt{names} is also an owned value of the type \texttt{[\&str; 3]} -- an array of length 3 of string slices. Since these strings are located in the data segment of the resulting binary, the contents of the array are immutable string slices \texttt{\&str}. You can think of it this way: The C++ equivalent of \texttt{String} is \texttt{std::string} and the equivalent of \texttt{\&str} is \texttt{const char*}.
+
+% In the for loop, we iterate over all entries of the \texttt{names} slice. The method itself borrows \texttt{names} immutably to create an iterator over all elements. Then, we append the name to the mutable string variable \texttt{text}. Afterwards, the resulting string contents are printed to the console.
+
+Since the syntactic sugar in~\autoref{code:rust-ownership-appendix-example1} of the add-assign operator (\texttt{+=}) hides how the references are passed to the string concatenation behaviour, the following code example will unpack the syntactic sugar to provide a better explanation. You should keep in mind that the synactic sugar \texttt{a += b} is converted to the trait method \texttt{a.add\_assign(b)}. Additionally, as mentioned in appendix note~\ref{section:rust-trait-same-identifier}, any method \texttt{value.func(arg1)} can also be further converted using the path notation into a static function \texttt{Ty::func(value, arg1)} with the appropriate borrow modifiers.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, label=code:rust-ownership-appendix-example2]
+fn main() {
+    use std::ops::AddAssign;
+
+    let mut text = String::from("Hello");
+    let names = ["Teto", "Yuki", "Flower"];
+
+    for name in names.iter() {
+        // first add_assign borrows 'text' mutably
+        AddAssign::<&str>::add_assign(&mut text, &", ");
+        // add_assign releases borrow
+        // second add_assign borrows 'text' mutably
+        AddAssign::<&str>::add_assign(&mut text, &name);
+        // add_assign releases borrow
+    }   // for next loop iteration, 'text' can be borrowed
+
+    println!("{}", text);
+}
+\end{lstlisting}
+
+In the for loop, we edit the variable \texttt{text} two times. This is perfectly fine, since the logic occurs sequentially and every time we modify \texttt{text}, the borrow is released. After every loop iteration the variable is free of further borrow claims (R4). Every variable is also valid (R5), which means the reference rules are followed in this example.
+
+The ownership rules are also followed, with the variables \texttt{text} and \texttt{names} being dropped at the end of the function scope (R3). The first rule ``The value has an owner'' is followed also for static string costants, since the data segment is their owner.
+
+The static analyzer will treat for loops as repeating scopes, which means the compiler ensures the rules are followed accross iterations. This makes the following code illegal:
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small]
+fn main() {
+    let mut text = String::from("Hello");
+    let names = ["Teto", "Yuki", "Flower"];
+
+    for name in names.iter() {
+        let a = text; // iteration 1: 'a' moved
+                      // iteration 2: cannot move (already moved)
+    }
+}
+\end{lstlisting}
+
+In the thesis code, this behaviour caused design problems when writing the particle pairs iteration. The example below highlights the problem. We are given a nested for loop, with the outer loop borrowing the particles vector mutably, and the inner loop immutably.
+
+The callback type is an anonymous function taking two particles, with the first borrowed mutably, and the second immutably. The idea is to add the force interaction to the first argument only.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={First approach at DirectSum particle pairs iteration.}]
+type Callback = dyn Fn(&mut Particle, &Particle) + Send + Sync;
+
+impl ParticleContainer for DirectSum {
+    fn for_each_pairs_mut(&mut self, callback: &Callback) {
+        let count = self.particle_count();
+
+        for p1 in self.particles.iter_mut() {
+            for p2 in self.particles.iter() {
+                if p1 == p2 { continue; }
+
+                callback(&mut p1, &p2);
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+The problem with this code is, that it breaks the Forth Rule: Line 7 borrows the \texttt{self.particles} value mutably, and during this borrow line 8 also borrows the value immutably. This is not allowed.
+
+The second approach that was attempted was to iterate over the indeces of the particles, and manually retrieve them, as seen below. The \texttt{..} symbol is syntactic sugar for an integer range.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={Second approach at DirectSum particle pairs iteration.}]
+type Callback = dyn Fn(&mut Particle, &Particle) + Send + Sync;
+
+impl ParticleContainer for DirectSum {
+    fn for_each_pairs_mut(&mut self, callback: &Callback) {
+        let count = self.particle_count();
+
+        for i in 0 .. count {
+            for j in 0 .. count {
+                if i == j { continue; }
+
+                let p1 = self.particles.get_mut(i);
+                let p2 = self.particles.get(i);
+
+                callback(&mut p1, &p2);
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+The problem remains: Since \texttt{get(index)} and \texttt{get\_mut(index)} borrow the entire particles vector, we run into a problem where the naive approach does not work in Rust. The solution is to use the vector method \texttt{split\_at\_mut(index)}.
+
+This function logically splits the vector into two slices, the left-hand side and the right-hand side. This way, it is possible to modify multiple items in a vector. The resulting code is given below.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={Second approach at DirectSum particle pairs iteration.}]
+type Callback = dyn Fn(&mut Particle, &Particle) + Send + Sync;
+
+impl ParticleContainer for DirectSum {
+    fn for_each_pairs_mut(&mut self, callback: &Callback) {
+        let count = self.particle_count();
+
+        for i in 0 .. count {
+            for j in 0 .. count {
+                if i == j { continue; }
+
+                let (left, right) = self.particles.split_at_mut(j);
+
+                let p1 = left.get_mut(i);
+                let p2 = right.get(0);
+
+                callback(&mut p1, &p2);
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+The main insight here is, that this simple behaviour would be trivial to implement in C++, but due to Rust ownership rules which enforce memory safety, the pair iterator approach is a bit tricky x
 
 \chapter{Benchmarks}
 
