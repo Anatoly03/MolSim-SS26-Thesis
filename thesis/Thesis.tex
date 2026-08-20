@@ -175,11 +175,11 @@ My bestie Kasane Teto, who has not said a word but always morally supported me w
 \end{center}
 \vspace{1cm}
 
-In the past decades, Rust has gained more admiration as a low-level, performant and memory-safe programming language, while C++ remains the dominant choice for high-performance computing in the academic field. This thesis presents empirical results by writing six molecular dynamics implementations in both Rust and C++.
+In the past decades, Rust has gained more admiration as a low-level, performant and memory-safe programming language, while C++ remains the dominant choice for high-performance computing in the academic field. This thesis presents empirical results by implementing three distinct algorithmic molecular dynamics approaches in both Rust and C++.
 
 Both languages implement three different approaches in particle management and computation patterns, with DirectSum computing over all particle pairs in the hot loop, LinkedCells introducing a three-dimensional chunk system to reduce the overall workload, and DirectSumParallel using multi-threaded paradigms to accelerate computation.
 
-This thesis aims to inform the decision of adopting Rust in emerging software for performance-critical applications with high memory-safety requirements, showing that the Rust slightly outperforms C++ in competitive environment.
+This thesis aims to inform the decision of whether to adopt Rust in emerging software for performance-critical applications with high memory-safety requirements, showing that Rust can slightly outperform C++ in competitive environments.
 
 \cleardoublepage
 
@@ -191,11 +191,11 @@ This thesis aims to inform the decision of adopting Rust in emerging software fo
 \end{center}
 \vspace{1cm}
 
-In den letzten Jahrzehnten kriegt Rust zunehmend Anerkennung als eine systemnahe, performante und speichersichere Programmiersprache, während C++ im akademischen Bereich weiterhin die dominante Sprache für Hochleistungsrechnungen ist. Diese Arbeit präsentiert empirische Ergebnisse, die auf der Implementierung von sechs Verfahren der Molekulardynamik in Rust und C++ basieren.
+In den letzten Jahrzehnten hat Rust zunehmend Anerkennung als eine systemnahe, performante und speichersichere Programmiersprache gewonnen, während C++ im akademischen Bereich weiterhin die dominante Sprache für Hochleistungsrechnungen ist. Diese Arbeit präsentiert empirische Ergebnisse, die auf der Implementierung von drei Ansätzen der Molekulardynamik in Rust und C++ basieren.
 
 Beide Sprachen implementieren jeweils drei unterschiedliche Ansätze zur Partikelverwaltung einer Simulation: DirectSum berechnet Interaktionen über alle Partikelpaare in der Hot-Loop, LinkedCells fügt ein dreidimensionales Zellsystem zur Reduzierung des gesamten Arbeitsaufwandes hinzu und DirectSumParallel nutzt Multithreading zur Beschleunigung der Berechnungen.
 
-Ziel dieser Arbeit ist es, die Entscheidung für den Einsatz von Rust in neuer, performanten Software mit sicherheitskritischen Anforderungen. Es wird gezeigt, dass Rust bisschen schneller als C++ ist.
+Ziel dieser Arbeit ist es, die Entscheidung zu informieren, ob Rust in neuer, performanter Software mit sicherheitskritischen Anforderungen eingesetzt werden sollte. Es wird gezeigt, dass Rust in wettbewerbsfähigen Umgebungen etwas schneller als C++ sein kann.
 
 
 \cleardoublepage
@@ -218,7 +218,7 @@ Ziel dieser Arbeit ist es, die Entscheidung für den Einsatz von Rust in neuer, 
 % labels can be put almost anywhere and can be referencef from anywhere.
 \label{sec:intro}
 
-In 2025, StackOverflow's developer survey ranked Rust as the most admired programming language, holding the title consecutively for nine years\cite{stackoverflow-developer-survey}.
+In 2025, StackOverflow's developer survey ranked Rust as the most admired programming language, holding the title consecutively for nine years~\cite{stackoverflow-developer-survey}.
 
 % https://survey.stackoverflow.co/
 % https://survey.stackoverflow.co/2025/technology#admired-and-desired
@@ -293,13 +293,13 @@ In 2025, StackOverflow's developer survey ranked Rust as the most admired progra
     % \legend{C++ (Admired), Rust (Admired), C++ (Desired), Rust (Desired)}
     \end{axis}
 \end{tikzpicture}
-\caption{Rust and C++ in StackOverflows' survey on most admired programming languages}
+\caption{Rust and C++ in StackOverflows' survey on most admired programming languages.}
 \label{fig:stackoverflow-most-admired}
 \end{figure}
 
-In 2020, the social platform Discord had already published several blogposts explaining that they are rewritting software components in Rust\cite{discord-moves-to-rust}. Their main reasoning behind this decision was mostly about reaching high performance demands but also went into detail about the type system of Rust.
+In 2020, the social platform Discord had already published several blogposts explaining that they are rewritting software components in Rust~\cite{discord-moves-to-rust}. Their main reasoning behind this decision was mostly about reaching high performance demands but also went into detail about the type system of Rust.
 
-Specifically, the blogpost mentions issues with the garbage collector of the Go Programming Language, which was rescanning the entire LRU cache for memory to be freed, causing latency spikes every 2 minutes.
+Specifically, the blogpost mentions issues with the garbage collector of the Go Programming Language, which was rescanning the entire cache for memory to be freed, causing latency spikes every 2 minutes.
 
 % The same year on 18th November, the technology company Cloudflare ``began experiencing significant failures to deliver core network traffic''\cite{cloudflare-outage}, with Rust being featured as part of the error in the blogpost, creating a lot online discussions about the languages' relevance.
 
@@ -307,7 +307,7 @@ Specifically, the blogpost mentions issues with the garbage collector of the Go 
 % A change to Cloudflares' database permissions caused the `feature file' to be written with duplicated rows.
 % The Rust proxy-service, which had limited memory allocated, then became the source of the unhandled error when the feature file size grew three times larger than expected.
 
-In 2024, Google has published a security blogpost with the topic on making their software memory safe, in which they mentioned a new migration approach called ``interoperability'' which offers an incremental approach to adopting memory safety in software\cite{google-eliminating-memory-safety-vulnerabilities}. This allows working on a multi-lingual codebase where new code is written in Rust, allowing the team to define their own pace of migrating to Rust.
+In 2024, Google has published a security blogpost with the topic on making their software memory safe, in which they mentioned a new migration approach called ``interoperability'' which offers an incremental approach to adopting memory safety in software~\cite{google-eliminating-memory-safety-vulnerabilities}. This allows working on a multi-lingual codebase where new code is written in Rust, allowing the team to define their own pace of migrating to Rust.
 
 This paper takes the goal of diving deeper into a more direct and technical comparison between Rust and C++ by writing a molecular dynamics simulation program in both programming languages, analyzing the differences in usability and benchmark performance.
 
@@ -319,7 +319,7 @@ Before diving into the the syntax and the defining elements of the Rust Programm
 Since Cargo can install dependencies it was also designed to be extensible, meaning that most operations you will need to maintain a Rust project are located behind a Cargo subcommand.
 
 \begin{description}
-    \item[cargo run] Equivalent to \texttt{make run}, Cargo will invoke the Rust compiler on the codebase and execute the resulting binary.
+    \item[cargo run] Shortcut for Cargo to invoke the Rust compiler on the codebase and then execute the resulting binary.
     \item[cargo build] Equivalent to \texttt{make}, Cargo will invoke the Rust compiler on the codebase and compile a binary but not execute it.
     \item[cargo test] Equivalent to \texttt{ctest} or GoogleTest, Cargo has an integrated testing tool which will compile the codebase and run all functions annotated with \texttt{\#[test]} as an individual, isolated test case.
     \item[cargo doc] Equivalent to \texttt{Doxygen} or other documentation libraries, Cargo provides a built-in way of generating documentation for the codebase.
@@ -347,7 +347,7 @@ It is noteworthy to mention that there is no equivalent to GDB in the Rust ecosy
 
 \subsection{Structs and Traits}
 
-Structs in Rust are almost entirely equivalent to C++ structs. A struct is a type which defines a collection of fields. However, unlike in C++, Rust has no concept of struct inheritance. Instead of abstract classes, Rust provides traits\cite{rust-book-traits}, an abstract interface that types can implement explicitly. This introduces the concept of composability in Rust, giving one type the feature to express multiple traits.
+Structs in Rust are almost entirely equivalent to C++ structs. A struct is a type which defines a collection of fields. However, unlike in C++, Rust has no concept of struct inheritance. Instead of abstract classes, Rust provides traits~\cite{rust-book-traits} as seen in~\autoref{code:rust-trait}: An abstract interface that types can implement explicitly. This introduces the concept of ``composability'' in Rust, giving one type the ability to express multiple traits.
 
 \vspace{0.5em}
 % \setlength{\columnsep}{2em}
@@ -361,7 +361,7 @@ Structs in Rust are almost entirely equivalent to C++ structs. A struct is a typ
 % \vfill\null
 % \columnbreak
 
-\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={A Trait definition in Rust (Note: A comparison whether position difference is zero is omitted for code flow simplicity; Do not be confused that there is no \texttt{return} keyword: The last line is considered the return value if it is not followed by a semicolon)}, label=code:rust-trait]
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={A Trait definition in Rust (Do not be confused that there is no \texttt{return} keyword: The last line is considered the return value if it is not followed by a semicolon)}, label=code:rust-trait]
 pub trait Force {
     fn potential(&self, particle: &Particle, other: &Particle)
         -> f64;
@@ -374,7 +374,7 @@ pub trait Force {
 }
 \end{lstlisting}
 
-A trait is, more comparable to the concept in Java, an abstract interface, defining the interface name and a collection of methods. Some methods can have a default definition and thus do not need to be redefined. Traits are explicitly implemented for types with an implementation block.
+A trait is, more comparable to the concept in Java, an abstract interface, defining the interface name and a collection of methods. Some methods can have a default definition and thus do not need to be redefined. Traits are explicitly implemented for types with an implementation block as seen in~\autoref{code:rust-trait-implement}.
 
 \vspace{0.5em}
 \begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=An implementation of the Force trait in Rust (Note: A comparison whether distance is zero is omitted for code flow simplicity), label=code:rust-trait-implement]
@@ -389,11 +389,11 @@ impl Force for NewtonForce {
 \end{lstlisting}
 % \end{multicols}
 
-Similar to C++ operator overloads, Rust backes some operators by traits, providing similar syntactic sugar to overload certain operators.
+Similar to C++ operator overloads, Rust backes some operators by traits, providing similar syntactic sugar to overload operators like in C++.
 
-For example, the infix notation of the $+$ operator can be defined with the trait \texttt{Add<Rhs>}, where the self type acts as left-hand side and a generic type defines the type of the right-hand side. This way, string buffers can be concated over the same operator as integers are being summed over. In~\autoref{code:rust-trait}, we overload the $*$ operator to allow multiplication of the custom vector type implementation with a scalar.
+For example, the infix notation of the $+$ operator can be defined with the trait \texttt{Add<Rhs>}, where the self type acts as left-hand side and the generic type \texttt{Rhs} defines the type of the right-hand side. This way, string buffers can be concated over the same operator as integers are being summed over. In~\autoref{code:rust-trait}, we use the overloaded operator $*$ to allow multiplication of the custom vector type implementation with a scalar. Since implementing such a trait involves some more complex Rust concepts, its' explanation is moved to the appendix in~\ref{section:rust-implement-add-appendix}.
 
-This `atomicity' of an implementation block is good for two reasons: Firstly, it allows for code readability, differentiating between ``type methods'' and ``trait implementation''. Secondly, this prevents a collision between traits using the same identifier for a method.
+This `atomicity' of an implementation block is good from the perspective of codebase maintainance and developer experience for two reasons: Firstly, it allows for code readability, differentiating between ``type methods'' and ``trait implementation''. Secondly, by enforcing an implementation into a distinct scope, this prevents a collision between traits using the same identifier for a method.
 
 As the second argument can cause some confusion with how Rust resolves the ambiguity with overlapping trait method names, appendix note~\ref{section:rust-trait-same-identifier} offers some clarification. However, this is mostly irrelevant to the thesis and skipped here.
 
@@ -453,7 +453,7 @@ std::string* return_hello() {
 }
 \end{lstlisting}
 
-The erroneous Rust code examples above would compile in C which means that by enforcing the ownership and reference rules, Rust eliminates an entire class of bugs, which would cause mutation side effects and undefined behaviour in C++.
+The erroneous Rust code example in~\autoref{code:cpp-err3} would compile in C++ which means that by enforcing the ownership and reference rules, Rust eliminates an entire class of bugs, which would cause mutation side effects and undefined behaviour in C and C++.
 
 % Before understanding the details of borrowing consider this intuitive example from daily life:
 
@@ -483,7 +483,7 @@ Both the C++ and Rust implementations use dynamic dispatch to convert a type int
 
 For example, the types \texttt{NewtonForce} and \texttt{LennardJonesForce} both implement (or inherit, for the C++ codebase) the \texttt{Force} trait. For the simulation run, we convert both force implementations into a dynamic \texttt{Force} object. At the cost of losing all information on the underlying type, we get a black box of a model, capable of yielding the potential and force interaction for any two particles. The equivalent in C++ is achieved through inheritance and virtual functions.
 
-The in-language implementation of both paradigms is also a bit different: In C++ an object of a polymorphic type comes with ``vtable pointers'', a table of every virtual method and the mapping to the correct implementation, which is resolved at runtime. In Rust, a reference can be coerced into a smart pointer with the \texttt{dyn} keyword.
+The in-language implementation of both paradigms is also a bit different: In C++ an object of a polymorphic type comes with ``vtable pointers'', a table of every virtual method and the mapping to the correct implementation, which is resolved at runtime. In Rust, a reference can be coerced into a smart pointer with the \texttt{dyn} keyword as seen in~\autoref{code:rust-dyn}.
 
 \vspace{0.5em}
 \begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=Dynamic Coercion in Rust, label=code:rust-dyn]
@@ -497,7 +497,7 @@ println!("Potential: {}", force.potential(...))
 
 \subsection{Enums}
 
-Rust enums are a special branched type, which do not have a direct equivalent in C++, as it is derived from the more functional language OCaml. Consider the following enum implementation.
+Rust enums are a special branched type, which are a superset of C++ enums in terms of usage, as it is follows the more functional concepts like in OCaml. Consider the following enum implementation in~\autoref{code:rust-option}.
 
 \vspace{0.5em}
 \begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=Optionality in Rust, label=code:rust-option]
@@ -507,10 +507,12 @@ pub enum Option<T> {
 }
 \end{lstlisting}
 
-This type defines a generic optionality of a type, it can be either present (\texttt{Some}) or it is not (\texttt{None}). The power of enums comes from the pattern matching keyword \texttt{match}, which allows to run code conditionally based on the enum branch.
+This type defines an optionality over a generic type, which can be either set (\texttt{Some}) or unset (\texttt{None}). In Rust, every enum member is more akin to an individual struct, being able to define custom attributes. You can define the enum member \texttt{Some(T)} as \verb|Some{value: T}|.
+
+The power of enums in codeflow then comes from the pattern matching keyword \texttt{match}, which allows to run code conditionally based on the enum branch as seen in~\autoref{code:rust-option-method}.
 
 \vspace{0.5em}
-\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={Optionality in Rust}, label=code:rust-option]
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={Optionality in Rust}, label=code:rust-option-method]
 impl<T> Option<T> {
     pub fn is_some(&self) -> bool {
         match self {
@@ -532,7 +534,7 @@ The third line defines the \texttt{match} block and also the return value of the
 Since enums are powerful in control flow, they also become the basis of Rusts' error handling. Consider the following simplified implementation of a result type:
 
 \vspace{0.5em}
-\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={The result type in Rust (Note: The \texttt{: Error} syntax is a trait bound requiring the generic type to implement the \texttt{Error} trait).}, label=code:rust-result]
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={The result type in Rust (Note: The `\texttt{: Error}' syntax is a trait bound requiring the generic type to implement the \texttt{Error} trait).}, label=code:rust-result]
 pub enum Result<T, E: Error> {
     Ok(T),
     Err(E)
@@ -578,7 +580,7 @@ Below are few creditworthy libraries which are utilized in the Rust project and 
 
 \subsection{Clap}
 
-Clap is used in the program frame, it provides a macro capable of parsing a struct and generating the command line parser, mapping console input to values in the struct. This helps keep the code quality much cleaner and removes the need of \texttt{getopt}'s seemingly magic syntax. The command line parser is generated with \texttt{\#[derive(Parser)]}
+Clap is used in the program frame, it provides a macro capable of parsing a struct and generating the command line parser, mapping console input to values in the struct. This helps keep the code quality much cleaner and removes the need of \texttt{getopt}'s seemingly magic syntax. The command line parser is generated with \texttt{\#[derive(Parser)]} as seen in~\autoref{code:rust-clap}.
 
 \vspace{0.5em}
 \begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=An example of using clap in Rust, label=code:rust-clap]
@@ -660,11 +662,15 @@ F_{i \rightarrow j} = - F_{j \rightarrow i}
 
 Expanding the physical theory explained in the previous chapter, this chapter aims to provide technical and implementation insights on how the mathematical formulas were translated into simulation code. The core principles in mind were naivity, similarity, readability and maintainability (extensibility).
 
-For the principle of naivity the idea was, as the word says, to write naive code which allows for more fair cross-language comparisons. It would be unfair to compare simple C++ code with hyper-optimized Rust, or vice-versa. This means that neither of the implementations use SIMD or tricky patterns to reduce workload. We do one exception with Newtons' Third Law, but this optimization is applied in both implementations.
+For the principle of naivity the idea was, as the word says, to write naive code which allows for more fair cross-language comparisons. It would be unfair to compare simple C++ code with hyper-optimized Rust, or vice-versa. This means that neither of the implementations use SIMD or tricky patterns to reduce workload.
+
+% We do one exception with Newtons' Third Law, but this optimization is applied in both implementations.
 
 The principle of similarity ensures the thesis insights are ``fair''. We do not give an objective definition on what a fair comparison is -- it is not objective. The insights in this thesis are based on the comparison of two different technologies, with similarity in patterns being sought for, but not always objectively justifiable. We will later mention this again in the evaluation as ``implementation bias''.
 
-The other principles revolve mostly around comparing developer experience with one question: How easy and how intuitive is it to write maintable code in both languages?
+The other principles revolve mostly around comparing developer experience with one question: How easy and how intuitive is it to write maintainable code in both languages?
+
+The source code containing all implementations, the benchmark code, and benchmark data is open source and available on GitHub\footnote{\url{https://github.com/Anatoly03/MolSim-SS26-Thesis}}.
 
 \section{Molecular Dynamics Simulation}
 
@@ -674,10 +680,10 @@ The molecular dynamics codebase is organised into three primary modules (in Rust
 
 The program frame serves the entry point for the command line invocation and parses the console arguments, invoking the I/O library, setting up the simulation and then running the simulation loop the rest of the program lifetime.
 
-\vspace{0.5em}
-\begin{lstlisting}[style=eclipse-rust, language=Shell, basicstyle=\ttfamily\small, caption=Console usage example, label=code:cli-example]
-./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 35 -d 0.0014 --output output/two-bodies.vtk
-\end{lstlisting}
+% \vspace{0.5em}
+% \begin{lstlisting}[style=eclipse-rust, language=Shell, basicstyle=\ttfamily\small, caption=Console usage example, label=code:cli-example]
+% ./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 35 -d 0.0014 --output output/two-bodies.vtk
+% \end{lstlisting}
 
 
 \subsection{Core Library}
@@ -707,7 +713,7 @@ impl TryFrom<PathBuf> for FileDefinition {
 }
 \end{lstlisting}
 
-The simplicity in~\autoref{code:rust-try-from-serde} is amazing, as entire new data formats can be included in the project by adding only one a few lines of code. The data formats section~\cite{rust-serde-data-formats} of the serde documentation lists around 20 different data formats which could be inserted, which include TOML and binary formats.
+The simplicity in~\autoref{code:rust-try-from-serde} is a major benefit, as entire new data formats can be included in the project by adding only one a few lines of code. The data formats section~\cite{rust-serde-data-formats} of the serde documentation lists around 20 different data formats which could be inserted, which include TOML and binary formats.
 
 For writing data we could in theory use the same approach in reverse, with \texttt{to\_string} methods and file writing, however due to a requirement from a legacy project, we needed custom comments in the written output, as well as more sophisticated control around file writing. That's why we implemented a \texttt{Writer} trait and a static method which selects the appropriate file writer.
 
@@ -716,6 +722,14 @@ The writer selection is done through the \texttt{--output} variable in the conso
 \subsection{Parallelization in Rust}
 
 Parallelization is only applied to the pairwise loop, which accounts for the majority of the total runtime (whose exact percentage depends on the amount of particles, with higher particle counts it reaches over $90\%$ of the runtime). In C++ this is done with the OpenMP pragma invocation \texttt{omp parallel for} on the ``outer loop'' of the pairwise iteration, at the cost of removing Newtons' Third Law optimization. This means that the sequential implementation should outperform the parallel implementation at 1 thread.
+
+\section{Linked Cells}
+
+todo
+
+\section{Parallelization}
+
+todo
 
 \section{Benchmarking CI}
 
@@ -1510,7 +1524,9 @@ Recall that according to the product specification of the CPU used for benchmark
     \item[Close Cores] The performance decline occurs at 8 to 9 threads, as we run out of performance cores, we either have to use an efficiency core or share the cores cache, both leading to undesired performance loss.
 \end{description}
 
-Since this specific processor can be considered ``unstable'' for benchmarking, we have also benchmarked the implementations on the CoolMUC4 supercluster~\cite{coolmuc-stats}, which runs on an Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz~\cite{cpu-intel-xeon-platinum-8380}. This computer has more evenly distributed processing power, contrary to consumer CPUs, which means the artefacts seen in~\autoref{fig:benchmark-parallel-omp-modi} should not happen on such a large scale.
+% Since this specific processor can be considered ``unstable'' for benchmarking,
+
+We have also benchmarked the implementations on the CoolMUC4 supercluster~\cite{coolmuc-stats}, which runs on an Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz~\cite{cpu-intel-xeon-platinum-8380}. This computer has more evenly distributed processing power, contrary to consumer CPUs, which means the artefacts seen in~\autoref{fig:benchmark-parallel-omp-modi} should not happen on such a large scale.
 
 The results comparing Rayon and OpenMP with the Close Cores configuration on the supercluster can be seen below.
 
@@ -1664,6 +1680,9 @@ The results comparing Rayon and OpenMP with the Close Cores configuration on the
 The results in~\autoref{fig:benchmark-parallel-omp-modi-coolmuc} (Intel(R) Core(TM) series processor) differ from what we measured in~\autoref{fig:benchmark-parallel} (Intel(R) Xeon(R) platinum series processor).
 
 While Rust seems to outperform C++ for very few threads and occasionally between 21 and 32 threads, overall C++ seems to win the performance contest. For interested readers, we will some more CoolMUC benchmarks in appendix~\ref{section:coolmuc-parallel}.
+
+% Vielleicht mal als log scale probieren? Das Ergebnis könnte schon interessant sein, gerade bei hoher Thread Zahl.
+% Gingen die Messungen nicht sogar noch höher?
 
 \chapter{Discussion and Conclusion}
 
@@ -1954,6 +1973,33 @@ fn main() {
 \end{lstlisting}
 
 The example above will not compile, as \texttt{foobar()} is ambiguous. The solution is to rewrite the last line into \texttt{Foo::fobar(x)} if we want to print `Foo'. By using the path notation, the ambiguity is resolved. Intuitively, this makes the method static with a clear, unique name.
+
+\section{Overloading Operators}\label{section:rust-implement-add-appendix}
+
+Implementing the traits like \texttt{Add} or \texttt{Mul}, which are linked with the infix operators $+$ and $*$, requires a combination of concepts which would be confusing in the main body of the thesis. This section will explain the concepts which give Rust traits more powers in more detail. First take a look at~\autoref{code:rust-trait-implement-add}.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={A Trait definition in Rust (Do not be confused that there is no \texttt{return} keyword: The last line is considered the return value if it is not followed by a semicolon)}, label=code:rust-trait-implement-add]
+impl<T: Mul<Output = T> + Copy> Mul<T> for Vec3<T> {
+    type Output = Self;
+
+    fn mul(self, scalar: T) -> Self::Output {
+        Self {
+            x: self.x * scalar,
+            y: self.y * scalar,
+            z: self.z * scalar,
+        }
+    }
+}
+\end{lstlisting}
+
+Unlike the more simple trait definition in~\autoref{code:rust-trait}, the \texttt{Mul} trait has generics, type bounds and trait types.
+
+Generics are near identical to the C++ \texttt{template} concept: Defined in angle brackets, a generic is a type paramater appended after the trait name, for example in \texttt{Mul<Rhs>} \texttt{Rhs} is the generic parameter of the \texttt{Mul} trait. This allows for simple templating of a trait and implementing it for different types. For example, a string buffer can implement \texttt{Add<\&str>} and \texttt{Add<char>} to support both concatenation with string literals and characters. Note, that when implementing a trait with generics for a type, you need to specify the generic after the \texttt{impl} keyword to indicate it's a local generic and not a foreign type.
+
+Type bounds can be added with a semicolon, or a special \texttt{where}-clause and are used to specify a set of traits which the generic implements -- in other words, it implements the trait conditionally for generic parameters which implement the type bounds. In~\autoref{code:rust-trait-implement-add}, we implement the multiplication behaviour for a vector struct containing the attributes \texttt{x}, \texttt{y} and \texttt{z} of type \texttt{T}.
+
+We bind the generic parameter \texttt{T} to implement the traits \texttt{Mul<Output = T>} and \texttt{Copy}. In the trait scope, we can then use the bound behaviour of \texttt{T} without knowing the underlying type, as seen in the expression \texttt{self.x * scalar}.
 
 \section{More Depth to Ownership}\label{section:rust-ownership-appendix}
 
