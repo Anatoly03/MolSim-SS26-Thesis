@@ -636,10 +636,10 @@ The goal of the physics system is to create a function ``\texttt{tick}'' which a
 
 \begin{align}
 {\mathcal S}^{k + 1} := \texttt{tick}\left( {\mathcal S}^k \right)
-& \forall k {\mathbb N}^+
+& \forall k \in {\mathbb N}^+
 \end{align}
 
-To achieve this, we build \texttt{tick} as a pipeline of different functions which update the position, the force and the velocity (in this order).
+To achieve this, we build \texttt{tick} as a pipeline of different functions which update the position, then the force and then the velocity (in this order).
 
 \section{Updating Position and Velocity}
 
@@ -678,7 +678,7 @@ U_\text{LJ} := 4 \cdot \epsilon \cdot \left[{{\left(\frac{\sigma}{r}\right)}^{12
 The Lennard-Jones potential relies on the particle distance $r$ and the constants $\epsilon = 5$ and $\sigma = 1$ which define the particle material. % We will not get to an intuitive understanding of what these constants represent.
 Additionally we introduce a cut-off radius $r_c = 3$, which sets the potential to zero for a particle pair with $r > r_c$, mostly for performance reasons.
 
-The force on the particle pair is then computed using the equation $F_X = -\frac{U_X}{r}$, or intuitively: The potential is equal to the resulting force vector length. The particle force $f_i$ is computed as the sum of all forces with every other particle.
+The force on the particle pair is then computed using the equation $F_X = -\frac{U_X}{r}$ where $r$ is the scalar distance, and the direction is along the vector connecting both particles, or intuitively: The potential is equal to the resulting force vector length. The particle force $f_i$ is computed as the sum of all forces with every other particle.
 
 \section{Linked Cells}
 
@@ -686,7 +686,7 @@ The problem with the naive pairwise computation approach, which we refer to as D
 
 We attempt another algorithm, which we call LinkedCells. The idea is that we strategically divide the simulation space into cells (or ``chunks'') and reduce the overall particle pairs needed to compute. This depends on the assumption, that the potential is approaching zero for growing particle distances, in other words if particles further away exercise near-zero force.
 
-The algorithm declares for simplicity, that every cell is its' own simulation state ${\mathcal S}_i$. This means that updating position and velocity is as simple as iterating over every cell and invoking the respective pipeline function, or a two-layer recursion. After position is updated, as an addition to DirectSum, we have to make sure that particles moving between cells is accounted for. In-code this process is called ``reindexation'': Every particles' position is tested for cell bounds, and out of bounds particles are inserted into other, regional cells.
+The algorithm declares for simplicity, that every cell is its' own simulation state ${\mathcal S}_i$, or intuitively an independent sub-system. This means that updating position and velocity is as simple as iterating over every cell and invoking the respective pipeline function, or a two-layer recursion. After position is updated, as an addition to DirectSum, we have to make sure that particles moving between cells is accounted for. In-code this process is called ``reindexation'': Every particles' position is tested for cell bounds, and out of bounds particles are inserted into other, regional cells.
 
 The pairwise iteration needs to consider two scenarios, and the resulting force update function is a sequential combination of both:
 
