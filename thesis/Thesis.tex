@@ -391,7 +391,7 @@ impl Force for NewtonForce {
 
 Similar to C++ operator overloads, Rust backes some operators by traits, providing similar syntactic sugar to overload operators like in C++.
 
-For example, the infix notation of the $+$ operator can be defined with the trait \texttt{Add<Rhs>}, where the self type acts as left-hand side and the generic type \texttt{Rhs} defines the type of the right-hand side. This way, string buffers can be concated over the same operator as integers are being summed over. In~\autoref{code:rust-trait}, we use the overloaded operator $*$ to allow multiplication of the custom vector type implementation with a scalar. Since implementing such a trait involves some more complex Rust concepts, its' explanation is moved to the appendix in~\ref{section:rust-implement-add-appendix}.
+For example, the infix notation of the $+$ operator can be defined with the trait \texttt{Add<Rhs>}, where the self type acts as left-hand side and the generic type \texttt{Rhs} defines the type of the right-hand side. This way, string buffers can be concated over the same operator as integers are being summed over. In~\autoref{code:rust-trait}, we use the overloaded operator $*$ to allow multiplication of the custom vector type implementation with a scalar. Since implementing such a trait involves some more complex Rust concepts, its explanation is moved to the appendix in~\ref{section:rust-implement-add-appendix}.
 
 This `atomicity' of an implementation block is good from the perspective of codebase maintainance and developer experience for two reasons: Firstly, it allows for code readability, differentiating between ``type methods'' and ``trait implementation''. Secondly, by enforcing an implementation into a distinct scope, this prevents a collision between traits using the same identifier for a method.
 
@@ -622,41 +622,80 @@ There's been some studies in this particular field 7 years ago when Rayon was le
 
 In this chapter, we will explain the molecular dynamics algorithms from a mathematical and theoretical perspective, and the next chapter will dive into a more detailed technical explanation of the implementation.
 
-We define force as the equation $F_X = -\frac{U_X}{r}$, with $r$ being the scalar distance between two particles, and we call $U_X$ the potential. We mostly work with Lennard-Jones interactions $F_\text{LJ}$ in this thesis, however, as an artefact from a legacy project we also support the Newtonian force calculation $F_\text{N}$. In other words, the algorithm sees the force $F$ as an abstract interface. The formulas for the Newton potential $U_\text{N}$ and the Lennard-Jones Potential $U_\text{LJ}$ are given as follows:
+Most of the physics equations and concepts presented in this section are based on the book ``Numerical Simulation in Molecular Dynamics'' by Michael Griebel~\cite{numerical-simulation}.
+
+\section{Overview of the Physics System}
+
+We are given the three-dimensional simulation state ${\mathcal S} = (\mathcal P, t_c, t_e, \delta, U)$ where $\mathcal P$ is a set of particles $p_i \in \mathcal P$, $t_c \in \mathbb R$ is the current time, $t_e \in \mathbb R$ is the total (or ``end'') time, $\delta \in \mathbb R$ the delta time per simulation step and $U$ the potential evaluation function $(p_i, p_j) \mapsto \mathbb R$. The total time $t_e$ specifies the overall physical duration of the simulation and $\delta$ the precision of the simulation. 
+
+Furthermore, a particle $p_i$ is the tuple $p_i = (x_i, v_i, f_i, m_i)$ with $x_i \in {\mathbb R}^3$ representing the position of the particle, $v_i \in {\mathbb R}^3$  velocity, $f_i \in {\mathbb R}^3$ its force,
+% $o_i \in {\mathbb R}^3$ its force in the previous time step (old force) 
+and $m_i \in \mathbb R$ its mass. We also declare the notation $p_i^k$ as the particle $p_i$ at time step $k$ and ${\mathcal S}^k$ as the simulation configuration at time step $k$.
+
+The goal of the physics system is to create a function ``\texttt{tick}'' which applies physically correct behaviour every simulation step for an initial configuration ${\mathcal S}^0$ as seen below in Equation 3.1.
 
 \begin{align}
-U_\text{N} := - G \cdot \frac{M}{r}
-\end{align}\label{potential-newton}
+{\mathcal S}^{k + 1} := \texttt{tick}\left( {\mathcal S}^k \right)
+& \forall k {\mathbb N}^+
+\end{align}
 
-\begin{align}
-U_\text{LJ} := 4 \cdot \epsilon \cdot \left[{{\left(\frac{\sigma}{r}\right)}^{12}} - {{\left(\frac{\sigma}{r}\right)}^6}\right]
-\end{align}\label{potential-lennard-jones}
+To achieve this, we build \texttt{tick} as a pipeline of different functions which update the position, the force and the velocity (in this order).
 
-For the Newton potential, $G = 1$ is the gravitational constant and $M$ the product of the particle masses. For the Lennard-Jones potential, it is enough to say that $\epsilon = 5$ and $\sigma = 1$ are arbitrary constants. We will not get to an intuitive understanding of what these constants represent.
+\section{Updating Position and Velocity}
 
-At the core of the hot loop is a pipeline of updating particle positions, force and velocity every time step. The following Equations~\ref{pipeline-update-position} and~\ref{pipeline-update-velocity} update the position and velocity of a particle with $t$ representing the time step, $\delta$ the delta time constant, $x_t$ the position of a particle (at timestep $t$), $v_t$ the velocity of a particle, $F_t$ the summed force of a particle at time step $t$.
+The simulation is on paper a continuous problem which gives the exact location of every particle for a given time step. Due to the limitations of digital computers we rely on time discretization~\cite{numerical-simulation} for our physical equations. The position and force update functions are derived below in Equations 3.2 and 3.3.
 
 % self.position += self.velocity * delta_time + self.force * (delta_time.powi(2) / (2.0 * self.mass));
 \begin{align}
-x_{t+1} := v_t \delta + U_t \frac{\delta^2}{2m}
-\end{align}\label{pipeline-update-position}
+x_i^{t+1} := v_i^t \delta + f_i^t \frac{{\delta}^2}{2m_i}
+\label{pipeline-update-position}
+\end{align}
 
 % self.velocity += (self.force + self.old_force) * (delta_time / (2.0 * self.mass));
 \begin{align}
-v_{t+1} := (F_t + F_{t-1}) \cdot (\frac{\delta}{2m})
-\end{align}\label{pipeline-update-velocity}
+v_{t+1} := \left(f_i^t + f_i^{t-1}\right) \cdot \left(\frac{\delta}{2m_i}\right)
+\label{pipeline-update-velocity}
+\end{align}
 
-% \begin{align}
-% F_{t+1} := \sum_{p\ \in\text{ Particles}} U
-% \end{align}\label{pipeline-update-force}
+Note that in Equation 3.3 we rely on the force from a previous time step. Algorithmically this is achieved by storing the delayed force (or ``old force'') in the particle tuple.
 
-The forces are computed as the pairwise sum of all individual force interactions between particles.
+\section{Force Interface}
 
-Consider $F_{i \rightarrow j}$ to be the force which the particle $i$ exercises on particle $j$. Then for all particle pairs, Newtons' Third Law must hold:
+As previously mentioned, the potential function $U$ is stored in the simulation state $\mathcal S$. This is mostly due to a requirement from a legacy project where the force type could be dynamically set. We provide the following two potential functions, the Newton potential $U_\text{N}$ in Equation 3.4 and the Lennard-Jones potential $U_\text{LJ}$ in Equation 3.5.
+
+\begin{align}
+U_\text{N} := - G \cdot \frac{M}{r}
+\label{potential-newton}
+\end{align}
+
+The Newton potential uses the gravitational constant $G = 1$, the particle mass product $M = m_i \cdot m_j$ and the scalar distance $r = |p_i - p_j|$ between the two particles $p_i$ and $p_j$. The force is proportional to the product of the particle masses and inversely proportional to the distance.
+
+\begin{align}
+U_\text{LJ} := 4 \cdot \epsilon \cdot \left[{{\left(\frac{\sigma}{r}\right)}^{12}} - {{\left(\frac{\sigma}{r}\right)}^6}\right]
+\label{potential-lennard-jones}
+\end{align}
+
+The Lennard-Jones potential relies on the particle distance $r$ and the constants $\epsilon = 5$ and $\sigma = 1$ which define the particle material. % We will not get to an intuitive understanding of what these constants represent.
+Additionally we introduce a cut-off radius $r_c = 3$, which sets the potential to zero for a particle pair with $r > r_c$, mostly for performance reasons.
+
+The force on the particle pair is then computed using the equation $F_X = -\frac{U_X}{r}$, or intuitively: The potential is equal to the resulting force vector length. The particle force $f_i$ is computed as the sum of all forces with every other particle.
+
+\section{Linked Cells}
+
+The problem with the naive pairwise computation approach, which we refer to as DirectSum, is the performance bottleneck: Since we iterate over particle pairs, the performance of the algorithms is in $\mathcal O (n^2)$ (we say the performance is in ``n-square''). This means that if the particle count is doubled, the computational runtime grows by a factor of at least 4.
+
+We attempt another algorithm, which we call LinkedCells. The idea is that we strategically divide the simulation space into cells (or ``chunks'') and reduce the overall particle pairs needed to compute. This depends on the assumption, that the potential is approaching zero for growing particle distances, in other words if particles further away exercise near-zero force.
+
+\section{Newtons' Third Law}
+
+If $F_{i \rightarrow j}$ is the force which the particle $p_i$ exercises on $p_j$, then $p_j$ also exercises the inversion of the force on $p_j$ as seen in Equation 3.6.
 
 \begin{align}
 F_{i \rightarrow j} = - F_{j \rightarrow i}
-\end{align}\label{newton-three}
+\label{newton-three}
+\end{align}
+
+This fact is used to optimize the naive approach (DirectSum), by halving the amount of particle pairs needed to iterate over.
 
 \chapter{Methods and Implementation}
 
@@ -674,7 +713,9 @@ The source code containing all implementations, the benchmark code, and benchmar
 
 \section{Molecular Dynamics Simulation}
 
-The molecular dynamics codebase is organised into three primary modules (in Rust they are called ``crates''): the program frame (binary entry point), the core library, and the I/O library. This modularity allows the core simulation methods to be tested.
+The molecular dynamics codebase is organised into three primary modules (in Rust they are called ``crates''): The program frame (binary entry point), the core library, and the I/O library. This modularity allows the core simulation methods to be tested.
+
+% The frame module reads the program arguments from the console and 
 
 \subsection{Program Frame}
 
