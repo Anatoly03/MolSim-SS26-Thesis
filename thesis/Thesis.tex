@@ -574,49 +574,9 @@ To get a bit of intuition on what kind of operations are unsafe consider this ex
 
 % \chapter{Rust Project Quickstart}
 
-\section{Major Dependencies in Rust}
+% \section{Major Dependencies in Rust}
 
-Below are few creditworthy libraries which are utilized in the Rust project and significantly improve the programming workflow. They utilize procedural macros to generate code from a struct.
-
-\subsection{Clap}
-
-Clap is used in the program frame, it provides a macro capable of parsing a struct and generating the command line parser, mapping console input to values in the struct. This helps keep the code quality much cleaner and removes the need of \texttt{getopt}'s seemingly magic syntax. The command line parser is generated with \texttt{\#[derive(Parser)]} as seen in~\autoref{code:rust-clap}.
-
-\vspace{0.5em}
-\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=An example of using clap in Rust, label=code:rust-clap]
-/// The comment will be visible with --help
-#[derive(Parser)]
-struct Args {
-    /// Positional argument.
-    input: PathBuf,
-
-    /// Non-positional argument.
-    #[arg(short, long, default_value = "output/out.vtk")]
-    output: PathBuf,
-
-    /// Simulation time step.
-    #[arg(short, long)]
-    delta_time: Option<f64>,
-}
-\end{lstlisting}
-
-The above figure shows a struct definition annotated with macros and attributes from the Clap crate. The line \texttt{let args = Args::parse()} can then be used in the main function to invoke the command line parser and retrieve all arguments. This moves the input validation completely to a depenency and is a huge improvement in comparison to \texttt{getopt}.
-
-To make a fair comparison to C++, it is crucial to add that there are CLI parser alternatives in the C++ ecosystem which are more modern, feature-rich and provide better error handling, like CLI11\cite{cpp-cli11}.
-
-\subsection{Serde}
-
-Serde is the standard of serialization and deserialization across the Rust package ecosystem, having reached over 1 billion all-time downloads\cite{rust-crates-serde}. It provides the traits \texttt{Serialize} and \texttt{Deserialize} that map Rust types into and from an internal data format. Various data formats like JSON, YAML or VTU can then implement the traits \texttt{Serializer} and \texttt{Deserializer} to communicate with Serde's internal data format.
-
-The derive macros \texttt{\#[derive(Serialize, Deserialize)]} can be used to automatically generate the proper mapping. In the project, this is extremely helpful for the structs \texttt{FileDefinition} and \texttt{Particle}. This way, most of the input validation is once again moved to a dependency and there is no need implement checks for missing fields yourself.
-
-\subsection{Rayon}
-
-Rayon is a parallelization library similar in usage to OpenMP (OMP). Instead of pragmas (macros), Rayon uses Rust Traits to implement parallelization behaviour for iterators. The comparison is fair since both libraries are highly popular within their language, but at the same time unfair due to the following technical reason:
-
-OpenMP provides the developer with a low-level interface to map the program threads to the hardware directly, while Rayon is a high-level parallelism library which implements optimizations like work stealing~\cite{rust-rayon-work-stealing}. Rayon is capable of dynamically deciding how to balance the workload to make multithreading ``profitable''. This is completely opposite to OpenMP's approach of giving the developer more tools and freedom.
-
-There's been some studies in this particular field 7 years ago when Rayon was less mature than today~\cite{rust-rayon-carnegie-mellon-university} which had multiple different insights. One insight was that for matrix multiplication, OpenMP performed best at 8 threads and had a performance decline afterwards, while Rayon performed better for higher thread counts. We will observe similar artefacts later in this thesis.
+% Below are few creditworthy libraries which are utilized in the Rust project and significantly improve the programming workflow. They utilize procedural macros to generate code from a struct.
 
 \chapter{Application with Molecular Dynamics}
 
@@ -790,7 +750,9 @@ The source code containing all implementations, the benchmark code, and benchmar
 
 The molecular dynamics codebase is organised into three primary modules (in Rust they are called ``crates''): The program frame (binary entry point), the core library, and the I/O library. This modularity allows the core simulation methods to be tested.
 
-% The frame module reads the program arguments from the console and 
+From a high-level perspective, the code runs as follows: The frame module reads the program arguments from the console and invokes the I/O module on the input argument to read the initial particle state. This file also defines which force system and algorithmic implementation to use.
+
+The frame program then defines the simulations' ``hot loop'' (also called iterations, ticks, internally referred to as steps) and writes the output configuration frequently. When the current time reaches the end time $t_c \geq t_e$, the simulation halts.
 
 \subsection{Program Frame}
 
@@ -801,18 +763,77 @@ The program frame serves the entry point for the command line invocation and par
 % ./target/release/moldyn-cli input/two-bodies-collision-0001-parallel.yaml -t 35 -d 0.0014 --output output/two-bodies.vtk
 % \end{lstlisting}
 
+In Rust this is achieved using the external dependency Clap~\cite{rust-crates-clap}, which provides a macro capable of generating a console argument parser from a struct, directly filling the struct fields with command line arguments and error handling console input. 
 
-\subsection{Core Library}
+This helps keep the code quality much cleaner and removes the need of \texttt{getopt}'s seemingly magic syntax. The command line parser is generated with \texttt{\#[derive(Parser)]} as seen in~\autoref{code:rust-clap}.
 
-The core library exposes a lot of reused items, like the particle struct, the custom vector implementation, the particle container- and simulation traits and their implementing types.
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption=An example of using clap in Rust, label=code:rust-clap]
+/// The comment will be visible with --help
+#[derive(Parser)]
+struct Args {
+    /// Positional argument.
+    input: PathBuf,
+
+    /// Non-positional argument.
+    #[arg(short, long, default_value = "output/out.vtk")]
+    output: PathBuf,
+
+    /// Simulation time step.
+    #[arg(short, long)]
+    delta_time: Option<f64>,
+}
+\end{lstlisting}
+
+The above figure shows a struct definition annotated with macros and attributes from the Clap crate. The line \texttt{let args = Args::parse()} can then be used in the main function to invoke the command line parser and retrieve all arguments. This moves the input validation completely to a dependency and is a huge improvement in comparison to \texttt{getopt}.
+
+To make a fair comparison to C++, it is crucial to add that there are CLI parser alternatives in the C++ ecosystem which are more modern, feature-rich and provide better error handling, like CLI11\cite{cpp-cli11}.
+
+In the C++ thesis codebase, we wrote a custom console argument parser, inspired by simplicity seen in Clap. The C++ equivalent usage producing the same console argument parser can be seen below in~\autoref{code:cpp-custom-args}.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-cpp, language=C++, basicstyle=\ttfamily\small, caption=An example of using the custom console argument parser in C++, label=code:cpp-custom-args]
+int main(int argc, char *argv[])
+{
+    std::filesystem::path input_file_path;
+    std::filesystem::path output_file_path = "./output/out.xyz";
+    std::optional<double> delta_time;
+
+    Args()
+        .required_details(&input_file_path, "Positional argument.")
+        .required_details('o', "output", &output_file_path, "Non-positional argument.")
+        .optional_details('d', "delta-time", &delta_time, "Simulation time step.")
+        .help("The comment will be visible with --help")
+        .parse(argc, argv);
+}
+\end{lstlisting}
 
 \subsection{I/O Library}
 
-The I/O library relies on the dependency serde~\cite{rust-crates-serde} for serialization and deserialization. Wrapping serde into an abstract layer: The \texttt{Writer} trait and the \texttt{FileDefinition} struct. The file definition defines the structure of a configuration file (particle positions, global data, algorithm used, delta-time) and is capable of serializing and deserializing.
+The I/O library relies on the dependency Serde for general serialization and deserialization. Serde is the standard of serialization and deserialization across the Rust package ecosystem, having reached over 1 billion all-time downloads~\cite{rust-crates-serde}.
 
+It provides the traits \texttt{Serialize} and \texttt{Deserialize} that map Rust types into and from an internal data format. Various data formats like JSON, YAML or VTU can then implement the traits \texttt{Serializer} and \texttt{Deserializer} to communicate with Serde's internal data format. The derive macros \texttt{\#[derive(Serialize, Deserialize)]} can be used to automatically generate the proper mapping. In the project, this is extremely helpful for the structs \texttt{FileDefinition} and \texttt{Particle}. This way, most of the input validation is once again moved to a dependency and there is no need implement checks for missing fields yourself.
+
+% Wrapping serde into an abstract layer: The \texttt{Writer} trait and the \texttt{FileDefinition} struct. The file definition defines the structure of a configuration file (particle positions, global data, algorithm used, delta-time) and is capable of serializing and deserializing.
+
+\subsubsection{Reading Input}
+
+For deserialization of the configuration input state, we have a struct \texttt{FileDefinition}, which implements Serde traits as seen in~\autoref{code:rust-filedefinition-definition}.
 
 \vspace{0.5em}
-\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={An example of how the \texttt{FileDefinition} deserialization is implemented. (Note: This example is highly simplified to the point where this will not compile: The types do not match)}, label=code:rust-try-from-serde]
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={An example of how the \texttt{FileDefinition} struct is implemented. (Note: Some struct fields have been removed for simplicity.)}, label=code:rust-filedefinition-definition]
+#[derive(Serialize, Deserialize)]
+pub struct FileDefinition {
+    pub name: Option<String>,
+    pub force: Box<dyn Force>,
+    pub particles: Vec<ParticleLike>,
+}
+\end{lstlisting}
+
+This is combined with the reading functionality which automatically determines which kind of data format to assume as seen in~\autoref{code:rust-try-from-serde}.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={An example of how the \texttt{FileDefinition} deserialization is implemented. (Note: This example is highly simplified to the point where this will not compile: The types do not match. The \texttt{match} block returns a \texttt{FileDefinition} value.)}, label=code:rust-try-from-serde]
 impl TryFrom<PathBuf> for FileDefinition {
     type Error = std::io::Error;
 
@@ -829,23 +850,132 @@ impl TryFrom<PathBuf> for FileDefinition {
 }
 \end{lstlisting}
 
-The simplicity in~\autoref{code:rust-try-from-serde} is a major benefit, as entire new data formats can be included in the project by adding only one a few lines of code. The data formats section~\cite{rust-serde-data-formats} of the serde documentation lists around 20 different data formats which could be inserted, which include TOML and binary formats.
+The simplicity in~\autoref{code:rust-filedefinition-definition} and \ref{code:rust-try-from-serde} are a major benefit, as entire new data formats can be included in the project by adding only a few lines of code. The data formats section~\cite{rust-serde-data-formats} of the serde documentation lists around 20 different data formats which could be inserted, which include TOML and binary formats. The \texttt{derive} macros allow to hide a lot of repetitive code which, in contrast to C++, does not require manually writing encoding and decoding logic (see~\autoref{code:cpp-yaml-implement}).
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-cpp, language=C++, basicstyle=\ttfamily\small, caption=An example of implementing a custom YAML encoding and decoding for a custom type, label=code:cpp-yaml-implement]
+namespace YAML {
+    template<>
+    struct convert<Simulation>
+    {
+        static Node encode(const Simulation &rhs)
+        {
+            Node node;
+
+            node["force"] = rhs.force->system_name();
+            node["algorithm"] = rhs.particle_container->algorithm_name();
+
+            return node;
+        }
+
+        static bool decode(const Node &node, Simulation &rhs)
+        {
+            rhs.force = node["force"] ? node["force"].as<std::unique_ptr<Force>>() : std::make_unique<Newton>();
+            rhs.particle_container = node["algorithm"] ? node["algorithm"].as<std::unique_ptr<ParticleContainer>>() : std::make_unique<DirectSum>();
+
+            return false;
+        }
+    };
+}
+\end{lstlisting}
+
+This allows Rust to define a ``single point of truth'' which fixes an entire class of bugs present in C++: If a new struct attribute, or functionality, is added and it is not updated with the YAML encoder, we may experience undefined behaviour deep in the programs' runtime.
+
+\subsubsection{Writing Output}
 
 For writing data we could in theory use the same approach in reverse, with \texttt{to\_string} methods and file writing, however due to a requirement from a legacy project, we needed custom comments in the written output, as well as more sophisticated control around file writing. That's why we implemented a \texttt{Writer} trait and a static method which selects the appropriate file writer.
 
 The writer selection is done through the \texttt{--output} variable in the console line arguments. The extension of the input is parsed, and a similar approach like in~\autoref{code:rust-try-from-serde} is used to select the correct writer. The writer then borrows the simulation data immutably for every write and also tracks the ``output counter'' to generate the new filename and output. For example the console input \texttt{--output out/hello.vtk} will create the files \texttt{out/hello-0.vtu}, \texttt{out/hello-1.vtu}, and so on.
 
-\subsection{Parallelization in Rust}
+Since the code is in principle similar to how the readers' data format is programmed, examples are skipped here.
+
+\subsection{Core Library}
+
+The core library exposes a lot of reused items, like the particle struct, the custom vector implementation, the particle container- and simulation traits and their implementing types.
+
+\subsubsection{Core Structs}
+
+The main types in the core library are the \texttt{Particle} struct as well as the custom vector type \texttt{Vec3<T>} over the generic scalar type \texttt{T}, which is statically set to the 64-bit float type.
+
+\subsubsection{Forces}
+
+There are two forces, \texttt{NewtonForce} and \texttt{LennardJonesForce} and both inherit the shared behaviour of a \texttt{Force}, which can compute the potential between two particles and the force. In Rust this is implemented by defining a trait \texttt{Force} and implementing this trait for the forces, while C++ uses struct inheritance with virtual functions. Both Rust and C++ use dynamic dispatch to achieve this abstraction in the simulation loop.
+
+\subsubsection{Particle Container}
+
+There are three implementations, \texttt{DirectSum}, \texttt{LinkedCells<C>} and \texttt{DirectSumParallel} and all inherit the shared behaviour of a \texttt{ParticleContainer}. In Rust and C++ the implementation follows the equivalent abstraction pattern like for forces.
+
+The beauty of this implementation is, that the generic parameter \texttt{C} in the LinkedCells implementation is also required to implement behaviour of \texttt{ParticleContainer}. This means that in both Rust and C++ we can generate the types \texttt{LinkedCells<DirectSumParallel>} (``linked cells implementation with parallelization in every cell'') and \texttt{LinkedCells<\\LinkedCells<DirectSum>>} (``two-layer recursive linked cells, where the simulation cells are further divided into smaller cells'') which would define the behaviour of the cell, however these were not used in the final implementation.
+
+\subsubsection{Simulation}
+
+The simulation implements, in theory, the \texttt{ParticleContainer} trait. However, since Rust treats the same type with distinct generics as distinct types, a special \texttt{SimulationTrait} is created. The \texttt{FileDefinition} from the I/O library then defines a conversion into a dynamic simulation. 
+
+\subsection{Linked Cells}
+
+You can see the definitions for the \texttt{LinkedCells} struct in Listings~\ref{code:rust-linked-cells-definition} (Rust) and~\ref{code:cpp-linked-cells-definition} (C++).
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={The definition of the \texttt{LinkedCells} struct with the generic \texttt{Cell} in Rust}, label=code:rust-linked-cells-definition]
+pub struct LinkedCells<Cell: ParticleContainer> {
+    cells: HashMap<Vec3<i32>, Cell>,
+    cell_size: Vec3<f64>,
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=eclipse-cpp, language=C++, basicstyle=\ttfamily\small, caption={The definition of the \texttt{LinkedCells} struct with the generic \texttt{ParticleContainerT} in C++}, label=code:cpp-linked-cells-definition]
+template <typename ParticleContainerT>
+class LinkedCells : public ParticleContainer
+{
+    // assert that ParticleContainerT is a ParticleContainer
+    static_assert(std::is_base_of<ParticleContainer, ParticleContainerT>::value, "ParticleContainerT must extend ParticleContainer");
+    static_assert(std::is_default_constructible<ParticleContainerT>::value, "ParticleContainerT must be default-constructible");
+
+    Vec3<double> cell_size;
+    std::unordered_map<Vec3<int>, ParticleContainerT> particle_containers_chunk;
+}
+\end{lstlisting}
+
+To ensure a fair comparison, we use a hashmap in Rust and an unordered map in C++ for the cells data structure, with the ``cell index'', the static cell position, used as the key. On paper this gives both data structure constant value access time.
+
+As previously mentioned, the cell is an abstraction of another particle container, which per default is a smaller \texttt{DirectSum} container. The syntax difference for the ``for each particles'' method is highlighted in Listings~\ref{code:rust-linked-cells-foreach} (Rust) and~\ref{code:cpp-linked-cells-foreach} (C++).
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={The definition of the \texttt{LinkedCells::for\_each\_particles} method in Rust. (Note: In the source code, we use more functional syntax with the \texttt{.value().for\_each(callback)} function, which was unrolled into a for loop.)}, label=code:rust-linked-cells-foreach]
+fn for_each_particles(&self, callback: &(dyn Fn(&Particle) + Send + Sync)) {
+    for cell in self.cells.values() {
+        cell.for_each_particles(callback);
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=eclipse-cpp, language=C++, basicstyle=\ttfamily\small, caption={The definition of the \texttt{LinkedCells::for\_each\_particles} method in C++}, label=code:cpp-linked-cells-foreach]
+template <typename ParticleContainerT>
+void for_each_particles(std::function<void(const Particle &)> callback) const override
+{
+    for (const auto &pair : particle_containers_chunk)
+    {
+        pair.second.for_each_particles(callback);
+    }
+}
+\end{lstlisting}
+
+Both implementations follow a similar structure of taking the callback argument as a dynamic (virtual) object with the C++ \texttt{std::function} interface being equivalent to the \texttt{Fn} trait in Rust. The iteration over cells is also trivial, as well as passing the callback recursively into the cells' \texttt{for\_each\_particles} invocation.
+
+\subsection{Parallelization}
+
+The third algorithmic approach is the \texttt{DirectSum} implementation with parallel execution on the pairwise loop.
+
+todo
 
 Parallelization is only applied to the pairwise loop, which accounts for the majority of the total runtime (whose exact percentage depends on the amount of particles, with higher particle counts it reaches over $90\%$ of the runtime). In C++ this is done with the OpenMP pragma invocation \texttt{omp parallel for} on the ``outer loop'' of the pairwise iteration, at the cost of removing Newtons' Third Law optimization. This means that the sequential implementation should outperform the parallel implementation at 1 thread.
 
-\section{Linked Cells}
 
-todo
+Rayon is a parallelization library similar in usage to OpenMP (OMP). Instead of pragmas (macros), Rayon uses Rust Traits to implement parallelization behaviour for iterators. The comparison is fair since both libraries are highly popular within their language, but at the same time unfair due to the following technical reason:
 
-\section{Parallelization}
+OpenMP provides the developer with a low-level interface to map the program threads to the hardware directly, while Rayon is a high-level parallelism library which implements optimizations like work stealing~\cite{rust-rayon-work-stealing}. Rayon is capable of dynamically deciding how to balance the workload to make multithreading ``profitable''. This is completely opposite to OpenMP's approach of giving the developer more tools and freedom.
 
-todo
+There's been some studies in this particular field 7 years ago when Rayon was less mature than today~\cite{rust-rayon-carnegie-mellon-university} which had multiple different insights. One insight was that for matrix multiplication, OpenMP performed best at 8 threads and had a performance decline afterwards, while Rayon performed better for higher thread counts. We will observe similar artefacts later in this thesis.
 
 \section{Benchmarking CI}
 
@@ -863,7 +993,7 @@ Beyond the built-in automatic benchmark mechanisms, external tools like Perf wer
 
 \chapter{Benchmarking}
 
-All following benchmarks are executed on mars, a high end, personal computer with a 64-bit 12th Gen Intel(R) Core(TM) i7-12700K and $2 \times 16$GB DDR5 RAM. The processor has 12 cores, of which 8 are performance cores with a pair of threads using Intel(R) Hyper-Threading Technology, and 4 are efficiency cores, each having their own thread, making for a total of 20 threads\cite{cpu-intel-core-i7-12700k}. The hardware topology for the described processor can be seen visually below. 
+All following benchmarks are executed on mars, a high end, personal computer with a 64-bit 12th Gen Intel(R) Core(TM) i7-12700K and $2 \times 16$GB DDR5 RAM. The processor has 12 cores, of which 8 are performance cores with a pair of threads using Intel(R) Hyper-Threading Technology, and 4 are efficiency cores, each having their own thread, making for a total of 20 threads\cite{cpu-intel-core-i7-12700k}. The hardware topology for the described processor can be seen visually below in~\autoref{fig:hwloc}.
 
 \begin{figure}[htbp]
     \centering
@@ -1153,7 +1283,7 @@ For interested readers, we will provide some further benchmarks (including 3D be
 
 % We will first bench the performance of different sequential implementations to ensure the the credibility of the measured data as seen in~\autoref{fig:benchmark-sequential}. The graph can only hint at general performance hierarchy. 
 
-For the DirectSum implementation, when measuring sequential performance against simulation steps $S$ and other configuration data fixed, we observe linear runtime $\mathcal{O}(S)$. This is because despite having to compute all particle pairs, the amount of particles $N$ and hence the workload per simulation step is constant in this graph.
+For the DirectSum implementation, when measuring sequential performance against simulation steps $S$ and other configuration data fixed, we observe linear runtime $\mathcal{O}(S)$ as seen in~\autoref{fig:benchmark-sequential}. This is because despite having to compute all particle pairs, the amount of particles $N$ and hence the workload per simulation step is constant in this graph.
 
 To ensure the credibility of the computed average, the fluctuations between minimal and maximal run duration were also recorded.
 % The biggest relative outlier occured with Rust at 210 steps with a fluctuation of $20.9\%$.
@@ -1644,7 +1774,7 @@ Recall that according to the product specification of the CPU used for benchmark
 
 We have also benchmarked the implementations on the CoolMUC4 supercluster~\cite{coolmuc-stats}, which runs on an Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz~\cite{cpu-intel-xeon-platinum-8380}. This computer has more evenly distributed processing power, contrary to consumer CPUs, which means the artefacts seen in~\autoref{fig:benchmark-parallel-omp-modi} should not happen on such a large scale.
 
-The results comparing Rayon and OpenMP with the Close Cores configuration on the supercluster can be seen below.
+The results comparing Rayon and OpenMP with the Close Cores configuration on the supercluster can be seen below in~\autoref{fig:benchmark-parallel-omp-modi-coolmuc}.
 
 \begin{figure}[!htb]
 \begin{tikzpicture}
