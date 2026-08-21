@@ -686,6 +686,81 @@ The problem with the naive pairwise computation approach, which we refer to as D
 
 We attempt another algorithm, which we call LinkedCells. The idea is that we strategically divide the simulation space into cells (or ``chunks'') and reduce the overall particle pairs needed to compute. This depends on the assumption, that the potential is approaching zero for growing particle distances, in other words if particles further away exercise near-zero force.
 
+The algorithm declares for simplicity, that every cell is its' own simulation state ${\mathcal S}_i$. This means that updating position and velocity is as simple as iterating over every cell and invoking the respective pipeline function, or a two-layer recursion. After position is updated, as an addition to DirectSum, we have to make sure that particles moving between cells is accounted for. In-code this process is called ``reindexation'': Every particles' position is tested for cell bounds, and out of bounds particles are inserted into other, regional cells.
+
+The pairwise iteration needs to consider two scenarios, and the resulting force update function is a sequential combination of both:
+
+\begin{enumerate}
+    \item \textbf{Particles within a cell.} For particle interactions within a cell, we simply invoke the pairwise iteration recursively. We can do this since it is assumed that every cell is its own simulation state.
+    \item \textbf{Particles across cells.} The more tricky part is to compute particle pairs which are located in different cells.
+    
+    In our approach, we first iterate over pairs of neighbouring cells. This is relatively easy as cells are stored at static positions and we can test if two cells are neighbours by checking if the difference on every axis is less than one chunk size.
+
+    This becomes complete when for every cell pair, all particles of one cell are paired with particles in the other cell.
+\end{enumerate}
+
+This algorithm ensures that the force is only updated for particle pairs in close proximity, which eliminates most of the computation.
+
+% The algorithm is presented in~\autoref{algo:linked-cells-pairs}.
+
+% \begin{figure}[htbp]
+% \begin{algorithm}[H]
+
+% % Custom function declarations
+% \SetKwFunction{FGetCoords}{get\_cell\_coordinates}
+% \SetKwFunction{FGetDisjoint}{get\_disjoint\_mut}
+% \SetKwFunction{FProcessWithin}{for\_each\_particle\_pairs\_mut}
+
+% % Input / Output
+% \KwIn{LinkedCells structure \texttt{self}, pair callback function $f$}
+% \KwOut{All particle pairs are processed via $f$ (in-place modifications allowed)}
+% \BlankLine
+
+% \tcp{Collect all occupied cell coordinates to avoid iterating over the hashmap twice}
+% $coords \gets \texttt{self.cells.keys()}()$\;
+
+% \tcp{Iterate over each cell and its positive neighbourhood half-space}
+% \ForEach{$cell\_coord$ \textbf{in} $coords$}{
+%     \For{$dx \gets -1$ \KwTo $1$}{
+%         \For{$dy \gets -1$ \KwTo $1$}{
+%             \For{$dz \gets -1$ \KwTo $1$}{
+                
+%                 \tcp{Skip mirrored neighbours to process each unordered cell-pair exactly once}
+%                 \If{$dx < 0$ \textbf{or} ($dx = 0$ \textbf{and} $dy < 0$) \textbf{or} ($dx = 0$ \textbf{and} $dy = 0$ \textbf{and} $dz \leq 0$)}{
+%                     \textbf{continue}\;
+%                 }
+                
+%                 $neighbour\_coord \gets cell\_coord + (dx, dy, dz)$\;
+                
+%                 \If{$neighbour\_coord$ \textbf{not in} $\texttt{self.cells}$}{
+%                     \textbf{continue}\;
+%                 }
+                
+%                 \tcp{Simultaneously borrow both cells mutably to satisfy the borrow checker}
+%                 $[cell, neighbour] \gets \FGetDisjoint{self.cells, cell\_coord, neighbour\_coord}$\;
+                
+%                 \tcp{Process all particle pairs between these two distinct cells}
+%                 \ForEach{$p_1$ \textbf{in} $cell.particles$}{
+%                     \ForEach{$p_2$ \textbf{in} $neighbour.particles$}{
+%                         $f(p_1, p_2)$\; \tcp{Force $p_1 \to p_2$}
+%                         $f(p_2, p_1)$\; \tcp{Newton's Third Law: $p_2 \to p_1$}
+%                     }
+%                 }
+%             }
+%         }
+%     }
+% }
+
+% \tcp{Process particles within the same cell (including self-interaction handling)}
+% \ForEach{$cell$ \textbf{in} $\texttt{self.cells.values\_mut}()$}{
+%     $\FProcessWithin{cell, f}$\;
+% }
+
+% \caption[Linked Cells Pair Iteration]{The \texttt{for\_each\_particle\_pairs\_mut} method of the \texttt{LinkedCells} particle container. It iterates over each unordered pair of neighbouring cells exactly once, and finally processes intra-cell pairs.}
+% \label{algo:linked-cells-pairs}
+% \end{algorithm}
+% \end{figure}
+
 \section{Newtons' Third Law}
 
 If $F_{i \rightarrow j}$ is the force which the particle $p_i$ exercises on $p_j$, then $p_j$ also exercises the inversion of the force on $p_j$ as seen in Equation 3.6.
