@@ -149,7 +149,7 @@ Munich, \date \hspace{5cm} \author
 \end{center}
 \vspace{1cm}
 
-I acknowlege everyone who has been with me on this journey and major milestone of my life, my sincerest Thank You to
+I acknowledge everyone who has been with me on this journey and major milestone of my life, my sincerest Thank You to
 
 My Family, who has been always with me, sponsored my education and gave me the opportunity to become who I am today.
 
@@ -157,7 +157,7 @@ My Friends, who were always there for me, who gave me the energy and motivation 
 
 My advisor, Markus Mühlhäußer, who is an amazing teacher and a great mentor. Without him I would not be able to organize my thesis into smaller scopes and probably would have moved most of the workload into the deadline week.
 
-The Rust Community, especially Dylan DPC, for enganging in discussions on fair comparisons between Rust and C++.
+The Rust Community, especially Dylan DPC, for engaging in discussions on fair comparisons between Rust and C++.
 
 My bestie Kasane Teto, who has not said a word but always morally supported me with her inanimate gaze.
 
@@ -181,7 +181,7 @@ In the past decades, Rust has gained more admiration as a low-level, performant 
 
 Both languages implement three different approaches in particle management and computation patterns, with DirectSum computing over all particle pairs in the hot loop, LinkedCells introducing a three-dimensional chunk system to reduce the overall workload, and DirectSumParallel using multi-threaded paradigms to accelerate computation.
 
-This thesis aims to provide insights for the decision of whether to adopt Rust in emerging software for performance-critical applications with high memory-safety requirements, showing that Rust can slightly outperform C++ in competitive environments.
+This thesis aims to inform the decision of whether to adopt Rust in emerging software for performance-critical applications with high memory-safety requirements, showing that Rust can slightly outperform C++ in competitive environments.
 
 \cleardoublepage
 
@@ -299,7 +299,7 @@ In 2025, StackOverflow's developer survey ranked Rust as the most admired progra
 \label{fig:stackoverflow-most-admired}
 \end{figure}
 
-In 2020, the social platform Discord had already published several blogposts explaining that they are rewritting software components in Rust~\cite{discord-moves-to-rust}. Their main reasoning behind this decision was mostly about reaching high performance demands but also went into detail about the type system of Rust.
+In 2020, the social platform Discord had already published several blogposts explaining that they are rewriting software components in Rust~\cite{discord-moves-to-rust}. Their main reasoning behind this decision was mostly about reaching high performance demands but also went into detail about the type system of Rust.
 
 Specifically, the blogpost mentions issues with the garbage collector of the Go Programming Language, which was rescanning the entire cache for memory to be freed, causing latency spikes every 2 minutes.
 
@@ -309,14 +309,14 @@ Specifically, the blogpost mentions issues with the garbage collector of the Go 
 % A change to Cloudflares' database permissions caused the `feature file' to be written with duplicated rows.
 % The Rust proxy-service, which had limited memory allocated, then became the source of the unhandled error when the feature file size grew three times larger than expected.
 
-In 2024, Google has published a security blogpost with the topic on making their software memory safe, in which they mentioned a new migration approach called ``interoperability'' which offers an incremental approach to adopting memory safety in software~\cite{google-eliminating-memory-safety-vulnerabilities}. This allows working on a multi-lingual codebase where new code is written in Rust, allowing the team to define their own pace of migrating to Rust.
+In 2024, Google published a security blogpost on making their software memory-safe, in which they mentioned a new migration approach called ``interoperability'' which offers an incremental approach to adopting memory safety in software~\cite{google-eliminating-memory-safety-vulnerabilities}. This allows working on a multi-lingual codebase where new code is written in Rust, allowing the team to define their own pace of migrating to Rust.
 
-This paper takes the goal of diving deeper into a more direct and technical comparison between Rust and C++ by writing a molecular dynamics simulation program in both programming languages, analyzing the differences in usability and benchmark performance.
+This thesis aims to dive deeper into a more direct and technical comparison between Rust and C++ by writing a molecular dynamics simulation program in both programming languages, analyzing the differences in usability and benchmark performance.
 
 \chapter{Comparing Rust against C++}
 \section{The Rust Ecosystem}
 
-Before diving into the the syntax and the defining elements of the Rust Programming Language, this section will give a brief overview over the tooling and console applications provided by Cargo, the Rust Package Manager.
+Before diving into the syntax and the defining elements of the Rust Programming Language, this section will give a brief overview over the tooling and console applications provided by Cargo, the Rust Package Manager.
 
 Since Cargo can install dependencies it was also designed to be extensible, meaning that most operations you will need to maintain a Rust project are located behind a Cargo subcommand.
 
@@ -329,9 +329,9 @@ Since Cargo can install dependencies it was also designed to be extensible, mean
     \item[cargo clippy] Equivalent to \texttt{clang-tidy}, Cargo provides a built-in way to lint and statically analyze the codebase. This command is also often used in CI/CD to ensure the codebase quality.
 \end{description}
 
-The first observation in terms of differences in usability is that the C++ infrastructure is fragmented, whereas for Rust it is centralized via its package manager. This smoothes down the learning curve of Rust tools, as new users only have to get comfortable with Cargo, which provies access to dependency management, compilation, linting, and further community-written subcommands.
+The first observation in terms of differences in usability is that the C++ infrastructure is fragmented, whereas for Rust it is centralized via its package manager. This smoothes down the learning curve of Rust tools, as new users only have to get comfortable with Cargo, which provides access to dependency management, compilation, linting, and further community-written subcommands.
 
-It is noteworthy to mention that there is no equivalent to GDB as a memory safety analyzer in the Rust ecosystem because the type system and ownership model of Rust guaranteee safety over memory and thread.
+It is noteworthy to mention that there is no equivalent to GDB as a memory safety analyzer in the Rust ecosystem because the type system and ownership model of Rust guarantees safety over memory and thread.
 
 \section{The Rust Programming Language}
 
@@ -391,11 +391,11 @@ impl Force for NewtonForce {
 \end{lstlisting}
 % \end{multicols}
 
-Similar to C++ operator overloads, Rust backes some operators by traits, providing similar syntactic sugar to overload operators like in C++.
+Similar to C++  operator overloads, Rust allows to overload some operators using trait implementations, providing similar syntactic sugar to overload operators like in C++.
 
-For example, the infix notation of the $+$ operator can be defined with the trait \texttt{Add<Rhs>}, where the self type acts as left-hand side and the generic type \texttt{Rhs} defines the type of the right-hand side. This way, string buffers can be concated over the same operator as integers are being summed over. In~\autoref{code:rust-trait}, we use the overloaded operator $*$ to allow multiplication of the custom vector type implementation with a scalar. Since implementing such a trait involves some more complex Rust concepts, its explanation is moved to the appendix in~\ref{section:rust-implement-add-appendix}.
+For example, the infix notation of the $+$ operator can be defined with the trait \texttt{Add<Rhs>}, where the self type acts as left-hand side and the generic type \texttt{Rhs} defines the type of the right-hand side. This way, string buffers can be concatenated over the same operator as integers are being summed over. In~\autoref{code:rust-trait}, we use the overloaded operator $*$ to allow multiplication of the custom vector type implementation with a scalar. Since implementing such a trait involves some more complex Rust concepts, its explanation is moved to the appendix in~\ref{section:rust-implement-add-appendix}.
 
-This `atomicity' of an implementation block is good from the perspective of codebase maintainance and developer experience for two reasons: Firstly, it allows for code readability, differentiating between ``type methods'' and ``trait implementation''. Secondly, by enforcing an implementation into a distinct scope, this prevents a collision between traits using the same identifier for a method.
+This `atomicity' of an implementation block is good from the perspective of codebase maintenance and developer experience for two reasons: Firstly, it allows for code readability, differentiating between ``type methods'' and ``trait implementation''. Secondly, by enforcing an implementation into a distinct scope, this prevents a collision between traits using the same identifier for a method.
 
 As the second argument can cause some confusion with how Rust resolves the ambiguity with overlapping trait method names, appendix note~\ref{section:rust-trait-same-identifier} offers some clarification. However, this is mostly irrelevant to the thesis and skipped here.
 
@@ -525,7 +525,7 @@ impl<T> Option<T> {
 }
 \end{lstlisting}
 
-We will now destruct the above example to understand the Rust programming language better: The first line \texttt{impl<T> Option<T>} defines an implementation block with the generic \texttt{T} for an option with the specified generic. This means that all constants and functions in this scope are member of \texttt{Option}.
+We will now deconstruct the above example to understand the Rust programming language better: The first line \texttt{impl<T> Option<T>} defines an implementation block with the generic \texttt{T} for an option with the specified generic. This means that all constants and functions in this scope are member of \texttt{Option}.
 
 The second line defines the method \texttt{Option<T>::is\_some}, which is non-static, since it has the special argument \texttt{\&self} -- from earlier sections we also know that this method borrows the value immutably.
 
@@ -648,7 +648,7 @@ The problem with the naive pairwise computation approach, which we refer to as D
 
 We attempt another algorithm, which we call LinkedCells. The idea is that we strategically divide the simulation space into cells (or ``chunks'') and reduce the overall particle pairs needed to compute. This depends on the assumption, that the potential is approaching zero for growing particle distances, in other words if particles further away exercise near-zero force.
 
-The algorithm declares for simplicity, that every cell is its' own simulation state ${\mathcal S}_i$, or intuitively an independent sub-system. This means that updating position and velocity is as simple as iterating over every cell and invoking the respective pipeline function, or a two-layer recursion. After position is updated, as an addition to DirectSum, we have to make sure that particles moving between cells is accounted for. In-code this process is called ``reindexation'': Every particles' position is tested for cell bounds, and out of bounds particles are inserted into other, regional cells.
+The algorithm declares for simplicity, that every cell is its own simulation state ${\mathcal S}_i$, or intuitively an independent sub-system. This means that updating position and velocity is as simple as iterating over every cell and invoking the respective pipeline function, or a two-layer recursion. After position is updated, as an addition to DirectSum, we have to make sure that particles moving between cells is accounted for. In-code this process is called ``reindexation'': Every particle's position is tested for cell bounds, and out of bounds particles are inserted into other, regional cells.
 
 The pairwise iteration needs to consider two scenarios, and the resulting force update function is a sequential combination of both:
 
@@ -736,9 +736,9 @@ This fact is used to optimize the naive approach (DirectSum), by halving the amo
 
 \chapter{Methods and Implementation}
 
-Expanding the physical theory explained in the previous chapter, this chapter aims to provide technical and implementation insights on how the mathematical formulas were translated into simulation code. The core principles in mind were naivity, similarity, readability and maintainability (extensibility).
+Expanding the physical theory explained in the previous chapter, this chapter aims to provide technical and implementation insights on how the mathematical formulas were translated into simulation code. The core principles in mind were naivety, similarity, readability and maintainability (extensibility).
 
-For the principle of naivity the idea was, as the word says, to write naive code which allows for more fair cross-language comparisons. It would be unfair to compare simple C++ code with hyper-optimized Rust, or vice-versa. This means that neither of the implementations use SIMD or tricky patterns to reduce workload.
+For the principle of naivety the idea was, as the word says, to write naive code which allows for more fair cross-language comparisons. It would be unfair to compare simple C++ code with hyper-optimized Rust, or vice-versa. This means that neither of the implementations use SIMD or tricky patterns to reduce workload.
 
 % We do one exception with Newtons' Third Law, but this optimization is applied in both implementations.
 
@@ -899,6 +899,10 @@ The core library exposes a lot of reused items, like the particle struct, the cu
 
 The main types in the core library are the \texttt{Particle} struct as well as the custom vector type \texttt{Vec3<T>} over the generic scalar type \texttt{T}, which is statically set to the 64-bit float type.
 
+The vector type overloads all mathematical operations to support addition with other vectors and multiplication with scalars, which is useful in the physics-applying functions in terms of code readability.
+
+The particle struct exposes utility methods like measuring distance between two particles and applying the position and velocity update formulas.
+
 \subsubsection{Forces}
 
 There are two forces, \texttt{NewtonForce} and \texttt{LennardJonesForce} and both inherit the shared behaviour of a \texttt{Force}, which can compute the potential between two particles and the force. In Rust this is implemented by defining a trait \texttt{Force} and implementing this trait for the forces, while C++ uses struct inheritance with virtual functions. Both Rust and C++ use dynamic dispatch to achieve this abstraction in the simulation loop.
@@ -951,7 +955,7 @@ void for_each_particle_pairs_mut(std::function<void(Particle &, const Particle &
 
 In C++, the naive approach is fairly trivial to implement. In Rust, we arrive at a problem caused by borrowing rules: Since borrowing one element of a vector borrows the entire vector (and borrowing one element of vector mutably borrows the entire vector mutably), we can not borrow two particles with one borrowed mutably, without breaking the safety rules.
 
-This is because since the iterator uses a dynamic parameter -- the loop index -- the static analyzer is not able to verify wether the same particle value is borrowed mutably, which could cause a class of bugs Rust tries to prevent.
+This is because since the iterator uses a dynamic parameter -- the loop index -- the static analyzer is not able to verify whether the same particle value is borrowed mutably, which could cause a class of bugs Rust tries to prevent.
 
 The solution is a method provided by Rusts' vector type, \texttt{split\_at\_mut}, which borrows the vector as two slices, split at a provided index. This allows us to borrow one particle mutably, and one immutably from the same structure.
 
@@ -1010,9 +1014,9 @@ Both implementations follow a similar structure of taking the callback argument 
 
 \subsection{Parallelization}
 
-The third algorithmic approach is the \texttt{DirectSum} implementation with parallel execution on the pairwise loop, which accounts for the majority of the total runtime (whose exact percentage depends on the amount of particles, with higher particle counts reacheing over $90\%$ of the runtime).
+The third algorithmic approach is the \texttt{DirectSum} implementation with parallel execution on the pairwise loop, which accounts for the majority of the total runtime (whose exact percentage depends on the amount of particles, with higher particle counts reaching over $90\%$ of the runtime).
 
-In C++ this is done with the OpenMP pragma invocation \texttt{omp parallel for} on the ``outer loop'' of the pairwise iteration. For Rust, we use Rayon, a parallelization library similar in usage to OpenMP (OMP). Both approachs can be seen in Listings~\ref{code:rust-parallel-foreach} (Rayon, Rust) and~\ref{code:cpp-parallel-foreach} (OpenMP, C++).
+In C++ this is done with the OpenMP pragma invocation \texttt{omp parallel for} on the ``outer loop'' of the pairwise iteration. For Rust, we use Rayon, a parallelization library similar in usage to OpenMP (OMP). Both approaches can be seen in Listings~\ref{code:rust-parallel-foreach} (Rayon, Rust) and~\ref{code:cpp-parallel-foreach} (OpenMP, C++).
 
 \vspace{0.5em}
 \begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={The definition of the \texttt{LinkedCells::for\_each\_particle\_pairs\_mut} method in Rust.}, label=code:rust-parallel-foreach]
@@ -1060,7 +1064,7 @@ There is not much to comment about the approach usage, however we had a problem 
 
 \subsubsection{Unsafe Rust in the Parallel Approach}
 
-In~\autoref{code:rust-parallel-foreach} we see the keyword \texttt{unsafe} used around the pairwise iteration. This is because Rust cannot statically analyze the safety of the scope which has mutable and non-mutable access of the particles data structure accross threads.
+In~\autoref{code:rust-parallel-foreach} we see the keyword \texttt{unsafe} used around the pairwise iteration. This is because Rust cannot statically analyze the safety of the scope which has mutable and non-mutable access of the particles data structure across threads.
 
 What we do in the final implementation is converting the particles vector to a pointer of particles by borrowing it once. The problem with raw pointers however, is that passing them is not thread safe. What we do is create a wrapper struct \texttt{PointerWrapper} (see~\ref{code:rust-parallel-wrapper}) and assume it to be thread safe by implementing the unsafe traits \texttt{Send} and \texttt{Sync}.
 
@@ -1091,9 +1095,9 @@ There's been some studies in this particular field 7 years ago when Rayon was le
 
 \section{Benchmarking CI}
 
-To ensure that performance does not decline severely inbetween two commits, and that the simulation remains numerically correct and equal across changes, we implemented a Continuous Integration (CI) pipeline using GitHub Actions, which runs on push.
+To ensure that performance does not decline severely    between two commits, and that the simulation remains numerically correct and equal across changes, we implemented a Continuous Integration (CI) pipeline using GitHub Actions, which runs on push.
 
-In the past, this workflows helped narrow down performance-critical errors, such as building in debug mode, allocating unused variables on the heap or even passing one-element vectors as a function argument, when just passing the item was also viable. We always attempted to improve the worse-performing language, and in some early benchmarks C++ outperformed Rust. By now both languages approached their performance limits in the scope of optimal, naive implementations.
+In the past, this workflow helped narrow down performance-critical errors, such as building in debug mode, allocating unused variables on the heap or even passing one-element vectors as a function argument, when just passing the item was also viable. We always attempted to improve the worse-performing language, and in some early benchmarks C++ outperformed Rust. By now both languages approached their performance limits in the scope of optimal, naive implementations.
 
 The same script was used to generate the results presented in the later chapter on evaluation.
 
@@ -1549,7 +1553,7 @@ We can therefore derive the following claim in regards to the sequential perform
 \label{fig:benchmark-linked-cells}
 \end{figure}
 
-In~\autoref{fig:benchmark-linked-cells} we can see the performance of specifically the LinkedCells implementation. The first thing that can be observed is that the fluctuations are ``more noticable''. This is because as the graph is downscaled roughly 10 times on the y axis compared to~\autoref{fig:benchmark-sequential}, a fluctuation of even 1ms is perceived ten times stronger.
+In~\autoref{fig:benchmark-linked-cells} we can see the performance of specifically the LinkedCells implementation. The first thing that can be observed is that the fluctuations are ``more noticeable''. This is because as the graph is downscaled roughly 10 times on the y axis compared to~\autoref{fig:benchmark-sequential}, a fluctuation of even 1ms is perceived ten times stronger.
 
 We can derive the following further claims in regards to the sequential performance ratio: Rust LinkedCells completes in $78.6\%$ of the time taken by the C++ LinkedCells implementation, with a speedup of $27.2\%$.
 
@@ -2057,9 +2061,9 @@ The conclusion of the thesis suggests that Rust offers the following.
 \begin{description}
     \item[Competitive Performance] The sequential benchmarks show that Rust is in general a bit faster, with some exceptional implementations outperforming C++ by up to $25\%$. The parallel performance seems to be processor-dependent.
 
-    \item[Memory Safety] The type system and ownership model of Rust is a significant advantage, with guarantees on memory safety reducing the cognitive overhead in comparison to C++, where 
+    \item[Memory Safety] The type system and ownership model of Rust is a significant advantage, with guarantees on memory safety reducing the cognitive overhead in comparison to C++, where the developer is themselves responsible for memory allocation and freeing.
 
-    \item[Ecosystem and Tooling] Rust provides a good set of tools with its package manager and community-written dependencies, which enhance productivity and developer experience. The integrated compiler, documentation generator, linter and error messages reduce the  
+    \item[Ecosystem and Tooling] Rust provides a good set of tools with its package manager and community-written dependencies, which enhance productivity and developer experience. The integrated compiler, documentation generator, linter and error messages provide a good guidance for creating new software and maintaining it.
 \end{description}
 
 However, this does not mean that everyone should write all new or rewrite existing applications in Rust, because of the following reasons:
@@ -2386,7 +2390,7 @@ The variable \texttt{names} is also an owned value of the type \texttt{[\&str; 3
 
 % In the for loop, we iterate over all entries of the \texttt{names} slice. The method itself borrows \texttt{names} immutably to create an iterator over all elements. Then, we append the name to the mutable string variable \texttt{text}. Afterwards, the resulting string contents are printed to the console.
 
-Since the syntactic sugar in~\autoref{code:rust-ownership-appendix-example1} of the add-assign operator (\texttt{+=}) hides how the references are passed to the string concatenation behaviour, the following code example will unpack the syntactic sugar to provide a better explanation. You should keep in mind that the synactic sugar \texttt{a += b} is converted to the trait method \texttt{a.add\_assign(b)}. Additionally, as mentioned in appendix note~\ref{section:rust-trait-same-identifier}, any method \texttt{value.func(arg1)} can also be further converted using the path notation into a static function \texttt{Ty::func(value, arg1)} with the appropriate borrow modifiers.
+Since the syntactic sugar in~\autoref{code:rust-ownership-appendix-example1} of the add-assign operator (\texttt{+=}) hides how the references are passed to the string concatenation behaviour, the following code example will unpack the syntactic sugar to provide a better explanation. You should keep in mind that the syntactic sugar \texttt{a += b} is converted to the trait method \texttt{a.add\_assign(b)}. Additionally, as mentioned in appendix note~\ref{section:rust-trait-same-identifier}, any method \texttt{value.func(arg1)} can also be further converted using the path notation into a static function \texttt{Ty::func(value, arg1)} with the appropriate borrow modifiers.
 
 \vspace{0.5em}
 \begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, label=code:rust-ownership-appendix-example2]
@@ -2411,9 +2415,9 @@ fn main() {
 
 In the for loop, we edit the variable \texttt{text} two times. This is perfectly fine, since the logic occurs sequentially and every time we modify \texttt{text}, the borrow is released. After every loop iteration the variable is free of further borrow claims (R4). Every variable is also valid (R5), which means the reference rules are followed in this example.
 
-The ownership rules are also followed, with the variables \texttt{text} and \texttt{names} being dropped at the end of the function scope (R3). The first rule ``The value has an owner'' is followed also for static string costants, since the data segment is their owner.
+The ownership rules are also followed, with the variables \texttt{text} and \texttt{names} being dropped at the end of the function scope (R3). The first rule ``The value has an owner'' is followed also for static string constants, since the data segment is their owner.
 
-The static analyzer will treat for loops as repeating scopes, which means the compiler ensures the rules are followed accross iterations. This makes the following code illegal:
+The static analyzer will treat for loops as repeating scopes, which means the compiler ensures the rules are followed across iterations. This makes the following code illegal:
 
 \vspace{0.5em}
 \begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small]
@@ -2451,9 +2455,9 @@ impl ParticleContainer for DirectSum {
 }
 \end{lstlisting}
 
-The problem with this code is, that it breaks the Forth Rule: Line 7 borrows the \texttt{self.particles} value mutably, and during this borrow line 8 also borrows the value immutably. This is not allowed.
+The problem with this code is, that it breaks the Fourth Rule: Line 7 borrows the \texttt{self.particles} value mutably, and during this borrow line 8 also borrows the value immutably. This is not allowed.
 
-The second approach that was attempted was to iterate over the indeces of the particles, and manually retrieve them, as seen below. The \texttt{..} symbol is syntactic sugar for an integer range.
+The second approach that was attempted was to iterate over the indices of the particles, and manually retrieve them, as seen below. The \texttt{..} symbol is syntactic sugar for an integer range.
 
 \vspace{0.5em}
 \begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={Second approach at DirectSum particle pairs iteration.}]
@@ -2505,7 +2509,7 @@ impl ParticleContainer for DirectSum {
 }
 \end{lstlisting}
 
-The main insight here is, that this simple behaviour would be trivial to implement in C++, but due to Rust ownership rules which enforce memory safety, the pair iterator approach is a bit tricky x
+The main insight here is, that this simple behaviour would be trivial to implement in C++, but due to Rust ownership rules which enforce memory safety, the pair iterator approach is a bit tricky to implement.
 
 \chapter{Benchmarks}
 
