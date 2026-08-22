@@ -157,6 +157,8 @@ My Friends, who were always there for me, who gave me the energy and motivation 
 
 My advisor, Markus Mühlhäußer, who is an amazing teacher and a great mentor. Without him I would not be able to organize my thesis into smaller scopes and probably would have moved most of the workload into the deadline week.
 
+The Rust Community, especially Dylan DPC, for enganging in discussions on fair comparisons between Rust and C++.
+
 My bestie Kasane Teto, who has not said a word but always morally supported me with her inanimate gaze.
 
 
@@ -179,7 +181,7 @@ In the past decades, Rust has gained more admiration as a low-level, performant 
 
 Both languages implement three different approaches in particle management and computation patterns, with DirectSum computing over all particle pairs in the hot loop, LinkedCells introducing a three-dimensional chunk system to reduce the overall workload, and DirectSumParallel using multi-threaded paradigms to accelerate computation.
 
-This thesis aims to inform the decision of whether to adopt Rust in emerging software for performance-critical applications with high memory-safety requirements, showing that Rust can slightly outperform C++ in competitive environments.
+This thesis aims to provide insights for the decision of whether to adopt Rust in emerging software for performance-critical applications with high memory-safety requirements, showing that Rust can slightly outperform C++ in competitive environments.
 
 \cleardoublepage
 
@@ -329,7 +331,7 @@ Since Cargo can install dependencies it was also designed to be extensible, mean
 
 The first observation in terms of differences in usability is that the C++ infrastructure is fragmented, whereas for Rust it is centralized via its package manager. This smoothes down the learning curve of Rust tools, as new users only have to get comfortable with Cargo, which provies access to dependency management, compilation, linting, and further community-written subcommands.
 
-It is noteworthy to mention that there is no equivalent to GDB in the Rust ecosystem because the type system and ownership model of Rust guaranteee safety over memory and thread.
+It is noteworthy to mention that there is no equivalent to GDB as a memory safety analyzer in the Rust ecosystem because the type system and ownership model of Rust guaranteee safety over memory and thread.
 
 \section{The Rust Programming Language}
 
@@ -479,7 +481,7 @@ Some further details to understand ownership and references is given in appendix
 
 \subsection{Dynamic Dispatch}
 
-Both the C++ and Rust implementations use dynamic dispatch to convert a type into an interface at runtime. This is not a zero-cost abstraction, but allows for a fair comparison and code writing simplicity.
+Both the C++ and Rust implementations use dynamic dispatch to up-cast a type into an abstract interface at runtime. This is not a zero-cost abstraction, but allows for a fair comparison and code writing simplicity.
 
 For example, the types \texttt{NewtonForce} and \texttt{LennardJonesForce} both implement (or inherit, for the C++ codebase) the \texttt{Force} trait. For the simulation run, we convert both force implementations into a dynamic \texttt{Force} object. At the cost of losing all information on the underlying type, we get a black box of a model, capable of yielding the potential and force interaction for any two particles. The equivalent in C++ is achieved through inheritance and virtual functions.
 
@@ -911,7 +913,51 @@ The beauty of this implementation is, that the generic parameter \texttt{C} in t
 
 The simulation implements, in theory, the \texttt{ParticleContainer} trait. However, since Rust treats the same type with distinct generics as distinct types, a special \texttt{SimulationTrait} is created. The \texttt{FileDefinition} from the I/O library then defines a conversion into a dynamic simulation. 
 
+\subsection{Direct Sum}
+
+The first algorithmic approach is the \texttt{DirectSum} implementation which uses an iteration over all particle pairs and serves as the base of other implementations, which attempt to accelerate this naive approach. The pairwise iterations can be seen below in Listings~\ref{code:rust-directsum-foreach-pairs} (Rust) and~\ref{code:cpp-directsum-foreach-pairs} (C++).
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={The particle-pairwise loop of the \texttt{DirectSum} struct in Rust}, label=code:rust-directsum-foreach-pairs]
+fn for_each_particle_pairs_mut(&mut self, f: &(dyn Fn(&mut Particle, &Particle) + Send + Sync)) {
+    let count = self.particle_count();
+
+    for i in 0..count {
+        // newtons third law: skip same pairs
+        for j in (i + 1)..count {
+            let (left, right) = self.particles.split_at_mut(j);
+            f(&mut left[i], &right[0]);
+            f(&mut right[0], &left[i]);
+        }
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[style=eclipse-cpp, language=C++, basicstyle=\ttfamily\small, caption={The particle-pairwise loop of the \texttt{DirectSum} struct in C++}, label=code:cpp-directsum-foreach-pairs]
+void for_each_particle_pairs_mut(std::function<void(Particle &, const Particle &)> callback) override
+{
+    for (size_t i = 0; i < particles_vec.size(); ++i)
+    {
+        for (size_t j = i + 1; j < particles_vec.size(); ++j)
+        {
+            auto& p1 = particles_vec[i];
+            auto& p2 = particles_vec[j];
+            callback(p1, p2);
+            callback(p2, p1);
+        }
+    }
+}
+\end{lstlisting}
+
+In C++, the naive approach is fairly trivial to implement. In Rust, we arrive at a problem caused by borrowing rules: Since borrowing one element of a vector borrows the entire vector (and borrowing one element of vector mutably borrows the entire vector mutably), we can not borrow two particles with one borrowed mutably, without breaking the safety rules.
+
+This is because since the iterator uses a dynamic parameter -- the loop index -- the static analyzer is not able to verify wether the same particle value is borrowed mutably, which could cause a class of bugs Rust tries to prevent.
+
+The solution is a method provided by Rusts' vector type, \texttt{split\_at\_mut}, which borrows the vector as two slices, split at a provided index. This allows us to borrow one particle mutably, and one immutably from the same structure.
+
 \subsection{Linked Cells}
+
+The second algorithmic approach is the \texttt{LinkedCells} implementation with cell management (chunks) to reduce computational workload.
 
 You can see the definitions for the \texttt{LinkedCells} struct in Listings~\ref{code:rust-linked-cells-definition} (Rust) and~\ref{code:cpp-linked-cells-definition} (C++).
 
@@ -960,22 +1006,88 @@ void for_each_particles(std::function<void(const Particle &)> callback) const ov
 }
 \end{lstlisting}
 
-Both implementations follow a similar structure of taking the callback argument as a dynamic (virtual) object with the C++ \texttt{std::function} interface being equivalent to the \texttt{Fn} trait in Rust. The iteration over cells is also trivial, as well as passing the callback recursively into the cells' \texttt{for\_each\_particles} invocation.
+Both implementations follow a similar structure of taking the callback argument as a dynamic (virtual) object with the C++ \texttt{std::function} interface being equivalent to the \texttt{Fn} trait in Rust. The callback also implements the traits \texttt{Send} and \texttt{Sync}, which will be relevant in the parallelization section later. The iteration over cells is also trivial, as well as passing the callback recursively into the cells' \texttt{for\_each\_particles} invocation.
 
 \subsection{Parallelization}
 
-The third algorithmic approach is the \texttt{DirectSum} implementation with parallel execution on the pairwise loop.
+The third algorithmic approach is the \texttt{DirectSum} implementation with parallel execution on the pairwise loop, which accounts for the majority of the total runtime (whose exact percentage depends on the amount of particles, with higher particle counts reacheing over $90\%$ of the runtime).
 
-todo
+In C++ this is done with the OpenMP pragma invocation \texttt{omp parallel for} on the ``outer loop'' of the pairwise iteration. For Rust, we use Rayon, a parallelization library similar in usage to OpenMP (OMP). Both approachs can be seen in Listings~\ref{code:rust-parallel-foreach} (Rayon, Rust) and~\ref{code:cpp-parallel-foreach} (OpenMP, C++).
 
-Parallelization is only applied to the pairwise loop, which accounts for the majority of the total runtime (whose exact percentage depends on the amount of particles, with higher particle counts it reaches over $90\%$ of the runtime). In C++ this is done with the OpenMP pragma invocation \texttt{omp parallel for} on the ``outer loop'' of the pairwise iteration, at the cost of removing Newtons' Third Law optimization. This means that the sequential implementation should outperform the parallel implementation at 1 thread.
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={The definition of the \texttt{LinkedCells::for\_each\_particle\_pairs\_mut} method in Rust.}, label=code:rust-parallel-foreach]
+fn for_each_particle_pairs_mut(
+    &mut self,
+    f: &(dyn Fn(&mut Particle, &Particle) + Send + Sync),
+) {
+    let count = self.particle_count();
+    let particles = PointerWrapper(self.particles.as_mut_ptr());
 
+    // in c++ we parallelized outer loop too
+    (0..count).into_par_iter().for_each(|i| unsafe {
+        let mut left = &mut *particles.at(i);
 
-Rayon is a parallelization library similar in usage to OpenMP (OMP). Instead of pragmas (macros), Rayon uses Rust Traits to implement parallelization behaviour for iterators. The comparison is fair since both libraries are highly popular within their language, but at the same time unfair due to the following technical reason:
+        for j in 0..count {
+            if i == j { continue; }
+            let right = &*particles.at(j);
+            f(&mut left, &right);
+        }
+    });
+}
+\end{lstlisting}
 
-OpenMP provides the developer with a low-level interface to map the program threads to the hardware directly, while Rayon is a high-level parallelism library which implements optimizations like work stealing~\cite{rust-rayon-work-stealing}. Rayon is capable of dynamically deciding how to balance the workload to make multithreading ``profitable''. This is completely opposite to OpenMP's approach of giving the developer more tools and freedom.
+\begin{lstlisting}[style=eclipse-cpp, language=C++, basicstyle=\ttfamily\small, caption={The definition of the \texttt{LinkedCells::for\_each\_particle\_pairs\_mut} method in C++}, label=code:cpp-parallel-foreach]
+void for_each_particle_pairs_mut(std::function<void(Particle &, const Particle &)> callback) override
+{
+#pragma omp parallel for
+    for (size_t i = 0; i < particles_vec.size(); ++i)
+    {
+        auto& left = particles_vec[i];
 
-There's been some studies in this particular field 7 years ago when Rayon was less mature than today~\cite{rust-rayon-carnegie-mellon-university} which had multiple different insights. One insight was that for matrix multiplication, OpenMP performed best at 8 threads and had a performance decline afterwards, while Rayon performed better for higher thread counts. We will observe similar artefacts later in this thesis.
+        for (size_t j = 0; j < particles_vec.size(); ++j)
+        {
+            if (i == j) continue; // skip self-interaction
+            const auto& right = particles_vec[j];
+            callback(left, right);
+        }
+    }
+}
+\end{lstlisting}
+
+Instead of pragmas (macros), Rayon uses Rust Traits to implement parallelization behaviour for iterators as seen with the \texttt{into\_par\_iter()} method above, which converts any iterable (data structure, range, etc.) into a parallel iterator.
+
+There is not much to comment about the approach usage, however we had a problem in the Rust implementation due to the borrowing rules. The final approach uses unsafe code to allow parallel access on the particles struct, which will be described in the next paragraph.
+
+\subsubsection{Unsafe Rust in the Parallel Approach}
+
+In~\autoref{code:rust-parallel-foreach} we see the keyword \texttt{unsafe} used around the pairwise iteration. This is because Rust cannot statically analyze the safety of the scope which has mutable and non-mutable access of the particles data structure accross threads.
+
+What we do in the final implementation is converting the particles vector to a pointer of particles by borrowing it once. The problem with raw pointers however, is that passing them is not thread safe. What we do is create a wrapper struct \texttt{PointerWrapper} (see~\ref{code:rust-parallel-wrapper}) and assume it to be thread safe by implementing the unsafe traits \texttt{Send} and \texttt{Sync}.
+
+\vspace{0.5em}
+\begin{lstlisting}[style=eclipse-rust, language=Rust, basicstyle=\ttfamily\small, caption={The definition of the \texttt{PointerWrapper} struct in Rust.}, label=code:rust-parallel-wrapper]
+pub struct PointerWrapper<T>(*mut T);
+unsafe impl<T> Sync for PointerWrapper<T> {}
+unsafe impl<T> Send for PointerWrapper<T> {}
+
+impl<T> PointerWrapper<T> {
+    unsafe fn at(&self, rhs: usize) -> *mut T {
+        unsafe { self.0.add(rhs) }
+    }
+}
+\end{lstlisting}
+
+In terms of developer experience and usability, OpenMP in C++ scores better compared to Rust, as the workaround with thread safe pointers involves unsafe code and additional abstractions. Rust also loses on the compile-time statically analyzed safety with this approach.
+
+\subsubsection{Fairness of the Comparison}
+
+The comparison is fair since both libraries are highly popular within their language, but at the same time unfair due to the following technical reason:
+
+OpenMP provides the developer with a low-level interface to map the program threads to the hardware directly, while Rayon is a high-level parallelism library which implements optimizations like work stealing~\cite{rust-rayon-work-stealing}, making Rayon capable of dynamically deciding how to balance the workload to make multithreading ``more profitable''. This is completely opposite to OpenMP's approach of giving the developer more tools and freedom.
+
+There's been some studies in this particular field 7 years ago when Rayon was less mature than nowadays~\cite{rust-rayon-carnegie-mellon-university} showcasing multiple different insights, in part even contradicting to the results presented by this thesis.
+
+% One insight was that for matrix multiplication, OpenMP performed best at 8 threads and had a performance decline afterwards, while Rayon performed better for higher thread counts. We will observe similar artefacts later in this thesis.
 
 \section{Benchmarking CI}
 
