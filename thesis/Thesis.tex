@@ -1698,7 +1698,7 @@ In the parallelized DirectSum implementation for both Rust and C++, we only para
 
 For Rust, we use Rayon as the parallelization library, and for C++ we use OMP. The thread count was set with environment variables \texttt{RAYON\_NUM\_THREADS} and \texttt{OMP\_NUM\_THREADS}.
 
-The first artefact we observe is that there are specific thread counts where OMP performance drops. On the machine where the benchmarks were run, there was a 1066ms drop between thread counts 8 and 9, and a 1508ms drop between thread counts 20 and 21. A similar artefact has also been observed by other studies~\cite{rust-rayon-carnegie-mellon-university}.
+The first artefact we observe in the benchmarks (see~\ref{fig:benchmark-parallel}) is that there are specific thread counts where OMP performance drops. On the machine where the benchmarks were run, there was a 1066ms drop between thread counts 8 and 9, and a 1508ms drop between thread counts 20 and 21. A similar artefact has also been observed by other studies~\cite{rust-rayon-carnegie-mellon-university}.
 
 The artefacts can generally be explained with OMP giving the developer more low-level control over thread-to-hardware assignments, and Rayon taking a more high-level approach. The performance decline at 21 threads can be explained with operating system overhead: When there are more threads requested than resources available, the scheduling overhead of dispatching threads starts to affect measurements.
 
