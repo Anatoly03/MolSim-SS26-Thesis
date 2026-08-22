@@ -2040,7 +2040,7 @@ The results comparing Rayon and OpenMP with the Close Cores configuration on the
 
 The results in~\autoref{fig:benchmark-parallel-omp-modi-coolmuc} (Intel(R) Core(TM) series processor) differ from what we measured in~\autoref{fig:benchmark-parallel} (Intel(R) Xeon(R) platinum series processor).
 
-While Rust seems to outperform C++ for very few threads and occasionally between 21 and 32 threads, overall C++ seems to win the performance contest. For interested readers, we will some more CoolMUC benchmarks in appendix~\ref{section:coolmuc-parallel} and~\ref{section:strong-scaling}, including the same diagrams in logarithmic scale.
+C++ marginally wins the performance contest on the supercomputer. For interested readers, we will some more CoolMUC benchmarks in appendix~\ref{section:coolmuc-parallel} and~\ref{section:strong-scaling}, including the same diagrams in logarithmic scale.
 
 % Vielleicht mal als log scale probieren? Das Ergebnis könnte schon interessant sein, gerade bei hoher Thread Zahl.
 % Gingen die Messungen nicht sogar noch höher?
@@ -2982,8 +2982,9 @@ The diagrams in the main thesis always enforce linear scaling to ensure a smooth
         ylabel={Speedup},
         xmode=log,
         ymode=log,
-        xtick={1, 2, 4, 8, 16, 32, 50},
-        ytick={1, 2, 4, 8, 16},
+        log ticks with fixed point,
+        xtick={1, 2, 4, 8, 16, 32, 64, 128},
+        ytick={1, 2, 4, 8, 16, 32, 64},
         scaled x ticks=false,  
         scaled y ticks=false,
         ymajorgrids=true, 
@@ -2997,7 +2998,7 @@ The diagrams in the main thesis always enforce linear scaling to ensure a smooth
         color=black,
         dashed,
         line width=1pt,
-        domain=1:50,
+        domain=1:128,
         samples=2
         ]
         {x};
@@ -3058,6 +3059,84 @@ The diagrams in the main thesis always enforce linear scaling to ensure a smooth
         48 1010.9760791
         49 927.518807
         50 940.458122
+        51 926.8128506
+        52 903.7459805
+        53 923.1696443
+        54 899.7259134
+        55 893.7013604
+        56 863.5280385
+        57 1057.7903489
+        58 1001.0483442000001
+        59 1014.7693988999999
+        60 1022.0311005
+        61 1011.6032607999999
+        62 993.1362617999999
+        63 993.0261232
+        64 976.9509101
+        65 989.2743633
+        66 996.2158036000001
+        67 955.8567873
+        68 977.6921559
+        69 957.1092718
+        70 973.7085154
+        71 953.1718254
+        72 966.3824191
+        73 941.5255678999999
+        74 949.7056285
+        75 936.6357017
+        76 926.1083922
+        77 958.5420627000001
+        78 934.6570295
+        79 924.5385229
+        80 937.0914348
+        81 933.7183282999999
+        82 916.1338023999999
+        83 933.9025952000001
+        84 910.3721972000001
+        85 912.7288031
+        86 913.4369685
+        87 904.6023941
+        88 900.9628167000001
+        89 894.3534302
+        90 894.9317451000001
+        91 895.7653818
+        92 901.3578276000001
+        93 905.7139849
+        94 891.4418148
+        95 884.8703907
+        96 895.9013143
+        97 898.4602017000001
+        98 890.3100098
+        99 879.0780762999999
+        100 881.0684387
+        101 880.8707909
+        102 876.8526091
+        103 883.4489113
+        104 879.6763721
+        105 881.8991575
+        106 878.6323475
+        107 867.1580855
+        108 866.01619
+        109 867.0484672
+        110 870.5163153
+        111 855.7924813999999
+        112 852.4019156
+        113 871.7200471
+        114 873.1673257
+        115 866.9732787
+        116 849.992698
+        117 858.7968122000001
+        118 868.793128
+        119 867.5795574
+        120 851.509807
+        121 855.5221723999999
+        122 849.2089031
+        123 850.4369045
+        124 858.519568
+        125 861.42906491
+        126 853.04582229999991
+        127 852.7873262999999
+        128 846.329577
     };
     \addlegendentry{C++ [OMP]}
 
@@ -3116,14 +3195,100 @@ The diagrams in the main thesis always enforce linear scaling to ensure a smooth
         48 1282.5135757
         49 1256.263048
         50 1203.0204662
+        51 1266.2005294
+        52 1192.3244985
+        53 1223.9495724
+        54 1207.5320912
+        55 1195.7734677
+        56 1220.2546539
+        57 1148.0309442
+        58 1253.5134303
+        59 1156.0356675
+        60 1154.1242655
+        61 1070.7242497
+        62 1167.4435684
+        63 1097.9268997000001
+        64 1177.6349321
+        65 1215.7145343
+        66 1003.6236381
+        67 1110.619346
+        68 1139.8027805
+        69 1094.5091522999999
+        70 1107.4318697
+        71 1104.2282077
+        72 1063.8969934
+        73 1110.7947421
+        74 1039.9344687
+        75 1052.4288571
+        76 1068.5707645
+        77 1034.2153396
+        78 1052.5638064
+        79 1063.3715402999999
+        80 1019.3012782999999
+        81 1057.9099122999999
+        82 1066.5770514
+        83 1070.6673405
+        84 1094.5751027000001
+        85 1081.8640900999999
+        86 1018.3035111
+        87 1058.0812955
+        88 1066.6474874
+        89 1088.4279631
+        90 1102.6910433
+        91 1067.6760066
+        92 1080.5174229000002
+        93 1038.7197307000001
+        94 1072.4262027
+        95 1080.5242297
+        96 1088.8504215
+        97 1158.070646
+        98 1093.5802784
+        99 1084.1155089000001
+        100 1089.7675582
+        101 1083.6654535
+        102 1079.7728267
+        103 1111.0310269000001
+        104 1114.965051
+        105 1106.5069161
+        106 1078.6752067
+        107 1072.373945
+        108 1147.4488359000002
+        109 1096.4685628
+        110 1130.4743819
+        111 1063.7737386000001
+        112 1064.4466346
+        113 1071.1110732
+        114 1112.0980325
+        115 1095.4586972
+        116 1092.1813879000001
+        117 1083.9159155
+        118 1156.5518715
+        119 1176.7893393
+        120 1106.575355
+        121 1126.0276405999998
+        122 1078.0251254000002
+        123 1124.5545313
+        124 1109.4468612
+        125 1080.0739859
+        126 1167.2435134
+        127 1102.9891716
+        128 1140.596523
     };
     \addlegendentry{Rust [Rayon]}
 
+    % \draw[dashed, red, line width=0.5pt] (axis cs:50,0) -- (axis cs:50,40);
+
     \end{axis}
 \end{tikzpicture}
-\caption{CoolMUC Strong Scaling Benchmark Results comparing Rust and C++}
+\caption{CoolMUC Logarithmic Strong Scaling Benchmark Results}
 \label{fig:benchmark-strong-scaling}
 \end{figure}
+
+In~\autoref{fig:benchmark-strong-scaling} we can see the C++ implementation with Close Cores configuration benchmarked against Rust in a logarithmic strong scaling diagram. The dotted line shows the theoretically achievable speedup under the assumption that $k$ threads will speed up the program by a factor of $k$.
+
+For computer algorithms this is almost never possible because the parallelization overhead and the sequential part of the program will outweigh the benefits of further threads as the execution time of the parallel code part approaches zero.
+
+At 40 threads we can also observe the performance drop for the C++ implementation. This is by design of the supercluster CoolMUC4: It has 2 sockets, each with 40 cores. When we use more than 40 cores, the program no longer profits from cache locality as some communication is done through the slower inter-socket bus system. Despite the performance drop, OpenMP (C++) still shows a higher speedup compared to Rayon (Rust), reaching at least a speedup of 16, while Rust stagnates at a speedup of 11.
 
 % \chapter{Other}
 
