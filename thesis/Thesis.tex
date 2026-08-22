@@ -1407,6 +1407,7 @@ A large absolute outlier occured with Rust at the 310 steps benchmark, with a me
 
 We can therefore derive the following claim in regards to the sequential performance ratio: Rust DirectSum completes in $86.6\%$ of the time taken by the C++ DirectSum implementation, with a speedup of $15.5\%$.
 
+\newpage
 \begin{figure}[h]
 \begin{tikzpicture}
     \begin{axis}[
@@ -1715,7 +1716,7 @@ To understand the artefact at 8 to 9 threads, we will measure OMP performance wi
 
 % At 2 threads, Rust parallel DirectSum completes in $88.5\%$ of the time taken by the C++ parallel DirectSum implementation, with a speedup of $22.6\%$. At 8 threads, Rust parallel DirectSum completes in $81.6\%$ of the time taken by the C++ parallel DirectSum implementation, with a speedup of $13\%$.
 
-% \newpage
+\newpage
 \begin{figure}[!htb]
 \begin{tikzpicture}
     \begin{axis}[
@@ -2035,10 +2036,10 @@ The results comparing Rayon and OpenMP with the Close Cores configuration on the
     \end{axis}
 \end{tikzpicture}
 \caption{CoolMUC Benchmark Results comparing Rust and C++}
-\label{fig:benchmark-parallel-omp-modi-coolmuc}
+\label{fig:benchmark-parallel-rust-cpp-coolmuc}
 \end{figure}
 
-The results in~\autoref{fig:benchmark-parallel-omp-modi-coolmuc} (Intel(R) Core(TM) series processor) differ from what we measured in~\autoref{fig:benchmark-parallel} (Intel(R) Xeon(R) platinum series processor).
+The results in~\autoref{fig:benchmark-parallel-rust-cpp-coolmuc} (Intel(R) Core(TM) series processor) differ from what we measured in~\autoref{fig:benchmark-parallel} (Intel(R) Xeon(R) platinum series processor).
 
 C++ marginally wins the performance contest on the supercomputer. For interested readers, we will some more CoolMUC benchmarks in appendix~\ref{section:coolmuc-parallel} and~\ref{section:strong-scaling}, including the same diagrams in logarithmic scale.
 
