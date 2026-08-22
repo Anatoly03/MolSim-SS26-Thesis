@@ -2029,7 +2029,6 @@ The results comparing Rayon and OpenMP with the Close Cores configuration on the
             (48, 1282.5135757)
             (49, 1256.263048)
             (50, 1203.0204662)
-
         };
 
     \legend{C++ [OMP], Rust [Rayon]}
@@ -2041,7 +2040,7 @@ The results comparing Rayon and OpenMP with the Close Cores configuration on the
 
 The results in~\autoref{fig:benchmark-parallel-omp-modi-coolmuc} (Intel(R) Core(TM) series processor) differ from what we measured in~\autoref{fig:benchmark-parallel} (Intel(R) Xeon(R) platinum series processor).
 
-While Rust seems to outperform C++ for very few threads and occasionally between 21 and 32 threads, overall C++ seems to win the performance contest. For interested readers, we will some more CoolMUC benchmarks in appendix~\ref{section:coolmuc-parallel}.
+While Rust seems to outperform C++ for very few threads and occasionally between 21 and 32 threads, overall C++ seems to win the performance contest. For interested readers, we will some more CoolMUC benchmarks in appendix~\ref{section:coolmuc-parallel} and~\ref{section:strong-scaling}, including the same diagrams in logarithmic scale.
 
 % Vielleicht mal als log scale probieren? Das Ergebnis könnte schon interessant sein, gerade bei hoher Thread Zahl.
 % Gingen die Messungen nicht sogar noch höher?
@@ -2969,6 +2968,162 @@ On CoolMUC4, sequential code performs slower than on a high-end consumer CPU, as
 However as it turns out, the Close Threads configuration performs poorly even on CoolMUC. This is because the CPU used on the supercomputer also makes use of Intel(R) Hyper-Threading Technology, with a pair of cache-sharing threads per core.
 
 % Not seen in the graph, but still benchmarked were Close- and Spread Sockets. Spread sockets (computing on different processors) performed 
+
+\section{Strong Scaling}\label{section:strong-scaling}
+
+The diagrams in the main thesis always enforce linear scaling to ensure a smooth thesis narrative. In this section we will take a look at the theoretical speed up of the parallel approaches in logarithmic, strong-scaling diagrams.
+
+\begin{figure}[!htb]
+\begin{tikzpicture}
+    \begin{axis}[
+        width=0.7\textwidth,  
+        height=0.3\textheight,
+        xlabel={Threads},
+        ylabel={Speedup},
+        xmode=log,
+        ymode=log,
+        xtick={1, 2, 4, 8, 16, 32, 50},
+        ytick={1, 2, 4, 8, 16},
+        scaled x ticks=false,  
+        scaled y ticks=false,
+        ymajorgrids=true, 
+        grid style=dashed,  
+        x tick label style={/pgf/number format/.cd, 1000 sep={}},
+        legend style={at={(0.02,0.98)},anchor=north west},
+    ]
+
+    % Perfect scaling reference line (y = x)
+    \addplot[
+        color=black,
+        dashed,
+        line width=1pt,
+        domain=1:50,
+        samples=2
+        ]
+        {x};
+    \addlegendentry{Perfect Scaling}
+
+    % C++ [OMP] - Dynamic Speedup Calculation
+    \addplot[
+        color=blue,
+        line width=1pt,
+    ] table[y expr={13425.672799200001 / \thisrowno{1}}] {
+        1 13425.672799200001
+        2 7034.6839787
+        3 4844.9483129
+        4 3774.5938616
+        5 3249.2982004
+        6 2812.3093775
+        7 2392.4670311
+        8 2164.31544
+        9 2053.1635998
+        10 1828.5429732999999
+        11 1750.8792173
+        12 1674.0708989000002
+        13 1617.8227607000001
+        14 1569.2232935999998
+        15 1766.634308
+        16 1449.1998526
+        17 1512.0131551
+        18 1258.4233966
+        19 1442.2110962000002
+        20 1598.5652562999999
+        21 1583.1422562999999
+        22 1542.2815818
+        23 1541.6771827999999
+        24 1471.806677
+        25 1446.9715864000002
+        26 1443.6229380999998
+        27 1374.0940407
+        28 1310.43283
+        29 1298.6067865
+        30 1307.7247138
+        31 1240.0514814
+        32 1240.7565235
+        33 1227.2677263
+        34 1189.4595444000001
+        35 1162.1068534
+        36 1147.7585795999998
+        37 1102.4131797
+        38 1081.9487092
+        39 1086.2546063
+        40 1078.6872185999998
+        41 1050.5861437
+        42 1042.8500787
+        43 1020.7516511
+        44 998.1856703
+        45 984.8835952999999
+        46 969.4272746
+        47 963.0503559
+        48 1010.9760791
+        49 927.518807
+        50 940.458122
+    };
+    \addlegendentry{C++ [OMP]}
+
+    % Rust [Rayon] - Dynamic Speedup Calculation
+    \addplot[
+        color=Dandelion,
+        line width=1pt,
+    ] table[y expr={13126.9900866 / \thisrowno{1}}] {
+        1 13126.9900866
+        2 6956.8335481
+        3 5444.7835344
+        4 4122.7243184
+        5 3320.4654511999997
+        6 2899.433084
+        7 2626.301639
+        8 2395.0016119
+        9 2304.3158381999997
+        10 2147.6523565
+        11 1981.5979676
+        12 1760.8822602
+        13 2036.3254857
+        14 1741.8312989
+        15 1757.1796485999998
+        16 1745.9586909000002
+        17 1828.1608116
+        18 1746.0657904000002
+        19 1726.0758609000002
+        20 1605.6061617
+        21 1521.8977839000001
+        22 1528.0916497
+        23 1558.1568987
+        24 1585.0291087
+        25 1437.8486694
+        26 1362.0971075999998
+        27 1340.9091382000001
+        28 1394.5036589000001
+        29 1291.951804
+        30 1311.1052264
+        31 1162.8568192999999
+        32 1360.3232194000002
+        33 1437.2031067
+        34 1430.8800580999998
+        35 1222.5695621
+        36 1341.9797082
+        37 1323.9310564
+        38 1302.7964967999999
+        39 1213.9852830999998
+        40 1196.0717703
+        41 1220.9208787
+        42 1273.0652542999999
+        43 1224.0270466
+        44 1173.7135263
+        45 1224.6056300999999
+        46 1268.7242528
+        47 1237.9188979
+        48 1282.5135757
+        49 1256.263048
+        50 1203.0204662
+    };
+    \addlegendentry{Rust [Rayon]}
+
+    \end{axis}
+\end{tikzpicture}
+\caption{CoolMUC Strong Scaling Benchmark Results comparing Rust and C++}
+\label{fig:benchmark-strong-scaling}
+\end{figure}
 
 % \chapter{Other}
 
