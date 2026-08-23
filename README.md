@@ -5,9 +5,13 @@
 [![Rust Documentation](https://badges.ws/badge?icon=rust&value=Rustdoc)](https://anatoly03.github.io/MolSim-SS26-Thesis/moldyn_core/index.html)
 [![C++ Doxygen](https://badges.ws/badge?icon=c%2b%2b&value=Doxygen)](https://anatoly03.github.io/MolSim-SS26-Thesis/cpp/index.html)
 
-This project implements molecular dynamics simulations in C++ and Rust. The primary goal of this project is to look at the programming languages in terms of (developer experience of) program architecture design and comparative benchmarking. The secondary goal is to contribute to the TUM practical "Scientific Computing (PSE) Molekulardynamik" with a working Rust starter template.
+> **tl;dr Benchmark Result**: Rust can perform slightly faster than C++ in sequential code, however we used abstractions like dynamic dispatch and virtual functions in the programs' computationally expensive part.
+>
+> For parallelization, we compare Rayon against OpenMP. Rayon performs better in environments with background tasks due to the profit-oriented work-stealing high-level thread management, while OpenMP performs better in supercluster environment with static low-level thread distributions.
+>
+> Overall, Rust gives C++-level performance when it comes to computationally expensive software and is a viable alternative when memory safety is required.
 
-> **Benchmark Result**: For DirectSum implementation, Rust performs 15% faster than C++.
+This project implements molecular dynamics simulations in C++ and Rust. The primary goal of this project is to look at the programming languages in terms of (developer experience of) program architecture design and comparative benchmarking. The secondary goal is to contribute to the TUM practical "Scientific Computing (PSE) Molekulardynamik" with a working Rust starter template.
 
 - [`benchmark`](./benchmark/): [Unused] Various reports with `perf`
 - [`cpp-moldyn-cli`](./cpp-moldyn-cli/): C++ Executable Workspace
@@ -24,6 +28,15 @@ This project implements molecular dynamics simulations in C++ and Rust. The prim
 - [`template-rust`](./template-rust/): Rust Molecular Dynamics template (Rewrite)
 - [`test-equality`](./test-equality/): Custom Benchmark Runner, written in Rust, compiles and runs Rust and C++ and benchmarks execution time of binary
 - [`thesis`](./thesis/): Bachelors' thesis LaTeX source code.
+
+## Abstract
+
+> In the past decades, Rust has gained more admiration as a low-level, performant and memory-safe programming language, while C++ remains the dominant choice for high-performance computing in the academic field. This thesis presents empirical results by implementing three distinct algorithmic molecular dynamics approaches in both Rust and C++.
+> 
+> Both languages implement three different approaches in particle management and computation patterns, with DirectSum computing over all particle pairs in the hot loop, LinkedCells introducing a three-dimensional chunk system to reduce the overall workload, and DirectSumParallel using multi-threaded paradigms to accelerate computation.
+> 
+> This thesis aims to inform the decision of whether to adopt Rust in emerging software for performance-critical applications with high memory-safety requirements, showing that Rust can slightly outperform C++ in competitive environments.
+
 
 ## Building & Running Rust
 

@@ -177,7 +177,7 @@ My bestie Kasane Teto, who has not said a word but always morally supported me w
 \end{center}
 \vspace{1cm}
 
-In the past decades, Rust has gained more admiration as a low-level, performant and memory-safe programming language, while C++ remains the dominant choice for high-performance computing in the academic field. This thesis presents empirical results by implementing three distinct algorithmic molecular dynamics approaches in both Rust and C++.
+In the past decades, Rust has gained more admiration as a low-level, performant and memory-safe programming language, while C++ remains the dominant choice for high-performance computing in the academic field. This thesis presents empirical results by implementing molecular dynamics approaches in both Rust and C++.
 
 Both languages implement three different approaches in particle management and computation patterns, with DirectSum computing over all particle pairs in the hot loop, LinkedCells introducing a three-dimensional chunk system to reduce the overall workload, and DirectSumParallel using multi-threaded paradigms to accelerate computation.
 
@@ -193,7 +193,7 @@ This thesis aims to inform the decision of whether to adopt Rust in emerging sof
 \end{center}
 \vspace{1cm}
 
-In den letzten Jahrzehnten hat Rust zunehmend Anerkennung als eine systemnahe, performante und speichersichere Programmiersprache gewonnen, während C++ im akademischen Bereich weiterhin die dominante Sprache für Hochleistungsrechnungen ist. Diese Arbeit präsentiert empirische Ergebnisse, die auf der Implementierung von drei Ansätzen der Molekulardynamik in Rust und C++ basieren.
+In den letzten Jahrzehnten hat Rust zunehmend Anerkennung als eine systemnahe, performante und speichersichere Programmiersprache gewonnen, während C++ im akademischen Bereich weiterhin die dominante Sprache für Hochleistungsrechnungen ist. Diese Arbeit präsentiert empirische Ergebnisse, die auf der Implementierung in Rust und C++ basieren.
 
 Beide Sprachen implementieren jeweils drei unterschiedliche Ansätze zur Partikelverwaltung einer Simulation: DirectSum berechnet Interaktionen über alle Partikelpaare in der Hot-Loop, LinkedCells fügt ein dreidimensionales Zellsystem zur Reduzierung des gesamten Arbeitsaufwandes hinzu und DirectSumParallel nutzt Multithreading zur Beschleunigung der Berechnungen.
 
@@ -2043,6 +2043,8 @@ The results in~\autoref{fig:benchmark-parallel-rust-cpp-coolmuc} (Intel(R) Core(
 
 C++ marginally wins the performance contest on the supercomputer. For interested readers, we will some more CoolMUC benchmarks in appendix~\ref{section:coolmuc-parallel} and~\ref{section:strong-scaling}, including the same diagrams in logarithmic scale.
 
+The reason why C++ outperforms here is due to the fact that there are no background tasks on the superclusters compute nodes on which the benchmarks were run. As previously mentioned, unlike OpenMP which distributes the workload evenly on all threads, while Rayon is designed for irregular workloads, where threads finish at different times~\cite{rust-rayon-work-stealing}. On a supercluster with no external interference, the thread scheduling overhead becomes a net negative.
+
 % Vielleicht mal als log scale probieren? Das Ergebnis könnte schon interessant sein, gerade bei hoher Thread Zahl.
 % Gingen die Messungen nicht sogar noch höher?
 
@@ -2059,7 +2061,9 @@ The parallelization implementations are also not comparable due to different thr
 The conclusion of the thesis suggests that Rust offers the following.
 
 \begin{description}
-    \item[Competitive Performance] The sequential benchmarks show that Rust is in general a bit faster, with some exceptional implementations outperforming C++ by up to $25\%$. The parallel performance seems to be processor-dependent.
+    \item[Competitive Performance] The sequential benchmarks show that Rust is in general at least as fast as C++, with some exceptional implementations outperforming C++ by up to $25\%$.
+    
+    The parallel performance depends on the scheduling model rather than the choice of language, with OpenMP using static scheduling giving better results in an environment where you are the only program running and Rayon being more suitable in environments with background tasks.
 
     \item[Memory Safety] The type system and ownership model of Rust is a significant advantage, with guarantees on memory safety reducing the cognitive overhead in comparison to C++, where the developer is themselves responsible for memory allocation and freeing.
 
@@ -3285,13 +3289,109 @@ The diagrams in the main thesis always enforce linear scaling to ensure a smooth
 \label{fig:benchmark-strong-scaling}
 \end{figure}
 
-In~\autoref{fig:benchmark-strong-scaling} we can see the C++ implementation with Close Cores configuration benchmarked against Rust in a logarithmic strong scaling diagram. The dotted line shows the theoretically achievable speedup under the assumption that $k$ threads will speed up the program by a factor of $k$.
+In~\autoref{fig:benchmark-strong-scaling} we can see the C++ implementation with Close Cores configuration benchmarked on the supercluster against Rust in a logarithmic strong scaling diagram (equal to \autoref{fig:benchmark-parallel-omp-modi} but in logarithmic scale). The dotted line shows the theoretically achievable speedup under the assumption that $k$ threads will speed up the program by a factor of $k$.
 
 For computer algorithms this is almost never possible because the parallelization overhead and the sequential part of the program will outweigh the benefits of further threads as the execution time of the parallel code part approaches zero.
 
 At 40 threads we can also observe the performance drop for the C++ implementation. This is by design of the supercluster CoolMUC4: It has 2 sockets, each with 40 cores. When we use more than 40 cores, the program no longer profits from cache locality as some communication is done through the slower inter-socket bus system. Despite the performance drop, OpenMP (C++) still shows a higher speedup compared to Rayon (Rust), reaching at least a speedup of 16, while Rust stagnates at a speedup of 11.
 
-% \chapter{Other}
+\begin{figure}[!htb]
+\begin{tikzpicture}
+    \begin{axis}[
+        width=0.7\textwidth,  
+        height=0.3\textheight,
+        xlabel={Threads},
+        ylabel={Speedup},
+        xmode=log,
+        ymode=log,
+        log ticks with fixed point,
+        xtick={1, 2, 4, 8, 16, 20},
+        ytick={1, 2, 4, 8, 16, 20},
+        scaled x ticks=false,  
+        scaled y ticks=false,
+        ymajorgrids=true, 
+        grid style=dashed,  
+        x tick label style={/pgf/number format/.cd, 1000 sep={}},
+        legend style={at={(0.02,0.98)},anchor=north west},
+    ]
+
+    % Perfect scaling reference line (y = x)
+    \addplot[
+        color=black,
+        dashed,
+        line width=1pt,
+        domain=1:20,
+        samples=2
+        ]
+        {x};
+    \addlegendentry{Perfect Scaling}
+
+    % C++ [OMP] - Dynamic Speedup Calculation
+    \addplot[
+        color=blue,
+        line width=1pt,
+    ] table[y expr={10549.44102935 / \thisrowno{1}}] {
+        1 10549.44102935
+        2 5571.0913138000005
+        3 3828.3011744
+        4 2959.53039775
+        5 2453.5616619
+        6 2086.83681485
+        7 1872.2937152
+        8 1776.9810624000002
+        9 2842.05725815
+        10 2579.0881229
+        11 2237.2077405
+        12 2098.12427635
+        13 1945.8673943499998
+        14 1834.7854885
+        15 1737.7995877
+        16 1635.72036285
+        17 1548.6944922
+        18 1484.56652175
+        19 1410.4665424000002
+        20 1378.5975749000002
+    };
+    \addlegendentry{C++ [OMP]}
+
+    % Rust [Rayon] - Dynamic Speedup Calculation
+    \addplot[
+        color=Dandelion,
+        line width=1pt,
+    ] table[y expr={9658.2842576 / \thisrowno{1}}] {
+        1 9658.2842576
+        2 4928.910334
+        3 3444.8674518000003
+        4 2587.9484446
+        5 2123.67822905
+        6 1860.88941835
+        7 1599.865377
+        8 1449.7257015
+        9 1346.69641615
+        10 1280.6119758
+        11 1219.16149855
+        12 1134.953047
+        13 1137.1112062
+        14 1124.4028151500002
+        15 1138.0777120999999
+        16 1138.08137515
+        17 1124.48505445
+        18 1124.25393865
+        19 1131.8717731
+        20 1134.6383659
+    };
+    \addlegendentry{Rust [Rayon]}
+
+    % \draw[dashed, red, line width=0.5pt] (axis cs:50,0) -- (axis cs:50,40);
+
+    \end{axis}
+\end{tikzpicture}
+\caption{Logarithmic Strong Scaling Benchmark Results}
+\label{fig:benchmark-strong-scaling-local-pc}
+\end{figure}
+
+In~\autoref{fig:benchmark-strong-scaling-local-pc} we can see the C++ implementation benchmarked against Rust in a logarithmic strong scaling diagram (equal to \autoref{fig:benchmark-parallel} but in logarithmic scale) on the consumer PC. Both figures together visualize that the speedup with OpenMP is higher on the supercluster, but Rayon performs better with background tasks.
+
 
 % \section{Hardware Topology}
 
