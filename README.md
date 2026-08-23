@@ -31,12 +31,11 @@ This project implements molecular dynamics simulations in C++ and Rust. The prim
 
 ## Abstract
 
-> In the past decades, Rust has gained more admiration as a low-level, performant and memory-safe programming language, while C++ remains the dominant choice for high-performance computing in the academic field. This thesis presents empirical results by implementing three distinct algorithmic molecular dynamics approaches in both Rust and C++.
+> In the past decades, Rust has gained more admiration as a low-level, performant and memory-safe programming language, while C++ remains the dominant choice for high-performance computing in the academic field. This thesis presents empirical results by implementing molecular dynamics approaches in both Rust and C++.
 > 
 > Both languages implement three different approaches in particle management and computation patterns, with DirectSum computing over all particle pairs in the hot loop, LinkedCells introducing a three-dimensional chunk system to reduce the overall workload, and DirectSumParallel using multi-threaded paradigms to accelerate computation.
 > 
 > This thesis aims to inform the decision of whether to adopt Rust in emerging software for performance-critical applications with high memory-safety requirements, showing that Rust can slightly outperform C++ in competitive environments.
-
 
 ## Building & Running Rust
 
