@@ -314,6 +314,9 @@ In 2024, Google published a security blogpost on making their software memory-sa
 This thesis aims to dive deeper into a more direct and technical comparison between Rust and C++ by writing a molecular dynamics simulation program in both programming languages, analyzing the differences in usability and benchmark performance.
 
 \chapter{Comparing Rust against C++}
+
+This chapter compares the Rust Programming Language and provided tooling based on the book ``The Rust Programming Language'' by Steve Klabnik, Carol Nichols, and Chris Krycho, with contributions from the Rust Community~\cite{rust-book} and compares the programming patterns in Rust against C++.
+
 \section{The Rust Ecosystem}
 
 Before diving into the syntax and the defining elements of the Rust Programming Language, this section will give a brief overview over the tooling and console applications provided by Cargo, the Rust Package Manager.
@@ -588,11 +591,13 @@ Most of the physics equations and concepts presented in this section are based o
 
 \section{Overview of the Physics System}
 
-We are given the three-dimensional simulation state ${\mathcal S} = (\mathcal P, t_c, t_e, \delta, U)$ where $\mathcal P$ is a set of particles $p_i \in \mathcal P$, $t_c \in \mathbb R$ is the current time, $t_e \in \mathbb R$ is the total (or ``end'') time, $\delta \in \mathbb R$ the delta time per simulation step and $U$ the potential evaluation function $(p_i, p_j) \mapsto \mathbb R$. The total time $t_e$ specifies the overall physical duration of the simulation and $\delta$ the precision of the simulation. 
+We are given the simulation state ${\mathcal S} = (\mathcal P, t_c, t_e, \delta, U)$ where $\mathcal P$ is a set of particles $p_i \in \mathcal P\\\forall i \in \mathbb N$ in three-dimensional space and $U$ the potential evaluation function $(p_i, p_j) \mapsto \mathbb R$. 
+
+The current time $t_c \in \mathbb R$ specifies the physical duration of the current timestep, the total simulation time $t_e \in \mathbb R$ sets the overall physical duration of the simulation and the delta time $\delta \in \mathbb R$ the precision of the simulation. 
 
 Furthermore, a particle $p_i$ is the tuple $p_i = (x_i, v_i, f_i, m_i)$ with $x_i \in {\mathbb R}^3$ representing the position of the particle, $v_i \in {\mathbb R}^3$  velocity, $f_i \in {\mathbb R}^3$ its force,
 % $o_i \in {\mathbb R}^3$ its force in the previous time step (old force) 
-and $m_i \in \mathbb R$ its mass. We also declare the notation $p_i^k$ as the particle $p_i$ at time step $k$ and ${\mathcal S}^k$ as the simulation configuration at time step $k$.
+and $m_i \in \mathbb R$ its mass. We also declare the notation $p_i^k$ as the particle $p_i$ at time step $k$ and ${\mathcal S}^k$ as the simulation state at time step $k$.
 
 The goal of the physics system is to create a function ``\texttt{tick}'' which applies physically correct behaviour every simulation step for an initial configuration ${\mathcal S}^0$ as seen below in Equation 3.1.
 
@@ -619,7 +624,9 @@ v_{t+1} := \left(f_i^t + f_i^{t-1}\right) \cdot \left(\frac{\delta}{2m_i}\right)
 \label{pipeline-update-velocity}
 \end{align}
 
-Note that in Equation 3.3 we rely on the force from a previous time step. Algorithmically this is achieved by storing the delayed force (or ``old force'') in the particle tuple.
+Note that in Equation 3.3 we rely on the force from a previous time step. Algorithmically this is achieved by storing the delayed force
+% (or ``old force'')
+in the particle tuple.
 
 \section{Force Interface}
 
@@ -633,7 +640,7 @@ U_\text{N} := - G \cdot \frac{M}{r}
 The Newton potential uses the gravitational constant $G = 1$, the particle mass product $M = m_i \cdot m_j$ and the scalar distance $r = |p_i - p_j|$ between the two particles $p_i$ and $p_j$. The force is proportional to the product of the particle masses and inversely proportional to the distance.
 
 \begin{align}
-U_\text{LJ} := 4 \cdot \epsilon \cdot \left[{{\left(\frac{\sigma}{r}\right)}^{12}} - {{\left(\frac{\sigma}{r}\right)}^6}\right]
+U_\text{LJ} := 4 \epsilon \cdot \left[{{\left(\frac{\sigma}{r}\right)}^{12}} - {{\left(\frac{\sigma}{r}\right)}^6}\right]
 \label{potential-lennard-jones}
 \end{align}
 
@@ -736,13 +743,15 @@ This fact is used to optimize the naive approach (DirectSum), by halving the amo
 
 \chapter{Methods and Implementation}
 
-Expanding the physical theory explained in the previous chapter, this chapter aims to provide technical and implementation insights on how the mathematical formulas were translated into simulation code. The core principles in mind were naivety, similarity, readability and maintainability (extensibility).
+Expanding the physical theory explained in the previous chapter, this chapter aims to provide technical and implementation insights on how the mathematical formulas were translated into simulation code. The core principles in mind were naivety, similarity, readability and maintainability and extensibility.
 
-For the principle of naivety the idea was, as the word says, to write naive code which allows for more fair cross-language comparisons. It would be unfair to compare simple C++ code with hyper-optimized Rust, or vice-versa. This means that neither of the implementations use SIMD or tricky patterns to reduce workload.
+For the principle of naivety the idea was
+% as the word says
+to write naive code which allows for more fair cross-language comparisons. It would be unfair to compare simple C++ code with hyper-optimized Rust, or vice-versa. This means that neither of the implementations use SIMD or tricky patterns to reduce workload.
 
 % We do one exception with Newtons' Third Law, but this optimization is applied in both implementations.
 
-The principle of similarity ensures the thesis insights are ``fair''. We do not give an objective definition on what a fair comparison is -- it is not objective. The insights in this thesis are based on the comparison of two different technologies, with similarity in patterns being sought for, but not always objectively justifiable. We will later mention this again in the evaluation as ``implementation bias''.
+The principle of similarity ensures the thesis insights are fair. We do not give an objective definition on what a fair comparison is -- it is not objective. The insights in this thesis are based on the comparison of two different technologies, with similarity in patterns being sought for, but not always objectively justifiable. We will later mention this again in the evaluation as ``implementation bias''.
 
 The other principles revolve mostly around comparing developer experience with one question: How easy and how intuitive is it to write maintainable code in both languages?
 
@@ -754,7 +763,7 @@ The molecular dynamics codebase is organised into three primary modules (in Rust
 
 From a high-level perspective, the code runs as follows: The frame module reads the program arguments from the console and invokes the I/O module on the input argument to read the initial particle state. This file also defines which force system and algorithmic implementation to use.
 
-The frame program then defines the simulations' ``hot loop'' (also called iterations, ticks, internally referred to as steps) and writes the output configuration frequently. When the current time reaches the end time $t_c \geq t_e$, the simulation halts.
+The frame program then defines the simulations' ``hot loop'', also called iterations, ticks, internally referred to as steps, and writes the output configuration frequently. When the current time reaches the end time $t_c \geq t_e$, the simulation halts.
 
 \subsection{Program Frame}
 
@@ -1121,7 +1130,7 @@ All following benchmarks are executed on mars, a high end, personal computer wit
 
 % \cite{cpu-benchmark-intel-core-i7-12700k}, the particle dataset \texttt{two-bodies-collision} is used for benchmarking, which moves a $20 \times 20$ matrix of particles against a $100 \times 20$ wall of particles, creating a dataset of $2,400$ particles. The statistics below were measured as ``the average of 20 runs'' of the x-axis value.
 
-The benchmarks below run on the \texttt{two-bodies-collision} dataset which is a particle layout of two two-dimensional grids of sizes $100 \times 20$ and $20 \times 20$, with the smaller grid moving into the larger body. The statistics below were measured as ``the average of 20 runs'' of the x-axis value.
+The benchmarks below run on the \texttt{two-bodies-collision} dataset\footnote{\url{https://github.com/Anatoly03/MolSim-SS26-Thesis/blob/main/input/two-bodies-collision-0001.yaml}} which is a particle layout of two two-dimensional grids of sizes $100 \times 20$ and $20 \times 20$, with the smaller grid moving into the larger body. The statistics below were measured as ``the average of 20 runs'' of the x-axis value.
 
 Despite being two-dimensional input, the computational complexity of the algorithms remains identical, with \texttt{DirectSum} iterating over all particle pairs and \texttt{LinkedCells} only over neighbouring cells. The measured performance should also not change much because most of the performance is dominated by loop structure and adding the z-axis to \texttt{LinkedCells} is a minimal change in comparison.
 
@@ -2054,7 +2063,7 @@ The results presented in this thesis show that Rust is at least as competitive w
 
 However, it is important to highlight that the results are subject to implementation bias with non-zero cost abstractions used in the hot loop of the physics implementation. In this work, we compare Rusts' \texttt{HashMap} against C++ \texttt{unordered\_map}, we use dynamic dispatch and minor differences in memory layout and compiler optimizations can contribute to the observed performance differences. Since the hot loop is subject to these paradigms, a small relative performance difference is instantly upscaled in the benchmarks.
 
-The Rust compiler \texttt{rustc} uses LLVM and the C++ code was compiled with the CMake default (which is GCC), which make different trade-offs in inling, loop-unrolling and link-time optimizations.
+The Rust compiler \texttt{rustc} uses LLVM and the C++ code was compiled with the CMake default (which is GCC), which make different trade-offs in inlining, loop-unrolling and link-time optimizations.
 
 The parallelization implementations are also not comparable due to different threading models, with Rayon being more high-level and memory safe, and OMP giving more hardware control at the cost of relying on unsafe memory models.
 
