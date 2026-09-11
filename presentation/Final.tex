@@ -300,13 +300,73 @@ fn dangle() -> &String {
 \end{frame}
 
 \subsection{Traits vs Interfaces}
-\simpleframe\begin{frame}{Traits vs Interfaces}
-    trait
+\simpleframe\begin{frame}[fragile]{Traits vs Interfaces}
+    Rust has no inheritance. Instead, shared behaviour is expressed through \blue{traits}, an abstract interface that a type can implement \blue{explicitly}.
+
+    \vspace{0.5em}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Definition}
+        \begin{lstlisting}[language=Rust,basicstyle=\ttfamily\scriptsize]
+pub trait Potential {
+    fn potential(
+        &self,
+        a: &Particle,
+        b: &Particle
+    ) -> Vec3;
+}
+        \end{lstlisting}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{Implementation for a type}
+        \begin{lstlisting}[language=Rust,basicstyle=\ttfamily\scriptsize]
+impl Potential for NewtonForce {
+    fn potential(...) -> f64 {
+        let d = Particle::dist(a, b);
+        let m = Particle::mass_prod(a, b);
+        -self.g * m / d
+    }
+}
+        \end{lstlisting}
+        \end{column}
+    \end{columns}
+
+    \vspace{0.5em}
+    In C++ a struct can inherit only one parent struct, but in Rust a type can \blue{implement multiple traits}. In code we have a \texttt{ParticleContainer} trait which the three approaches implement.
 \end{frame}
 
 \subsection{Dynamic Dispatch}
-\simpleframe\begin{frame}{Dynamic Dispatch}
-    dyn
+\simpleframe\begin{frame}[fragile]{Dynamic Dispatch}
+    For the simulation, the concrete force model and particle containers are chosen at runtime. For C++ we achieve this with virtual functions and in Rust we use \blue{dynamic dispatch}.
+
+    \vspace{0.5em}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Rust: Type coercion with \texttt{dyn}}
+\begin{lstlisting}[language=Rust,basicstyle=\ttfamily\scriptsize]
+let newton = NewtonForce { g: 1.0 };
+
+let force: &dyn Force = &newton;
+
+
+println!("{}", force
+    .potential(&p1, &p2));
+\end{lstlisting}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{C++: \texttt{virtual} functions}
+\begin{lstlisting}[language=C++,basicstyle=\ttfamily\scriptsize]
+auto newton = std::make_unique<NewtonForce>(1.0);
+std::unique_ptr<Force> force = std::move(newton);
+
+std::cout << force
+    ->potential(p1, p2);
+\end{lstlisting}
+        \end{column}
+    \end{columns}
+
+    \vspace{0.5em}
+    Both Rust and C++ make an indirect method call, which is \blue{not a zero-cost abstraction!}
 \end{frame}
 
 \section{Implementation}
