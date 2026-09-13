@@ -228,8 +228,8 @@
 fn problematic_move() {
     let s = String::from("hello");
     {                // inner scope
-        let t = s;   // a is moved to b
-    }                // b goes out of scope
+        let t = s;   // s is moved to t
+    }                // t goes out of scope
     println!("{s}"); // error: use of moved value
 }
     \end{lstlisting}
@@ -377,18 +377,103 @@ std::cout << force
 \end{frame}
 
 \subsection{Direct Sum}
-\simpleframe\begin{frame}{Direct Sum}
-    sum
+\nofooterframe\begin{frame}[fragile]{Direct Sum}{Conceptual Implementation\footnote{The code snippet is in Rust-style pseudo code. You cannot implicitly cast an \texttt{Option<T>}\newline to \texttt{T} in practice.}}
+    The \text{DirectSum} algorithm uses the naive approach: Two loops are used to compute all particle pair indeces \texttt{i} and \texttt{j}.
+
+    \vspace{0.5em}
+\begin{lstlisting}[frame=single,breaklines=false,language=Rust,basicstyle=\ttfamily\scriptsize]
+let p0 = self.particles.get_mut(i);
+let p1 = self.particles.get_mut(j); // problem: rule 4
+
+callback(&mut p0, &p1);
+callback(&mut p1, &p0);
+\end{lstlisting}
+    \vspace{0.5em}
+
+    This breaks \blue{Rule 4}: The signature of \texttt{Vec::get\_mut} \blue{borrows the entire vector mutably!}
+
+    \vspace{0.5em}
+\begin{lstlisting}[frame=single,breaklines=false,language=Rust,basicstyle=\ttfamily\scriptsize]
+pub fn get_mut(&mut self, index: usize) -> Option<&mut Particle>;
+\end{lstlisting}
+    \vspace{0.5em}
+\end{frame}
+
+\simpleframe\begin{frame}[fragile]{Direct Sum}{The Solution}
+    The solution is provided by the Rust standard library: Similar to placing an \blue{invariant}, you can \blue{split the vector logically into two mutable arrays:}
+
+    \vspace{0.5em}
+\begin{lstlisting}[frame=single,breaklines=false,language=Rust,basicstyle=\ttfamily\scriptsize]
+pub fn split_at_mut(&mut self, middle: usize)
+    -> (&mut [Particle], &mut [Particle]);
+\end{lstlisting}
+    \vspace{0.5em}
+
+    This gives us the following code snippet for the pairwise for loop over indeces \texttt{i} and \texttt{j}:
+
+    \vspace{0.5em}
+\begin{lstlisting}[frame=single,breaklines=false,language=Rust,basicstyle=\ttfamily\scriptsize]
+let (left, right) = self.particles.split_at_mut(j);
+
+let p0 = left.get_mut(i); // borrows left mutably
+let p1 = right.get_mut(j); // borrows right mutably
+
+callback(&mut p0, &p1);
+callback(&mut p1, &p0);
+\end{lstlisting}
 \end{frame}
 
 \subsection{Linked Cells}
-\simpleframe\begin{frame}{Linked Cells}
-    cells
+\nofooterframe\begin{frame}[fragile]{Linked Cells}
+    The \texttt{LinkedCells} approach partitions the 3D space into \blue{cells}, reducing pair computation to within a cell or inbetween neighbouring cells. The cell type is a generic\footnote{Base support for algorithms like \texttt{LinkedCells<ParallelDirectSum>} or  \texttt{LinkedCells<LinkedCells<DirectSum>>} exists but was never tested or benchmarked.} which implements \texttt{ParticleContainer}.
+
+    \vspace{1em}
+\begin{lstlisting}[frame=single,breaklines=false,language=Rust,basicstyle=\ttfamily\scriptsize]
+pub struct LinkedCells<Cell: ParticleContainer> {
+    cells: HashMap<Vec3<i32>, Cell>,
+    cell_size: Vec3<f64>,
+}
+\end{lstlisting}
+    \vspace{0.5em}
+
+
 \end{frame}
 
 \subsection{Parallel}
-\simpleframe\begin{frame}{Parallel}
-    par
+\simpleframe\begin{frame}[fragile]{Parallel}
+    For the parallelization approach, we parallelized the outer loop. In Rust, we had to disable memory-safety mechanisms using \texttt{unsafe} to get this to work.
+
+    \vspace{0.5em}
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \textbf{Rayon}
+\begin{lstlisting}[language=Rust,basicstyle=\ttfamily\scriptsize]
+(0..count).into_par_iter().for_each(|i| unsafe {
+  let mut p1 = &mut *particles.at(i);
+
+  for j in 0 ..count {
+    let right = &*particles.at(j);
+    callback(&mut p0, &p1);
+  }
+});
+\end{lstlisting}
+        \end{column}
+        \begin{column}{0.48\textwidth}
+            \textbf{OpenMP}
+\begin{lstlisting}[language=C++,basicstyle=\ttfamily\scriptsize]
+#pragma omp parallel for
+for (size_t i = 0; i < particles_vec.size(); ++i) {
+  const auto& p1 = particles_vec[i];
+
+  for (size_t j = 0; j < particles_vec.size(); ++j) {
+    const auto& p2 = particles_vec[j];
+    callback(p1, p2);
+  }
+}
+\end{lstlisting}
+        \end{column}
+    \end{columns}
+
 \end{frame}
 
 \section{Benchmarks}
@@ -411,11 +496,11 @@ std::cout << force
   \printbibliography
 \end{frame}
 
-\section{Appendix}
+\section{Appendix / Backup}
 \headerframe\begin{frame}{}
     \centering
     \Large
-    \blue{Appendix}
+    \blue{Appendix / Backup}
 \end{frame}
 
 \simpleframe\begin{frame}{Ownership and Borrowing: Rules}
@@ -426,6 +511,87 @@ std::cout << force
         \item At any given time, an item can either have one mutable reference or multiple immutable references,
         \item and any reference must be valid (no dangling references!).
     \end{enumerate}
+\end{frame}
+
+\simpleframe\begin{frame}[fragile]{Direct Sum}{Conceptual Implementation\footnote{The code snippet is in Rust-style pseudo code. You cannot implicitly cast an \texttt{Option<T>}\newline to \texttt{T} in practice.}}
+
+\begin{lstlisting}[frame=single,breaklines=false,language=Rust,basicstyle=\ttfamily\scriptsize]
+type Callback = Fn(&mut Particle, &Particle);
+// self.particles is a vector of particles
+
+fn for_each_pairs(&mut self, callback: &dyn Callback) {
+    let count = self.particles.len();
+
+    for i in 0..count {
+        for j in (i+1) ..count {
+            let p0 = self.particles.get_mut(i); // borrows self.particles
+            let p1 = self.particles.get_mut(j); // problem: rule 4
+
+            callback(&mut p0, &p1);
+            callback(&mut p1, &p0);
+        }
+    }
+}
+\end{lstlisting}
+\end{frame}
+
+\simpleframe\begin{frame}[fragile]{Direct Sum}{The Solution}
+\begin{lstlisting}[frame=single,breaklines=false,language=Rust,basicstyle=\ttfamily\scriptsize]
+fn for_each_pairs(&mut self, callback: &dyn Callback) {
+    let count = self.particles.len();
+
+    for i in 0..count {
+        for j in (i+1) ..count {
+            // next line borrows self.particles.
+            let (left, right) = self.particles.split_at_mut(j);
+
+            let p0 = left.get_mut(i); // borrows left mutably
+            let p1 = right.get_mut(j); // borrows right mutably
+
+            callback(&mut p0, &p1);
+            callback(&mut p1, &p0);
+        }
+    }
+}
+\end{lstlisting}
+\end{frame}
+
+\simpleframe\begin{frame}[fragile]{Parallel Direct Sum}{Rust}
+\begin{lstlisting}[frame=single,breaklines=false,language=Rust,basicstyle=\ttfamily\scriptsize]
+type Callback = Fn(&mut Particle, &Particle);
+
+fn for_each_pairs(&mut self, callback: &dyn Callback) {
+    let count = self.particles.len();
+
+    (0..count).into_par_iter().for_each(|i| unsafe {
+        let mut p1 = &mut *particles.at(i);
+
+        for j in 0 ..count {
+            let right = &*particles.at(j);
+            callback(&mut p0, &p1);
+        }
+    });
+}
+\end{lstlisting}
+\end{frame}
+
+\simpleframe\begin{frame}[fragile]{Parallel Direct Sum}{C++}
+\begin{lstlisting}[frame=single,breaklines=false,language=C++,basicstyle=\ttfamily\scriptsize]
+typedef Callback std::function<void(const Particle &, const Particle &)>;
+
+void for_each_pairs(Callback callback) const override {
+#pragma omp parallel for
+    for (size_t i = 0; i < particles_vec.size(); ++i) {
+        const auto& p1 = particles_vec[i];
+
+        for (size_t j = 0; j < particles_vec.size(); ++j) {
+            if (i == j) continue; // skip self-interaction
+            const auto& p2 = particles_vec[j];
+            callback(p1, p2);
+        }
+    }
+}
+\end{lstlisting}
 \end{frame}
 
 \end{document}
