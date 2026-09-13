@@ -773,8 +773,8 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
         xmode=log,
         ymode=log,
         log ticks with fixed point,
-        xtick={1, 2, 4, 8, 16, 20},
-        ytick={1, 2, 4, 8, 16, 20},
+        xtick={1, 2, 4, 8, 20},
+        ytick={1, 2, 4, 8, 20},
         scaled x ticks=false,  
         scaled y ticks=false,
         ymajorgrids=true, 
@@ -850,13 +850,14 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
     };
     \addlegendentry{Rust [Rayon]}
 
-    \draw[dashed, red, line width=0.5pt] (axis cs:8,0) -- (axis cs:8,400);
+    \draw[dashed, red, line width=0.5pt] (axis cs:8,1) -- (axis cs:8,20);
+    \draw[dashed, red, line width=0.5pt] (axis cs:9,1) -- (axis cs:9,20);
 
     \end{axis}
 \end{tikzpicture}
 \end{figure}
 
-    Higher is faster.
+    Higher is faster. Rayon (Rust) performs better.
 \end{frame}
 
 \simpleframe\begin{frame}[fragile]{Parallel Benchmarks}{CoolMUC}
@@ -1169,7 +1170,39 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
 \end{tikzpicture}
 \end{figure}
 
-    Higher is faster.
+    Higher is faster. OpenMP (C++) performs better.
+\end{frame}
+
+\section{Conclusion}
+\headerframe\begin{frame}{}
+    \centering
+    \Large
+    \blue{Conclusion}
+\end{frame}
+
+\simpleframe\begin{frame}[t]{Conclusion}
+    % In this specific implementation we see that \blue{Dynamic Dispatch in Rust outperforms virtual functions in C++}.
+
+    What Rust offers:
+
+    \vspace{0.5em}
+    \begin{itemize}
+        \item Competitive Performance
+        \item Compile-time verified Memory Safety
+        \item Integrated Ecosystem and Tooling
+    \end{itemize}
+    \vspace{0.5em}
+
+    Things to consider when rewriting codebases:
+
+    \vspace{0.5em}
+    \begin{itemize}
+        \item Technical Debt
+        \item Learning Curve
+        \item Lack of some major dependencies \gray{(Example: LLVM Project)}
+        \item Well-optimized projects \gray{(Rust may offer few to no advantage when rewriting optimal code that is well understood)}
+    \end{itemize}
+    \vspace{0.5em}
 \end{frame}
 
 \headerframe\begin{frame}[allowframebreaks]{References}
