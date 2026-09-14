@@ -103,71 +103,21 @@
 \end{frame}
 
 \nofooterframe\begin{frame}[t]{Motivation and Background}
-    \begin{figure}[h!]
-    \begin{tikzpicture}
-        \begin{axis}[
-            width=0.7\textwidth,  
-            height=0.6\textheight,
-            xlabel={Year},
-            % ylabel={Percentage},
-            ylabel={Percentage Admired},
-            xtick={2010, 2015, 2020, 2025},
-            scaled x ticks=false,  
-            scaled y ticks=false,
-            ymajorgrids=true, 
-            grid style=dashed,
-            ymin=-5,
-            ymax=105,
-            xmin=2014,
-            xmax=2026,
-            x tick label style={/pgf/number format/.cd, 1000 sep={}},
-            % legend style={at={(0.02,0.45)},anchor=north west},
-            legend style={at={(0.07,0.35)},anchor=north west},
-        ]
-
-        \addplot[
-            color=blue,
-            mark=square,
-            line width=1pt,
-            ]
-            coordinates {
-                (2015, 75.6)(2017, 52.0)(2018, 46.7)(2019, 52.0)(2020, 43.4)(2021, 49.2)(2022, 48.4)(2023, 49.8)(2024, 53.1)(2025, 46.6)
-            };
-
-        \addplot[
-            color=Bittersweet,
-            mark=triangle,
-            line width=1pt,
-            ]
-            coordinates {
-                (2015, 73.8)(2016, 79.1)(2017, 73.1)(2018, 78.9)(2019, 83.5)(2020, 86.1)(2021, 86.9)(2022, 86.7)(2023, 84.7)(2024, 82.2)(2025, 72.4)
-            };
-
-        % \addplot[
-        %     color=cyan,
-        %     mark=square,
-        %     line width=1pt,
-        %     ]
-        %     coordinates {
-        %         (2023, 16.4)(2024, 18.3)(2025, 16.7)
-        %     };
-
-        % \addplot[
-        %     color=Dandelion,
-        %     mark=triangle,
-        %     line width=1pt,
-        %     ]
-        %     coordinates {
-        %         (2023, 30.6)(2024, 28.7)(2025, 29.9)
-        %     };
-
-        \legend{C++, Rust}
-        % \legend{C++ (Admired), Rust (Admired), C++ (Desired), Rust (Desired)}
-        \end{axis}
-    \end{tikzpicture}
-    \end{figure}
-
-    In recent years, Rust has gained a lot of popularity and reputation as a strong C++ contender in memory-safety and performance. It was also rated ``the most admired programming language'' in the StackOverflow developer surveys\footcite{stackoverflow-developer-survey}.
+    % \footcite{google-eliminating-memory-safety-vulnerabilities}\footcite{discord-moves-to-rust}\footcite{rust-adoption-surges}
+    \begin{columns}[T]
+        \begin{column}{0.3\textwidth}
+            \centering
+            \includegraphics[height=0.68\textheight]{media/final-discord.png}
+        \end{column}
+        \begin{column}{0.3\textwidth}
+            \centering
+            \includegraphics[height=0.68\textheight]{media/final-google.png}
+        \end{column}
+        \begin{column}{0.3\textwidth}
+            \centering
+            \includegraphics[height=0.68\textheight]{media/final-devx.png}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 \section{The Rust Programming Language}
@@ -492,7 +442,7 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
     The benchmarks were run on my high-end PC ``mars'' and the CoolMUC supercluster. Mars runs on a \blue{64-bit 12th Gen Intel(R) Core(TM) i7-12700K} which has \blue{8 performance cores with a pair of threads} and \blue{4 efficiency cores}, accounting for \blue{20 hardware threads}\footnote{$8 \cdot 2 + 4 \cdot 1 = 20$}.
 \end{frame}
 
-\simpleframe\begin{frame}[fragile]{First Benchmarks}{Mars}
+\nofooterframe\begin{frame}[fragile]{First Benchmarks}{Mars}
 \begin{figure}[h!]
 \begin{tikzpicture}
     \begin{axis}[
@@ -757,12 +707,10 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
 \end{tikzpicture}
 \end{figure}
 
-    % First Impression: Rust is faster.
-    Lower is faster.
+    Lower is faster. Rust DirectSum performs $15\%$ faster than C++ DirectSum. Rust LinkedCells $27.2\%$ faster than C++ LinkedCells.
 \end{frame}
 
-\simpleframe\begin{frame}[fragile]{Parallel Benchmarks}{Mars}
-
+\nofooterframe\begin{frame}[fragile]{Parallel Benchmarks}{Mars}
 \begin{figure}[!htb]
 \begin{tikzpicture}
     \begin{axis}[
@@ -860,7 +808,7 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
     Higher is faster. Rayon (Rust) performs better.
 \end{frame}
 
-\simpleframe\begin{frame}[fragile]{Parallel Benchmarks}{CoolMUC}
+\nofooterframe\begin{frame}[fragile]{Parallel Benchmarks}{CoolMUC}
 \begin{figure}[!htb]
 \begin{tikzpicture}
     \begin{axis}[
@@ -1209,12 +1157,87 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
   \printbibliography
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                       %
+% APPENDIX / BACK UP                                    %
+%                                                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{Appendix / Backup}
 \headerframe\begin{frame}{}
     \centering
     \Large
     \blue{Appendix / Backup}
 \end{frame}
+
+\nofooterframe\begin{frame}[t]{Rust Admiration}
+    \begin{figure}[h!]
+    \begin{tikzpicture}
+        \begin{axis}[
+            width=0.7\textwidth,  
+            height=0.6\textheight,
+            xlabel={Year},
+            % ylabel={Percentage},
+            ylabel={Percentage Admired},
+            xtick={2010, 2015, 2020, 2025},
+            scaled x ticks=false,  
+            scaled y ticks=false,
+            ymajorgrids=true, 
+            grid style=dashed,
+            ymin=-5,
+            ymax=105,
+            xmin=2014,
+            xmax=2026,
+            x tick label style={/pgf/number format/.cd, 1000 sep={}},
+            % legend style={at={(0.02,0.45)},anchor=north west},
+            legend style={at={(0.07,0.35)},anchor=north west},
+        ]
+
+        \addplot[
+            color=blue,
+            mark=square,
+            line width=1pt,
+            ]
+            coordinates {
+                (2015, 75.6)(2017, 52.0)(2018, 46.7)(2019, 52.0)(2020, 43.4)(2021, 49.2)(2022, 48.4)(2023, 49.8)(2024, 53.1)(2025, 46.6)
+            };
+
+        \addplot[
+            color=Bittersweet,
+            mark=triangle,
+            line width=1pt,
+            ]
+            coordinates {
+                (2015, 73.8)(2016, 79.1)(2017, 73.1)(2018, 78.9)(2019, 83.5)(2020, 86.1)(2021, 86.9)(2022, 86.7)(2023, 84.7)(2024, 82.2)(2025, 72.4)
+            };
+
+        % \addplot[
+        %     color=cyan,
+        %     mark=square,
+        %     line width=1pt,
+        %     ]
+        %     coordinates {
+        %         (2023, 16.4)(2024, 18.3)(2025, 16.7)
+        %     };
+
+        % \addplot[
+        %     color=Dandelion,
+        %     mark=triangle,
+        %     line width=1pt,
+        %     ]
+        %     coordinates {
+        %         (2023, 30.6)(2024, 28.7)(2025, 29.9)
+        %     };
+
+        \legend{C++, Rust}
+        % \legend{C++ (Admired), Rust (Admired), C++ (Desired), Rust (Desired)}
+        \end{axis}
+    \end{tikzpicture}
+    \end{figure}
+
+    In recent years, Rust has gained a lot of popularity and reputation as a strong C++ contender in memory-safety and performance. It was also rated ``the most admired programming language'' in the StackOverflow developer surveys\footcite{stackoverflow-developer-survey}.
+\end{frame}
+
 
 \simpleframe\begin{frame}{Ownership and Borrowing: Rules}
     \begin{enumerate}
