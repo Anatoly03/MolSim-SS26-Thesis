@@ -117,7 +117,8 @@
         \includegraphics[width=0.8\textwidth]{media/hello-particles.png}
     \end{figure}
 
-    Simulating particle physics is expensive: The pair interaction problem for force calculation is in $\mathcal O(n^2)$. Other than algorithmic optimizations, choice of language can have an impact on performance.
+    Simulating particle physics is expensive: The pair interaction problem for force calculation is in $\mathcal O(n^2)$.
+    % Other than algorithmic optimizations, choice of language can have an impact on performance.
 \end{frame}
 
 \section{The Rust Programming Language}
@@ -140,15 +141,17 @@
         \texttt{cargo clippy} & \texttt{clang-tidy} \\
     \end{tabular}
 
-    \vspace{1.5em}
-    Rust is installed with its package manager \blue{Cargo}, which manages the toolchain for Rust as subcommands.
+    % \vspace{1.5em}
+    % Rust is installed with its package manager \blue{Cargo}, which manages the toolchain for Rust as subcommands.
     % It comes with the tester, formatter and linter, and other subcommands.
-    The C++ ecosystem is more fragmented, adding dependencies is done manually with CMake, so is the configuration of testing and documentation generators.
+    % The C++ ecosystem is more fragmented, adding dependencies is done manually with CMake, so is the configuration of testing and documentation generators.
 \end{frame}
 
 \subsection{The Ownership Model}
-\simpleframe\begin{frame}[t]{The Ownership Model}{Ownership}
-    Rust guarantees memory safety and automatically frees memory when a value goes out of scope. This is achieved through the ``Ownership model'', a set of rules which are enforced at compile time.
+\simpleframe\begin{frame}{The Ownership Model}{Ownership Rules}
+    Rust guarantees memory safety through a set of rules which are enforced at compile time.
+    % and automatically frees memory when a value goes out of scope. 
+    % This is achieved through the ``Ownership model''
 
     {\centering
     \begin{tikzpicture}[node distance=1cm and 1cm, minimum height=1cm, minimum width=3cm]
@@ -170,11 +173,12 @@
         \item[\blue{Rule 3}]  When the owner leaves the scope, without passing on ownership, the value will be dropped.
     \end{description}}
 
+    % \vspace{1.5em}
     \blue{Intuition:} The scope of the owner defines the \blue{lifetime} of a value.
 \end{frame}
 
-\simpleframe\begin{frame}[t]{The Ownership Model}{Borrowing and References}
-    To make sure values can be shared across different scopes, Rust introduces the concept of \blue{borrowing}: When references go out of scope, the value is not dropped, and a reference cannot outlive its value.
+\simpleframe\begin{frame}{The Ownership Model}{Borrowing and References}
+    To share values across different scopes, Rust introduces the concept of \blue{borrowing}: References which cannot outlive their owner.
 
     {\centering
     \begin{tikzpicture}[node distance=1cm and 1cm, minimum height=1cm, minimum width=3cm]
@@ -195,13 +199,13 @@
         \item[\blue{Rule 5}] and any reference must be valid (no dangling references!).
     \end{description}}
 
-    \vspace{1.5em}
+    \vspace{1em}
     \blue{Intuition:} Owner can read, write and free. Mutable borrow can read and write. Immutable borrow can only read.
 \end{frame}
 
 \subsection{Traits vs Interfaces}
 \nofooterframe\begin{frame}[fragile]{Traits vs Interfaces}
-    Rust has no Java-like inheritance. Instead, shared behaviour is expressed through \blue{traits}\footnote{Traits are similar to C++20 constraints and concepts: A type can \blue{implement\newline multiple traits}.}, an abstract interface that a type can implement \blue{explicitly}.
+    Rust has no Java-like inheritance. Instead, shared behaviour is expressed through \blue{traits}\footnote{Traits are similar to C++20 constraints and concepts.}, an abstract interface that a type can implement \blue{explicitly}.
 
     \vspace{0.5em}
     \begin{columns}[T]
@@ -231,13 +235,13 @@ impl Potential for NewtonForce {
         \end{column}
     \end{columns}
 
-    \vspace{0.5em}
-    In the codebase we have a \texttt{ParticleContainer} trait which the three approaches implement. Particles implement \texttt{Serialize} and \texttt{Deserialize} for I/O. \texttt{Vec3} overloads $+$ and $*$ by implementing \texttt{Add} and \texttt{Mul}.
+    % \vspace{0.5em}
+    % In the codebase we have a \texttt{ParticleContainer} trait which the three approaches implement. Particles implement \texttt{Serialize} and \texttt{Deserialize} for I/O. \texttt{Vec3} overloads $+$ and $*$ by implementing \texttt{Add} and \texttt{Mul}.
 \end{frame}
 
 \subsection{Dynamic Dispatch}
 \simpleframe\begin{frame}[fragile]{Dynamic Dispatch}
-    For the simulation, the concrete force model and particle containers are chosen at runtime. For C++ we achieve this with virtual functions and in Rust we use \blue{dynamic dispatch}.
+    For the simulation, the concrete force model and particle containers are chosen at runtime. For C++ we achieve this with \blue{virtual functions} and in Rust we use \blue{dynamic dispatch}.
 
     \vspace{0.5em}
     \begin{columns}[T]
@@ -473,8 +477,8 @@ pub fn split_at_mut(&mut self, middle: usize)
 \begin{lstlisting}[frame=single,breaklines=false,language=Rust,basicstyle=\ttfamily\scriptsize]
 let (left, right) = self.particles.split_at_mut(j);
 
-let p0 = left.get_mut(i); // borrows left mutably
-let p1 = right.get_mut(j); // borrows right mutably
+let p0 = left.get_mut(i); // borrows left mutably (at i)
+let p1 = right.get_mut(0); // borrows right mutably (at j + 0)
 
 callback(&mut p0, &p1);
 callback(&mut p1, &p0);
@@ -1273,8 +1277,8 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
     \begin{itemize}
         \item Technical Debt
         \item Learning Curve
-        \item Lack of some major dependencies \gray{(Example: LLVM Project)}
-        \item Well-optimized projects \gray{(Rust may offer few to no advantage when rewriting optimal code that is well understood)}
+        \item Lack of some major dependencies. % \gray{(Example: LLVM Project)}
+        \item Well-optimized projects. %\gray{(Rust may offer few to no advantage when rewriting optimal code that is well understood)}
     \end{itemize}
     \vspace{0.5em}
 \end{frame}
