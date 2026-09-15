@@ -259,11 +259,11 @@ fn dangle() -> &String {
             \textbf{Definition}
         \begin{lstlisting}[language=Rust,basicstyle=\ttfamily\scriptsize]
 pub trait Potential {
-    fn potential(
-        &self,
-        a: &Particle,
-        b: &Particle
-    ) -> Vec3;
+  fn potential(
+    &self,
+    a: &Particle,
+    b: &Particle
+  ) -> Vec3;
 }
         \end{lstlisting}
         \end{column}
@@ -271,11 +271,11 @@ pub trait Potential {
             \textbf{Implementation for a type}
         \begin{lstlisting}[language=Rust,basicstyle=\ttfamily\scriptsize]
 impl Potential for NewtonForce {
-    fn potential(...) -> f64 {
-        let d = Particle::dist(a, b);
-        let m = Particle::mass_prod(a, b);
-        -self.g * m / d
-    }
+  fn potential(...) -> f64 {
+    let d = Particle::dist(a, b);
+    let m = Particle::mass_prod(a, b);
+    -self.g * m / d
+  }
 }
         \end{lstlisting}
         \end{column}
@@ -324,6 +324,21 @@ std::cout << force
     \centering
     \Large
     \blue{Implementation}
+\end{frame}
+
+\nofooterframe\begin{frame}[fragile]{Implementation}{Physics Pipeline}
+    We have three different implementations for a particle container: \texttt{DirectSum}, \texttt{LinkedCells} and \texttt{DirectSumParallel}.
+    
+    \vspace{0.5em}
+    The \texttt{ParticleContainer} abstraction defines functionality for (1) managing particles, \blue{(2) iteration over particles} and \blue{(3) iteration over particle pairs}.
+
+    \vspace{0.5em}
+    The particle container is managed by a \texttt{Simulation} class which calls iterator with physical formulas. Example calls:
+
+    \begin{enumerate}
+        \item ``Update all particle positions based on its velocity'' $\Rightarrow$ \texttt{for\_each\_particle(Particle)}
+        \item ``Update all particle force based on other location and mass of other particles'' $\Rightarrow$ \texttt{for\_each\_pairs(Particle, Particle)}
+    \end{enumerate}
 \end{frame}
 
 \subsection{Direct Sum}
@@ -442,7 +457,7 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
     The benchmarks were run on my high-end PC ``mars'' and the CoolMUC supercluster. Mars runs on a \blue{64-bit 12th Gen Intel(R) Core(TM) i7-12700K} which has \blue{8 performance cores with a pair of threads} and \blue{4 efficiency cores}, accounting for \blue{20 hardware threads}\footnote{$8 \cdot 2 + 4 \cdot 1 = 20$}.
 \end{frame}
 
-\nofooterframe\begin{frame}[fragile]{First Benchmarks}{Mars}
+\nofooterframe\begin{frame}[fragile]{Sequential Benchmarks}{Mars}
 \begin{figure}[h!]
 \begin{tikzpicture}
     \begin{axis}[
@@ -1121,6 +1136,27 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
     Higher is faster. OpenMP (C++) performs better.
 \end{frame}
 
+\nofooterframe\begin{frame}[fragile]{Parallel Benchmarks}
+    In the parallel implementation $\ldots$
+
+    \vspace{0.5em}
+    \begin{itemize}
+        \item $\ldots$ Rayon (Rust) performed better on a consumer CPU.
+        \item $\ldots$ OpenMP (C++) performed better on CoolMUC.
+    \end{itemize}
+    \vspace{0.5em}
+
+    \blue{What??? Why???}
+    \vspace{0.5em}
+
+    Rayon uses profit-oriented work-to-thread distribution, making sure every thread is busy and accepts new workload when free. \blue{This is efficient when background tasks make work distribution uneven!}
+    \vspace{0.5em}
+
+    OpenMP distributes workload statically to threads. Since there are no background tasks, all threads have even work distribution. \blue{The overhead from Rayon becomes a liability!}
+
+    % \blue{$\Rightarrow$ Performance difference caused by }
+\end{frame}
+
 \section{Conclusion}
 \headerframe\begin{frame}{}
     \centering
@@ -1235,9 +1271,10 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
     \end{tikzpicture}
     \end{figure}
 
-    In recent years, Rust has gained a lot of popularity and reputation as a strong C++ contender in memory-safety and performance. It was also rated ``the most admired programming language'' in the StackOverflow developer surveys\footcite{stackoverflow-developer-survey}.
-\end{frame}
+    % In recent years, Rust has gained a lot of popularity and reputation as a strong C++ contender in memory-safety and performance. It was also rated ``the most admired programming language'' in the StackOverflow developer surveys\footcite{stackoverflow-developer-survey}.
 
+    On StackOverflow, Rust gained reputation as ``the most admired language'' for the past 9 years, outperforming C++ for 10 years.\footcite{stackoverflow-developer-survey}.
+\end{frame}
 
 \simpleframe\begin{frame}{Ownership and Borrowing: Rules}
     \begin{enumerate}
@@ -1247,6 +1284,49 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
         \item At any given time, an item can either have one mutable reference or multiple immutable references,
         \item and any reference must be valid (no dangling references!).
     \end{enumerate}
+\end{frame}
+
+\simpleframe\begin{frame}{Unsafe Rust: Rules}
+    What we have learned in the presentation is called ``Safe Rust'' -- it is statically verifiable and memory safe.
+    However, Rust has a mode called ``Unsafe Rust'', which gives developers access to operations which cannot be verified by the compiler.
+
+    \vspace{1em}
+    \begin{enumerate}
+        \item Dereferencing a pointer.
+        \item Using other unsafe functionalities, like invoking an unsafe function or implementing
+an unsafe trait.
+        \item Read or write to a mutable static variable.
+        \item Accessing fields of a union, a special element which is syntactically similar to a struct with the exception of all fields sharing the same storage
+    \end{enumerate}
+\end{frame}
+
+\simpleframe\begin{frame}[fragile]{Unsafe Rust: Parallel Implementation Example}
+    The pointer type is not thread-safe. However, we claim that ``we know better'' and create a wrapper type that can be used in different threads (needs \texttt{Sync} trait)
+    
+    \vspace{0.5em}
+\begin{lstlisting}[frame=single,breaklines=false,language=Rust,basicstyle=\ttfamily\scriptsize]
+pub struct PointerWrapper<T>(*mut T);
+unsafe impl<T> Sync for PointerWrapper<T> {}
+unsafe impl<T> Send for PointerWrapper<T> {}
+\end{lstlisting}
+    \vspace{0.5em}
+
+    We also declare the wrapper method \texttt{at(index)}, which gives us a pointer at an offset.
+    
+    \vspace{0.5em}
+\begin{lstlisting}[frame=single,breaklines=false,language=Rust,basicstyle=\ttfamily\scriptsize]
+unsafe fn at(&self, rhs: usize) -> *mut T {
+    unsafe { self.0.add(rhs) }
+}
+\end{lstlisting}
+    \vspace{0.5em}
+
+    In the \texttt{for}-loop we dereference at an offset, which is possibly undefined (Unsafe!).
+    
+    \vspace{0.5em}
+\begin{lstlisting}[frame=single,breaklines=false,language=Rust,basicstyle=\ttfamily\scriptsize]
+let mut left = &mut *particles.at(i);
+\end{lstlisting}
 \end{frame}
 
 \simpleframe\begin{frame}[fragile]{Direct Sum}{Conceptual Implementation\footnote{The code snippet is in Rust-style pseudo code. You cannot implicitly cast an \texttt{Option<T>}\newline to \texttt{T} in practice.}}
