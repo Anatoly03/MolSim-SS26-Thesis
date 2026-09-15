@@ -30,7 +30,7 @@
     morekeywords={Result, Option, Ok, Err, Some, None, panic},
     breaklines=true
 }
-\usetikzlibrary{automata,positioning}
+\usetikzlibrary{automata,positioning,arrows.meta,shapes.geometric}
 \addbibresource{Reference.bib}
 \addbibresource{../thesis/literature.bib}
 
@@ -92,7 +92,7 @@
 %     \tableofcontents
 % \end{frame}
 
-\simpleframe\begin{frame}[t]{Motivation and Background}
+\simpleframe\begin{frame}[t]{Motivation and Background}{Companies are Switching to Rust at Scale}
     % \footcite{google-eliminating-memory-safety-vulnerabilities}\footcite{discord-moves-to-rust}\footcite{rust-adoption-surges}
     \begin{columns}[T]
         \begin{column}{0.3\textwidth}
@@ -111,7 +111,7 @@
 \end{frame}
 
 \section{Motivation and Background}
-\simpleframe\begin{frame}[t]{Motivation and Background}
+\simpleframe\begin{frame}[t]{Motivation and Background}{Does the switch to Rust make sense for Molecular Dynamics?}
     \begin{figure}
         \centering
         \includegraphics[width=0.8\textwidth]{media/hello-particles.png}
@@ -326,22 +326,75 @@ std::cout << force
     \blue{Implementation}
 \end{frame}
 
-\nofooterframe\begin{frame}[fragile]{Implementation}{Physics Pipeline}
-    We have three different implementations for a particle container: \texttt{DirectSum}, \texttt{LinkedCells} and \texttt{DirectSumParallel}.
-    
-    \vspace{0.5em}
-    The \texttt{ParticleContainer} abstraction defines functionality for (1) managing particles, \blue{(2) iteration over particles} and \blue{(3) iteration over particle pairs}.
+\simpleframe\begin{frame}[fragile]{Implementation}{Program Architecture}
+    {\centering
+    \begin{tikzpicture}[node distance=0.75cm and 2cm, minimum height=1cm, minimum width=3cm]
+        \node[draw, gray!30, rectangle] (cli) {\gray{Frame}};
+        \node[draw, rectangle, right=of cli] (sim) {\texttt{Simulation}};
+        \node[draw, rectangle, below=of sim] (part) {\texttt{ParticleContainer}};
+        \node[draw, rectangle, left=of part] (io) {I/O};
+        \node[draw, rectangle, right=of part] (force) {\texttt{Force}};
 
-    \vspace{0.5em}
-    The particle container is managed by a \texttt{Simulation} class which calls iterator with physical formulas. Example calls:
+        \draw[->, gray!30] (cli) -- (sim) node[] {};
+        \draw[->, thick] (sim) -- (part) node[] {};
+        \draw[->, thick] (sim) -- (io) node[] {};
+        \draw[->, thick] (sim) -- (force) node[] {};
+    \end{tikzpicture}}
 
-    \begin{enumerate}
-        \item ``Update all particle positions based on its velocity'' $\Rightarrow$ \texttt{for\_each\_particle(Particle)}
-        \item ``Update all particle force based on other location and mass of other particles'' $\Rightarrow$ \texttt{for\_each\_pairs(Particle, Particle)}
-    \end{enumerate}
+    \vspace{1.5em}
+    \begin{itemize}
+        \item Forces: \texttt{Newton}, \texttt{LennardJones}
+        \item Algorithms: \texttt{DirectSum}, \texttt{LinkedCells}, \texttt{DirectSumParallel}
+        \item I/O: JSON, YAML, VTU
+    \end{itemize}
 \end{frame}
 
+% \nofooterframe\begin{frame}[fragile]{Implementation}{Physics Pipeline}
+%     We have three different implementations for a particle container: \texttt{DirectSum}, \texttt{LinkedCells} and \texttt{DirectSumParallel}.
+    
+%     \vspace{0.5em}
+%     The \texttt{ParticleContainer} abstraction defines functionality for (1) managing particles, \blue{(2) iteration over particles} and \blue{(3) iteration over particle pairs}.
+
+%     \vspace{0.5em}
+%     The particle container is managed by a \texttt{Simulation} class which calls iterator with physical formulas. Example calls:
+
+%     \begin{enumerate}
+%         \item ``Update all particle positions based on its velocity'' $\Rightarrow$ \texttt{for\_each\_particle(Particle)}
+%         \item ``Update all particle force based on other location and mass of other particles'' $\Rightarrow$ \texttt{for\_each\_pairs(Particle, Particle)}
+%     \end{enumerate}
+% \end{frame}
+
 \subsection{Direct Sum}
+\simpleframe\begin{frame}{Direct Sum}{Intuition}
+    \vspace{0.5em}
+    \begin{center}
+    \begin{tikzpicture}[scale=0.2]
+        \node[circle, fill=blue, inner sep=2.5pt] (a0) at (2, 2) {};
+        \node[circle, fill=blue, inner sep=2.5pt] (a1) at (8, 8) {};
+
+        \node[circle, fill=blue, inner sep=2.5pt] (a2) at (22, 12) {};
+        \node[circle, fill=blue, inner sep=2.5pt] (a3) at (28, 18) {};
+
+        \node[circle, fill=blue, inner sep=2.5pt] (a4) at (18, 22) {};
+
+        \node[circle, fill=blue, inner sep=2.5pt] (a5) at (2, 22) {};
+        \node[circle, fill=blue, inner sep=2.5pt] (a6) at (8, 22) {};
+        \node[circle, fill=blue, inner sep=2.5pt] (a7) at (8, 28) {};
+
+        \foreach \a in {0,1,...,7} {
+            \foreach \b in {0,1,...,7} {
+                \pgfmathparse{\a<\b ? 1 : 0}
+                \ifnum\pgfmathresult=1
+                    \draw[gray!80, very thin] (a\a) -- (a\b);
+                \fi
+            }
+        }
+    \end{tikzpicture}
+    \end{center}
+
+    8 particles, 56 interactions
+\end{frame}
+
 \nofooterframe\begin{frame}[fragile]{Direct Sum}{Conceptual Implementation\footnote{The code snippet is in Rust-style pseudo code. You cannot implicitly cast an \texttt{Option<T>}\newline to \texttt{T} in practice.}}
     The \text{DirectSum} algorithm uses the naive approach: Two loops are used to compute all particle pair indeces \texttt{i} and \texttt{j}.
 
@@ -389,6 +442,44 @@ callback(&mut p1, &p0);
 \end{frame}
 
 \subsection{Linked Cells}
+\nofooterframe\begin{frame}{Linked Cells}{Intuition}
+    \vspace{0.5em}
+    \begin{center}
+    \begin{tikzpicture}[scale=0.2]
+        \node[circle, fill=blue, inner sep=2.5pt] (a0) at (2, 2) {};
+        \node[circle, fill=blue, inner sep=2.5pt] (a1) at (8, 8) {};
+
+        \node[circle, fill=blue, inner sep=2.5pt] (a2) at (22, 12) {};
+        \node[circle, fill=blue, inner sep=2.5pt] (a3) at (28, 18) {};
+
+        \node[circle, fill=blue, inner sep=2.5pt] (a4) at (18, 22) {};
+        
+        \node[circle, fill=blue, inner sep=2.5pt] (a5) at (2, 22) {};
+        \node[circle, fill=blue, inner sep=2.5pt] (a6) at (8, 22) {};
+        \node[circle, fill=blue, inner sep=2.5pt] (a7) at (8, 28) {};
+
+        \draw[gray, thick] (0, 10) -- (30, 10);
+        \draw[gray, thick] (0, 20) -- (30, 20);
+        \draw[gray, thick] (10, 0) -- (10, 30);
+        \draw[gray, thick] (20, 0) -- (20, 30);
+
+        \draw[gray!80, very thin] (a0) -- (a1);
+        \draw[gray!80, very thin] (a0) -- (a1);
+        \draw[gray!80, very thin] (a2) -- (a3);
+        \draw[gray!80, very thin] (a3) -- (a4);
+        \draw[gray!80, very thin] (a4) -- (a2);
+        \draw[gray!80, very thin] (a4) -- (a5);
+        \draw[gray!80, very thin] (a4) -- (a6);
+        \draw[gray!80, very thin] (a4) -- (a7);
+        \draw[gray!80, very thin] (a5) -- (a7);
+        \draw[gray!80, very thin] (a5) -- (a6);
+        \draw[gray!80, very thin] (a6) -- (a7);
+    \end{tikzpicture}
+    \end{center}
+
+    8 particles, 11 interactions \gray{(recall: DirectSum had 56)}
+\end{frame}
+
 \nofooterframe\begin{frame}[fragile]{Linked Cells}
     The \texttt{LinkedCells} approach partitions the 3D space into \blue{cells}, reducing pair computation to within a cell or inbetween neighbouring cells. The cell type is a generic\footnote{Base support for algorithms like \texttt{LinkedCells<ParallelDirectSum>} or  \texttt{LinkedCells<LinkedCells<DirectSum>>} exists but was never tested or benchmarked.} which implements \texttt{ParticleContainer}.
 
@@ -404,8 +495,46 @@ pub struct LinkedCells<Cell: ParticleContainer> {
 
 \end{frame}
 
-\subsection{Parallel}
-\simpleframe\begin{frame}[fragile]{Parallel}
+\subsection{Parallel Direct Sum}
+\nofooterframe\begin{frame}{Parallel Direct Sum}{Intuition}
+    \vspace{0.5em}
+    \begin{center}
+    \begin{tikzpicture}[scale=0.2]
+        \node[circle, fill=blue!50, inner sep=2.5pt] (a0) at (2, 2) {};
+        \node[circle, fill=blue!50, inner sep=2.5pt] (a1) at (8, 8) {};
+
+        \node[circle, fill=blue!50, inner sep=2.5pt] (a2) at (22, 12) {};
+        \node[circle, fill=blue!50, inner sep=2.5pt] (a3) at (28, 18) {};
+
+        \node[circle, fill=blue!50, inner sep=2.5pt] (a4) at (18, 22) {};
+
+        \node[circle, fill=blue!50, inner sep=2.5pt] (a5) at (2, 22) {};
+        \node[circle, fill=blue, inner sep=2.5pt] (a6) at (8, 22) {};
+        \node[circle, fill=blue!50, inner sep=2.5pt] (a7) at (8, 28) {};
+
+        \foreach \a in {0,1,...,7} {
+            \foreach \b in {0,1,...,7} {
+                \pgfmathparse{\a<\b ? 1 : 0}
+                \ifnum\pgfmathresult=1
+                    \draw[gray!20, very thin] (a\a) -- (a\b);
+                \fi
+            }
+        }
+
+        \draw[gray!80, very thin] (a6) -- (a0);
+        \draw[gray!80, very thin] (a6) -- (a1);
+        \draw[gray!80, very thin] (a6) -- (a2);
+        \draw[gray!80, very thin] (a6) -- (a3);
+        \draw[gray!80, very thin] (a6) -- (a4);
+        \draw[gray!80, very thin] (a6) -- (a5);
+        \draw[gray!80, very thin] (a6) -- (a7);
+    \end{tikzpicture}
+    \end{center}
+
+    8 particles, 8 threads, 7 interactions per thread \gray{(recall: DirectSum had 56, LinkedCells had 11)}
+\end{frame}
+
+\simpleframe\begin{frame}[fragile]{Parallel Direct Sum}
     For the parallelization approach, we parallelized the outer loop. In Rust, we had to disable memory-safety mechanisms using \texttt{unsafe} to get this to work.
 
     \vspace{0.5em}
