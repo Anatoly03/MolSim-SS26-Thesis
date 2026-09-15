@@ -92,7 +92,7 @@
 %     \tableofcontents
 % \end{frame}
 
-\nofooterframe\begin{frame}[t]{Motivation and Background}
+\simpleframe\begin{frame}[t]{Motivation and Background}
     % \footcite{google-eliminating-memory-safety-vulnerabilities}\footcite{discord-moves-to-rust}\footcite{rust-adoption-surges}
     \begin{columns}[T]
         \begin{column}{0.3\textwidth}
@@ -1144,9 +1144,6 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
         \item $\ldots$ Rayon (Rust) performed better on a consumer CPU.
         \item $\ldots$ OpenMP (C++) performed better on CoolMUC.
     \end{itemize}
-    \vspace{0.5em}
-
-    \blue{What??? Why???}
     \vspace{0.5em}
 
     Rayon uses profit-oriented work-to-thread distribution, making sure every thread is busy and accepts new workload when free. \blue{This is efficient when background tasks make work distribution uneven!}
