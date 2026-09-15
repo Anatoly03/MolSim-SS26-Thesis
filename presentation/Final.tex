@@ -173,21 +173,6 @@
     \blue{Intuition:} The scope of the owner defines the \blue{lifetime} of a value.
 \end{frame}
 
-\simpleframe\begin{frame}[t,fragile]{The Ownership Model}{Ownership}
-    \begin{lstlisting}[frame=single,breaklines=false]
-fn problematic_move() {
-    let s = String::from("hello");
-    {                // inner scope
-        let t = s;   // s is moved to t
-    }                // t goes out of scope
-    println!("{s}"); // error: use of moved value
-}
-    \end{lstlisting}
-    \vspace{0.5em}
-
-    This example breaks \blue{Rule 2: There can only be one owner}. When \texttt{t} goes out of scope, the value is freed.
-\end{frame}
-
 \simpleframe\begin{frame}[t]{The Ownership Model}{Borrowing and References}
     To make sure values can be shared across different scopes, Rust introduces the concept of \blue{borrowing}: When references go out of scope, the value is not dropped, and a reference cannot outlive its value.
 
@@ -212,41 +197,6 @@ fn problematic_move() {
 
     \vspace{1.5em}
     \blue{Intuition:} Owner can read, write and free. Mutable borrow can read and write. Immutable borrow can only read.
-\end{frame}
-
-\simpleframe\begin{frame}[t,fragile]{The Ownership Model}{Borrowing and References}
-    \begin{lstlisting}[frame=single,breaklines=false]
-fn too_many_references() {
-    let s = String::from("hello");
-    let muts = &mut s; // 'muts' is a mutable borrow of 's'
-    println!("{s}");   // problem: printing a value borrows it
-                       // immutable (reading value content)
-                       // 'muts' out of scope
-}
-    \end{lstlisting}
-    \vspace{0.5em}
-
-    This example breaks \blue{Rule 4: Either one mutable reference or multiple immutable}.
-\end{frame}
-
-\simpleframe\begin{frame}[t,fragile]{The Ownership Model}{Borrowing and References}
-    \begin{lstlisting}[frame=single,breaklines=false]
-fn dangle() -> &String {
-    let s = String::from("hello");
-    return &s; // returns a reference to s;
-               // s goes out of scope => &s is invalid
-}
-    \end{lstlisting}
-    \vspace{0.5em}
-
-    This example breaks \blue{Rule 5: Any reference must be valid}. 
-    % Dangling references are a common problem in Rust when writing function chains:
-
-%     \begin{lstlisting}[frame=single,breaklines=false]
-% vec!["Hello", "World", "Banana"] // type equivalent: std::vector<std::string>
-%     .iter()
-%     .map(|value| &String::from(value)) // not allowed
-%     \end{lstlisting}
 \end{frame}
 
 \subsection{Traits vs Interfaces}
@@ -344,14 +294,12 @@ std::cout << force
     \vspace{1.5em}
     \begin{itemize}
         \item Forces: \texttt{Newton}, \texttt{LennardJones}
-        \item Algorithms: \texttt{DirectSum}, \texttt{LinkedCells}, \texttt{DirectSumParallel}
+        \item Particle Containers: \texttt{DirectSum}, \texttt{LinkedCells}, \texttt{DirectSumParallel}
         \item I/O: JSON, YAML, VTU
     \end{itemize}
 \end{frame}
 
 % \nofooterframe\begin{frame}[fragile]{Implementation}{Physics Pipeline}
-%     We have three different implementations for a particle container: \texttt{DirectSum}, \texttt{LinkedCells} and \texttt{DirectSumParallel}.
-    
 %     \vspace{0.5em}
 %     The \texttt{ParticleContainer} abstraction defines functionality for (1) managing particles, \blue{(2) iteration over particles} and \blue{(3) iteration over particle pairs}.
 
@@ -364,11 +312,17 @@ std::cout << force
 %     \end{enumerate}
 % \end{frame}
 
-\subsection{Direct Sum}
-\simpleframe\begin{frame}{Direct Sum}{Intuition}
-    \vspace{0.5em}
+\simpleframe\begin{frame}{Implementation}{Particle Containers}
+    % We have three different implementations for a particle container: \texttt{DirectSum}, \texttt{LinkedCells} and \texttt{DirectSumParallel}.
+
+    \begin{columns}[T]
+        \begin{column}{0.3\textwidth}
+            
     \begin{center}
-    \begin{tikzpicture}[scale=0.2]
+        \textbf{Direct Sum}
+        \vspace{1em}
+
+    \begin{tikzpicture}[scale=0.13]
         \node[circle, fill=blue, inner sep=2.5pt] (a0) at (2, 2) {};
         \node[circle, fill=blue, inner sep=2.5pt] (a1) at (8, 8) {};
 
@@ -392,9 +346,95 @@ std::cout << force
     \end{tikzpicture}
     \end{center}
 
-    8 particles, 56 interactions
+    56 interactions
+
+        \end{column}
+        \begin{column}{0.3\textwidth}
+            
+    \begin{center}
+        \textbf{Linked Cells}
+        \vspace{1em}
+
+    \begin{tikzpicture}[scale=0.13]
+        \node[circle, fill=blue, inner sep=2.5pt] (a0) at (2, 2) {};
+        \node[circle, fill=blue, inner sep=2.5pt] (a1) at (8, 8) {};
+
+        \node[circle, fill=blue, inner sep=2.5pt] (a2) at (22, 12) {};
+        \node[circle, fill=blue, inner sep=2.5pt] (a3) at (28, 18) {};
+
+        \node[circle, fill=blue, inner sep=2.5pt] (a4) at (18, 22) {};
+        
+        \node[circle, fill=blue, inner sep=2.5pt] (a5) at (2, 22) {};
+        \node[circle, fill=blue, inner sep=2.5pt] (a6) at (8, 22) {};
+        \node[circle, fill=blue, inner sep=2.5pt] (a7) at (8, 28) {};
+
+        \draw[gray, thick] (2, 10) -- (28, 10);
+        \draw[gray, thick] (2, 20) -- (28, 20);
+        \draw[gray, thick] (10, 2) -- (10, 28);
+        \draw[gray, thick] (20, 2) -- (20, 28);
+
+        \draw[gray!80, very thin] (a0) -- (a1);
+        \draw[gray!80, very thin] (a0) -- (a1);
+        \draw[gray!80, very thin] (a2) -- (a3);
+        \draw[gray!80, very thin] (a3) -- (a4);
+        \draw[gray!80, very thin] (a4) -- (a2);
+        \draw[gray!80, very thin] (a4) -- (a5);
+        \draw[gray!80, very thin] (a4) -- (a6);
+        \draw[gray!80, very thin] (a4) -- (a7);
+        \draw[gray!80, very thin] (a5) -- (a7);
+        \draw[gray!80, very thin] (a5) -- (a6);
+        \draw[gray!80, very thin] (a6) -- (a7);
+    \end{tikzpicture}
+    \end{center}
+
+    11 interactions
+
+        \end{column}
+        \begin{column}{0.3\textwidth}
+            
+    \begin{center}
+        \textbf{Direct Sum Parallel}
+        \vspace{1em}
+
+    \begin{tikzpicture}[scale=0.13]
+        \node[circle, fill=blue!50, inner sep=2.5pt] (a0) at (2, 2) {};
+        \node[circle, fill=blue!50, inner sep=2.5pt] (a1) at (8, 8) {};
+
+        \node[circle, fill=blue!50, inner sep=2.5pt] (a2) at (22, 12) {};
+        \node[circle, fill=blue!50, inner sep=2.5pt] (a3) at (28, 18) {};
+
+        \node[circle, fill=blue!50, inner sep=2.5pt] (a4) at (18, 22) {};
+
+        \node[circle, fill=blue!50, inner sep=2.5pt] (a5) at (2, 22) {};
+        \node[circle, fill=blue, inner sep=2.5pt] (a6) at (8, 22) {};
+        \node[circle, fill=blue!50, inner sep=2.5pt] (a7) at (8, 28) {};
+
+        % \foreach \a in {0,1,...,7} {
+        %     \foreach \b in {0,1,...,7} {
+        %         \pgfmathparse{\a<\b ? 1 : 0}
+        %         \ifnum\pgfmathresult=1
+        %             \draw[gray!20, very thin] (a\a) -- (a\b);
+        %         \fi
+        %     }
+        % }
+
+        \draw[gray!80, very thin] (a6) -- (a0);
+        \draw[gray!80, very thin] (a6) -- (a1);
+        \draw[gray!80, very thin] (a6) -- (a2);
+        \draw[gray!80, very thin] (a6) -- (a3);
+        \draw[gray!80, very thin] (a6) -- (a4);
+        \draw[gray!80, very thin] (a6) -- (a5);
+        \draw[gray!80, very thin] (a6) -- (a7);
+    \end{tikzpicture}
+    \end{center}
+
+    7 interactions per thread (8 threads)
+
+        \end{column}
+    \end{columns}
 \end{frame}
 
+\subsection{Direct Sum}
 \nofooterframe\begin{frame}[fragile]{Direct Sum}{Conceptual Implementation\footnote{The code snippet is in Rust-style pseudo code. You cannot implicitly cast an \texttt{Option<T>}\newline to \texttt{T} in practice.}}
     The \text{DirectSum} algorithm uses the naive approach: Two loops are used to compute all particle pair indeces \texttt{i} and \texttt{j}.
 
@@ -442,44 +482,6 @@ callback(&mut p1, &p0);
 \end{frame}
 
 \subsection{Linked Cells}
-\nofooterframe\begin{frame}{Linked Cells}{Intuition}
-    \vspace{0.5em}
-    \begin{center}
-    \begin{tikzpicture}[scale=0.2]
-        \node[circle, fill=blue, inner sep=2.5pt] (a0) at (2, 2) {};
-        \node[circle, fill=blue, inner sep=2.5pt] (a1) at (8, 8) {};
-
-        \node[circle, fill=blue, inner sep=2.5pt] (a2) at (22, 12) {};
-        \node[circle, fill=blue, inner sep=2.5pt] (a3) at (28, 18) {};
-
-        \node[circle, fill=blue, inner sep=2.5pt] (a4) at (18, 22) {};
-        
-        \node[circle, fill=blue, inner sep=2.5pt] (a5) at (2, 22) {};
-        \node[circle, fill=blue, inner sep=2.5pt] (a6) at (8, 22) {};
-        \node[circle, fill=blue, inner sep=2.5pt] (a7) at (8, 28) {};
-
-        \draw[gray, thick] (0, 10) -- (30, 10);
-        \draw[gray, thick] (0, 20) -- (30, 20);
-        \draw[gray, thick] (10, 0) -- (10, 30);
-        \draw[gray, thick] (20, 0) -- (20, 30);
-
-        \draw[gray!80, very thin] (a0) -- (a1);
-        \draw[gray!80, very thin] (a0) -- (a1);
-        \draw[gray!80, very thin] (a2) -- (a3);
-        \draw[gray!80, very thin] (a3) -- (a4);
-        \draw[gray!80, very thin] (a4) -- (a2);
-        \draw[gray!80, very thin] (a4) -- (a5);
-        \draw[gray!80, very thin] (a4) -- (a6);
-        \draw[gray!80, very thin] (a4) -- (a7);
-        \draw[gray!80, very thin] (a5) -- (a7);
-        \draw[gray!80, very thin] (a5) -- (a6);
-        \draw[gray!80, very thin] (a6) -- (a7);
-    \end{tikzpicture}
-    \end{center}
-
-    8 particles, 11 interactions \gray{(recall: DirectSum had 56)}
-\end{frame}
-
 \nofooterframe\begin{frame}[fragile]{Linked Cells}
     The \texttt{LinkedCells} approach partitions the 3D space into \blue{cells}, reducing pair computation to within a cell or inbetween neighbouring cells. The cell type is a generic\footnote{Base support for algorithms like \texttt{LinkedCells<ParallelDirectSum>} or  \texttt{LinkedCells<LinkedCells<DirectSum>>} exists but was never tested or benchmarked.} which implements \texttt{ParticleContainer}.
 
@@ -496,44 +498,6 @@ pub struct LinkedCells<Cell: ParticleContainer> {
 \end{frame}
 
 \subsection{Parallel Direct Sum}
-\nofooterframe\begin{frame}{Parallel Direct Sum}{Intuition}
-    \vspace{0.5em}
-    \begin{center}
-    \begin{tikzpicture}[scale=0.2]
-        \node[circle, fill=blue!50, inner sep=2.5pt] (a0) at (2, 2) {};
-        \node[circle, fill=blue!50, inner sep=2.5pt] (a1) at (8, 8) {};
-
-        \node[circle, fill=blue!50, inner sep=2.5pt] (a2) at (22, 12) {};
-        \node[circle, fill=blue!50, inner sep=2.5pt] (a3) at (28, 18) {};
-
-        \node[circle, fill=blue!50, inner sep=2.5pt] (a4) at (18, 22) {};
-
-        \node[circle, fill=blue!50, inner sep=2.5pt] (a5) at (2, 22) {};
-        \node[circle, fill=blue, inner sep=2.5pt] (a6) at (8, 22) {};
-        \node[circle, fill=blue!50, inner sep=2.5pt] (a7) at (8, 28) {};
-
-        \foreach \a in {0,1,...,7} {
-            \foreach \b in {0,1,...,7} {
-                \pgfmathparse{\a<\b ? 1 : 0}
-                \ifnum\pgfmathresult=1
-                    \draw[gray!20, very thin] (a\a) -- (a\b);
-                \fi
-            }
-        }
-
-        \draw[gray!80, very thin] (a6) -- (a0);
-        \draw[gray!80, very thin] (a6) -- (a1);
-        \draw[gray!80, very thin] (a6) -- (a2);
-        \draw[gray!80, very thin] (a6) -- (a3);
-        \draw[gray!80, very thin] (a6) -- (a4);
-        \draw[gray!80, very thin] (a6) -- (a5);
-        \draw[gray!80, very thin] (a6) -- (a7);
-    \end{tikzpicture}
-    \end{center}
-
-    8 particles, 8 threads, 7 interactions per thread \gray{(recall: DirectSum had 56, LinkedCells had 11)}
-\end{frame}
-
 \simpleframe\begin{frame}[fragile]{Parallel Direct Sum}
     For the parallelization approach, we parallelized the outer loop. In Rust, we had to disable memory-safety mechanisms using \texttt{unsafe} to get this to work.
 
@@ -1407,6 +1371,58 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
         \item and any reference must be valid (no dangling references!).
     \end{enumerate}
 \end{frame}
+
+\simpleframe\begin{frame}[t,fragile]{Ownership and Borrowing}{Example I}
+    \begin{lstlisting}[frame=single,breaklines=false]
+fn problematic_move() {
+    let s = String::from("hello");
+    {                // inner scope
+        let t = s;   // s is moved to t
+    }                // t goes out of scope
+    println!("{s}"); // error: use of moved value
+}
+    \end{lstlisting}
+    \vspace{0.5em}
+
+    This example breaks \blue{Rule 2: There can only be one owner}. When \texttt{t} goes out of scope, the value is freed.
+\end{frame}
+
+
+\simpleframe\begin{frame}[t,fragile]{Ownership and Borrowing}{Example II}
+    \begin{lstlisting}[frame=single,breaklines=false]
+fn too_many_references() {
+    let s = String::from("hello");
+    let muts = &mut s; // 'muts' is a mutable borrow of 's'
+    println!("{s}");   // problem: printing a value borrows it
+                       // immutable (reading value content)
+                       // 'muts' out of scope
+}
+    \end{lstlisting}
+    \vspace{0.5em}
+
+    This example breaks \blue{Rule 4: Either one mutable reference or multiple immutable}.
+\end{frame}
+
+\simpleframe\begin{frame}[t,fragile]{Ownership and Borrowing}{Example III}
+    \begin{lstlisting}[frame=single,breaklines=false]
+fn dangle() -> &String {
+    let s = String::from("hello");
+    return &s; // returns a reference to s;
+               // s goes out of scope => &s is invalid
+}
+    \end{lstlisting}
+    \vspace{0.5em}
+
+    This example breaks \blue{Rule 5: Any reference must be valid}. 
+    % Dangling references are a common problem in Rust when writing function chains:
+
+%     \begin{lstlisting}[frame=single,breaklines=false]
+% vec!["Hello", "World", "Banana"] // type equivalent: std::vector<std::string>
+%     .iter()
+%     .map(|value| &String::from(value)) // not allowed
+%     \end{lstlisting}
+\end{frame}
+
 
 \simpleframe\begin{frame}{Unsafe Rust: Rules}
     What we have learned in the presentation is called ``Safe Rust'' -- it is statically verifiable and memory safe.
