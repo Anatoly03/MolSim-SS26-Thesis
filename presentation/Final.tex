@@ -439,7 +439,7 @@ std::cout << force
 \end{frame}
 
 \subsection{Direct Sum}
-\nofooterframe\begin{frame}[fragile]{Direct Sum}{Conceptual Implementation\footnote{The code snippet is in Rust-style pseudo code. You cannot implicitly cast an \texttt{Option<T>}\newline to \texttt{T} in practice.}}
+\nofooterframe\begin{frame}[fragile]{Direct Sum}{Conceptual Implementation\footnote{All further code snippet will be in Rust-style pseudo code. You cannot implicitly \newline cast an \texttt{Option<T>} to \texttt{T} in practice.}}
     The \text{DirectSum} algorithm uses the naive approach: Two loops are used to compute all particle pair indeces \texttt{i} and \texttt{j}.
 
     \vspace{0.5em}
@@ -485,21 +485,20 @@ callback(&mut p1, &p0);
 \end{lstlisting}
 \end{frame}
 
-\subsection{Linked Cells}
-\nofooterframe\begin{frame}[fragile]{Linked Cells}
-    The \texttt{LinkedCells} approach partitions the 3D space into \blue{cells}, reducing pair computation to within a cell or inbetween neighbouring cells. The cell type is a generic\footnote{Base support for algorithms like \texttt{LinkedCells<ParallelDirectSum>} or  \texttt{LinkedCells<LinkedCells<DirectSum>>} exists but was never tested or benchmarked.} which implements \texttt{ParticleContainer}.
+% \subsection{Linked Cells}
+% \nofooterframe\begin{frame}[fragile]{Linked Cells}
+%     The \texttt{LinkedCells} approach partitions the 3D space into \blue{cells}, reducing pair computation to within a cell or inbetween neighbouring cells. The cell type is a generic\footnote{Base support for algorithms like \texttt{LinkedCells<ParallelDirectSum>} or  \texttt{LinkedCells<LinkedCells<DirectSum>>} exists but was never tested or benchmarked.} which implements \texttt{ParticleContainer}.
 
-    \vspace{1em}
-\begin{lstlisting}[frame=single,breaklines=false,language=Rust,basicstyle=\ttfamily\scriptsize]
-pub struct LinkedCells<Cell: ParticleContainer> {
-    cells: HashMap<Vec3<i32>, Cell>,
-    cell_size: Vec3<f64>,
-}
-\end{lstlisting}
-    \vspace{0.5em}
+%     \vspace{1em}
+% \begin{lstlisting}[frame=single,breaklines=false,language=Rust,basicstyle=\ttfamily\scriptsize]
+% pub struct LinkedCells<Cell: ParticleContainer> {
+%     cells: HashMap<Vec3<i32>, Cell>,
+%     cell_size: Vec3<f64>,
+% }
+% \end{lstlisting}
+%     \vspace{0.5em}
 
-
-\end{frame}
+% \end{frame}
 
 \subsection{Parallel Direct Sum}
 \simpleframe\begin{frame}[fragile]{Parallel Direct Sum}
@@ -1471,7 +1470,7 @@ let mut left = &mut *particles.at(i);
 \end{lstlisting}
 \end{frame}
 
-\simpleframe\begin{frame}[fragile]{Direct Sum}{Conceptual Implementation\footnote{The code snippet is in Rust-style pseudo code. You cannot implicitly cast an \texttt{Option<T>}\newline to \texttt{T} in practice.}}
+\simpleframe\begin{frame}[fragile]{Direct Sum}{Conceptual Implementation}
 
 \begin{lstlisting}[frame=single,breaklines=false,language=Rust,basicstyle=\ttfamily\scriptsize]
 type Callback = Fn(&mut Particle, &Particle);
