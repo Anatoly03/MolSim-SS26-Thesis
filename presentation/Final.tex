@@ -124,27 +124,10 @@
 \section{The Rust Programming Language}
 \headerframe\begin{frame}{}
     \centering
-    \Large
-    \blue{The Rust Progrogramming Language}
-\end{frame}
-
-\subsection{The Cargo Ecosystem}
-\simpleframe\begin{frame}{The Cargo Ecosystem}
-    \begin{tabular}{ m{0.46\textwidth} | m{0.46\textwidth} } 
-        \textbf{Rust} & \textbf{C++} \\
-        \hline
-        \texttt{cargo build} & \texttt{make} \\
-        \texttt{cargo run} & \texttt{make \&\& ./out.o} \\
-        \texttt{cargo test} & \texttt{ctest} \\
-        \texttt{cargo doc} & \texttt{doxygen} \\
-        \texttt{cargo fmt} & \texttt{clang-format} \\
-        \texttt{cargo clippy} & \texttt{clang-tidy} \\
-    \end{tabular}
-
-    % \vspace{1.5em}
-    % Rust is installed with its package manager \blue{Cargo}, which manages the toolchain for Rust as subcommands.
-    % It comes with the tester, formatter and linter, and other subcommands.
-    % The C++ ecosystem is more fragmented, adding dependencies is done manually with CMake, so is the configuration of testing and documentation generators.
+    {\Large
+    \blue{The Rust Programming Language}}
+    
+    and how it manages memory safety
 \end{frame}
 
 \subsection{The Ownership Model}
@@ -217,7 +200,7 @@ pub trait Potential {
     &self,
     a: &Particle,
     b: &Particle
-  ) -> Vec3;
+  ) -> f64;
 }
         \end{lstlisting}
         \end{column}
@@ -276,8 +259,10 @@ std::cout << force
 \section{Implementation}
 \headerframe\begin{frame}{}
     \centering
-    \Large
-    \blue{Implementation}
+    {\Large
+    \blue{Implementation}}
+
+    Program Architecture, Algorithms and Programming Puzzles 
 \end{frame}
 
 \simpleframe\begin{frame}[fragile]{Implementation}{Program Architecture}
@@ -300,6 +285,7 @@ std::cout << force
         \item Forces: \texttt{Newton}, \texttt{LennardJones}
         \item Particle Containers: \texttt{DirectSum}, \texttt{LinkedCells}, \texttt{DirectSumParallel}
         \item I/O: JSON, YAML, VTU
+        \item \texttt{Simulation} has a method \texttt{tick()} which runs a pipeline: Update position, force and velocity.
     \end{itemize}
 \end{frame}
 
@@ -440,7 +426,7 @@ std::cout << force
 
 \subsection{Direct Sum}
 \nofooterframe\begin{frame}[fragile]{Direct Sum}{Conceptual Implementation\footnote{All further code snippet will be in Rust-style pseudo code. You cannot implicitly \newline cast an \texttt{Option<T>} to \texttt{T} in practice.}}
-    The \text{DirectSum} algorithm uses the naive approach: Two loops are used to compute all particle pair indeces \texttt{i} and \texttt{j}.
+    The naive approach: Two loops compute all particle pair indeces \texttt{i} and \texttt{j}.
 
     \vspace{0.5em}
 \begin{lstlisting}[frame=single,breaklines=false,language=Rust,basicstyle=\ttfamily\scriptsize]
@@ -451,6 +437,8 @@ callback(&mut p0, &p1);
 callback(&mut p1, &p0);
 \end{lstlisting}
     \vspace{0.5em}
+
+    \pause
 
     This breaks \blue{Rule 4}: The signature of \texttt{Vec::get\_mut} \blue{borrows the entire vector mutably!}
 
@@ -470,6 +458,8 @@ pub fn split_at_mut(&mut self, middle: usize)
     -> (&mut [Particle], &mut [Particle]);
 \end{lstlisting}
     \vspace{0.5em}
+
+    \pause
 
     This gives us the following code snippet for the pairwise for loop over indeces \texttt{i} and \texttt{j}:
 
@@ -510,10 +500,10 @@ callback(&mut p1, &p0);
             \textbf{Rayon}
 \begin{lstlisting}[language=Rust,basicstyle=\ttfamily\scriptsize]
 (0..count).into_par_iter().for_each(|i| unsafe {
-  let mut p1 = &mut *particles.at(i);
+  let mut p0 = &mut *particles.at(i);
 
   for j in 0 ..count {
-    let right = &*particles.at(j);
+    let p1 = &*particles.at(j);
     callback(&mut p0, &p1);
   }
 });
@@ -524,11 +514,11 @@ callback(&mut p1, &p0);
 \begin{lstlisting}[language=C++,basicstyle=\ttfamily\scriptsize]
 #pragma omp parallel for
 for (size_t i = 0; i < particles_vec.size(); ++i) {
-  const auto& p1 = particles_vec[i];
+  const auto& p0 = particles_vec[i];
 
   for (size_t j = 0; j < particles_vec.size(); ++j) {
-    const auto& p2 = particles_vec[j];
-    callback(p1, p2);
+    const auto& p1 = particles_vec[j];
+    callback(p0, p1);
   }
 }
 \end{lstlisting}
@@ -540,8 +530,10 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
 \section{Benchmarks}
 \headerframe\begin{frame}{}
     \centering
-    \Large
-    \blue{Benchmarks}
+    {\Large
+    \blue{Benchmarks}}
+
+    Let's finally see the data!
 \end{frame}
 
 \simpleframe\begin{frame}{Mars}
@@ -1242,8 +1234,15 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
     \end{itemize}
     \vspace{0.5em}
 
+    \blue{What?? Why is this happening?}
+    \vspace{0.5em}
+
+    \pause
+
     Rayon uses profit-oriented work-to-thread distribution, making sure every thread is busy and accepts new workload when free. \blue{This is efficient when background tasks make work distribution uneven!}
     \vspace{0.5em}
+
+    \pause
 
     OpenMP distributes workload statically to threads. Since there are no background tasks, all threads have even work distribution. \blue{The overhead from Rayon becomes a liability!}
 
@@ -1253,8 +1252,10 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
 \section{Conclusion}
 \headerframe\begin{frame}{}
     \centering
-    \Large
-    \blue{Conclusion}
+    {\Large
+    \blue{Conclusion}}
+
+    Should you use Rust in new projects? Pros and cons.
 \end{frame}
 
 \simpleframe\begin{frame}[t]{Conclusion}
@@ -1266,18 +1267,20 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
     \begin{itemize}
         \item Competitive Performance
         \item Compile-time verified Memory Safety
-        \item Integrated Ecosystem and Tooling
+        \item Integrated Ecosystem and Tooling \gray{(Cargo comes with integrated tests, formatter and documentation generator $\neq$ C++ more fragmented: \texttt{clang-format}, Doxygen, Google Test, $\dots$)}
     \end{itemize}
     \vspace{0.5em}
 
-    Things to consider when rewriting codebases:
+    \pause
+
+    Things to consider when creating new software projects or rewriting existing codebases:
 
     \vspace{0.5em}
     \begin{itemize}
         \item Technical Debt
-        \item Learning Curve
-        \item Lack of some major dependencies. % \gray{(Example: LLVM Project)}
-        \item Well-optimized projects. %\gray{(Rust may offer few to no advantage when rewriting optimal code that is well understood)}
+        \item Learning Curve \gray{(Very steep!)}
+        \item Lack of some major dependencies. \gray{(LLVM, Vulkan)}
+        \item Well-understood, optimized projects. %\gray{(Rust may offer few to no advantage when rewriting optimal code that is well understood)}
     \end{itemize}
     \vspace{0.5em}
 \end{frame}
@@ -1363,6 +1366,25 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
     % In recent years, Rust has gained a lot of popularity and reputation as a strong C++ contender in memory-safety and performance. It was also rated ``the most admired programming language'' in the StackOverflow developer surveys\footcite{stackoverflow-developer-survey}.
 
     On StackOverflow, Rust gained reputation as ``the most admired language'' for the past 9 years, outperforming C++ for 10 years.\footcite{stackoverflow-developer-survey}.
+\end{frame}
+
+\subsection{The Cargo Ecosystem}
+\simpleframe\begin{frame}{The Cargo Ecosystem}
+    \begin{tabular}{ m{0.46\textwidth} | m{0.46\textwidth} } 
+        \textbf{Rust} & \textbf{C++} \\
+        \hline
+        \texttt{cargo build} & \texttt{make} \\
+        \texttt{cargo run} & \texttt{make \&\& ./out.o} \\
+        \texttt{cargo test} & \texttt{ctest} \\
+        \texttt{cargo doc} & \texttt{doxygen} \\
+        \texttt{cargo fmt} & \texttt{clang-format} \\
+        \texttt{cargo clippy} & \texttt{clang-tidy} \\
+    \end{tabular}
+
+    % \vspace{1.5em}
+    % Rust is installed with its package manager \blue{Cargo}, which manages the toolchain for Rust as subcommands.
+    % It comes with the tester, formatter and linter, and other subcommands.
+    % The C++ ecosystem is more fragmented, adding dependencies is done manually with CMake, so is the configuration of testing and documentation generators.
 \end{frame}
 
 \simpleframe\begin{frame}{Ownership and Borrowing: Rules}
