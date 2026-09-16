@@ -1258,16 +1258,16 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
     Should you use Rust in new projects? Pros and cons.
 \end{frame}
 
-\simpleframe\begin{frame}[t]{Conclusion}
+\nofooterframe\begin{frame}[t]{Conclusion}
     % In this specific implementation we see that \blue{Dynamic Dispatch in Rust outperforms virtual functions in C++}.
 
     What Rust offers:
 
     \vspace{0.5em}
     \begin{itemize}
-        \item Competitive Performance
-        \item Compile-time verified Memory Safety
-        \item Integrated Ecosystem and Tooling \gray{(Cargo comes with integrated tests, formatter and documentation generator $\neq$ C++ more fragmented: \texttt{clang-format}, Doxygen, Google Test, $\dots$)}
+        \item Competitive \blue{Performance}
+        \item Compile-time verified \blue{Memory Safety}
+        \item Integrated Ecosystem and Tooling with \blue{Cargo}\footnote{Cargo comes with integrated tests, formatter and documentation generator while the C++ ecosystem is more fragmented:  Google Test, \texttt{clang-format}, Doxygen, $\dots$}
     \end{itemize}
     \vspace{0.5em}
 
@@ -1280,7 +1280,7 @@ for (size_t i = 0; i < particles_vec.size(); ++i) {
         \item Technical Debt
         \item Learning Curve \gray{(Very steep!)}
         \item Lack of some major dependencies. \gray{(LLVM, Vulkan)}
-        \item Well-understood, optimized projects. %\gray{(Rust may offer few to no advantage when rewriting optimal code that is well understood)}
+        \item No rewrite benefit for well-understood, optimized projects. %\gray{(Rust may offer few to no advantage when rewriting optimal code that is well understood)}
     \end{itemize}
     \vspace{0.5em}
 \end{frame}
